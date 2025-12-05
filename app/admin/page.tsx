@@ -7,10 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CalendarDateRangePicker } from "@/components/admin/DateRangePicker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, LayoutDashboard, Map, Sprout, Users, Terminal } from "lucide-react";
+import { Download, LayoutDashboard, Map, Sprout, Users, Terminal, Bot } from "lucide-react";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GeminiTerminal } from "@/components/admin/GeminiTerminal";
+import { AgentDashboard } from "@/components/admin/AgentDashboard";
 
 import { useState, useEffect } from "react";
 import { Lock } from "lucide-react";
@@ -74,6 +75,10 @@ export default function AdminDashboard() {
             <Tabs defaultValue="overview" className="space-y-4">
                 <TabsList className="bg-white border border-stone-200">
                     <TabsTrigger value="overview">Tổng Quan</TabsTrigger>
+                    <TabsTrigger value="agentic" className="flex items-center gap-2">
+                        <Bot className="w-4 h-4" />
+                        Agentic OS
+                    </TabsTrigger>
                     <TabsTrigger value="terminal" className="flex items-center gap-2">
                         <Terminal className="w-4 h-4" />
                         Gemini Ops
@@ -108,6 +113,10 @@ export default function AdminDashboard() {
                             </CardContent>
                         </Card>
                     </div>
+                </TabsContent>
+
+                <TabsContent value="agentic" className="space-y-4">
+                    <AgentDashboard />
                 </TabsContent>
 
                 <TabsContent value="terminal" className="space-y-4">
