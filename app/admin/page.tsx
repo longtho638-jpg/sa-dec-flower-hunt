@@ -7,9 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CalendarDateRangePicker } from "@/components/admin/DateRangePicker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, LayoutDashboard, Map, Sprout, Users } from "lucide-react";
+import { Download, LayoutDashboard, Map, Sprout, Users, Terminal } from "lucide-react";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { GeminiTerminal } from "@/components/admin/GeminiTerminal";
 
 import { useState, useEffect } from "react";
 import { Lock } from "lucide-react";
@@ -73,6 +74,10 @@ export default function AdminDashboard() {
             <Tabs defaultValue="overview" className="space-y-4">
                 <TabsList className="bg-white border border-stone-200">
                     <TabsTrigger value="overview">Tổng Quan</TabsTrigger>
+                    <TabsTrigger value="terminal" className="flex items-center gap-2">
+                        <Terminal className="w-4 h-4" />
+                        Gemini Ops
+                    </TabsTrigger>
                     <TabsTrigger value="analytics" disabled>Phân Tích (AI)</TabsTrigger>
                     <TabsTrigger value="reports" disabled>Báo Cáo</TabsTrigger>
                     <TabsTrigger value="notifications" disabled>Thông Báo</TabsTrigger>
@@ -104,7 +109,34 @@ export default function AdminDashboard() {
                         </Card>
                     </div>
                 </TabsContent>
-            </Tabs>
-        </div>
+
+                <TabsContent value="terminal" className="space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-2">
+                            <GeminiTerminal />
+                        </div>
+                        <div className="space-y-4">
+                            <Card className="bg-stone-50 border-stone-200">
+                                <CardHeader>
+                                    <CardTitle className="text-sm">Lệnh Mẫu</CardTitle>
+                                </CardHeader>
+                                <CardContent className="text-sm space-y-2 text-stone-600">
+                                    <div className="p-2 bg-white rounded border cursor-pointer hover:border-green-400 transition-colors">
+                                        "Doanh thu hôm nay thế nào?"
+                                    </div>
+                                    <div className="p-2 bg-white rounded border cursor-pointer hover:border-green-400 transition-colors">
+                                        "Tìm 5 đơn hàng mới nhất"
+                                    </div>
+                                    <div className="p-2 bg-white rounded border cursor-pointer hover:border-green-400 transition-colors">
+                                        "Tạo mã giảm giá 20% cho khách VIP"
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </TabsContent>
+            </Tabs >
+        </div >
     );
 }
+
