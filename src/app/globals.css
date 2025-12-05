@@ -47,3 +47,10 @@ h6 {
 .text-balance {
   text-wrap: balance;
 }
+
+/* Animations */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

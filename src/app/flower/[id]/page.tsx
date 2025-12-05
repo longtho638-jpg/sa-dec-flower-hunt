@@ -139,8 +139,8 @@ export default function FlowerDetailPage() {
                         onClick={handleCollect}
                         disabled={isCollected}
                         className={`w-full py-4 rounded-3xl font-bold text-lg shadow-soft-red transition-all flex items-center justify-center gap-2 relative overflow-hidden group ${isCollected
-                                ? "bg-stone-100 text-stone-400 cursor-default border border-stone-200"
-                                : "bg-primary text-white hover:bg-red-600"
+                            ? "bg-stone-100 text-stone-400 cursor-default border border-stone-200"
+                            : "bg-primary text-white hover:bg-red-600"
                             }`}
                     >
                         {isCollected ? (

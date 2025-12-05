@@ -2,26 +2,47 @@
 
 import Link from "next/link";
 import { flowers } from "@/lib/dummyData";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Search, Home as HomeIcon, Scan, Gift } from "lucide-react";
 import FlowerCard from "@/components/FlowerCard";
+import SkeletonCard from "@/components/SkeletonCard";
+import { useState, useEffect } from "react";
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
     },
   },
 };
 
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 },
+const item: Variants = {
+  hidden: { y: 50, opacity: 0 },
+  show: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      damping: 20,
+      stiffness: 100
+    }
+  },
 };
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay for polish
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <main className="min-h-screen pb-32 relative overflow-x-hidden bg-background text-foreground">
       {/* Mobile Container Simulation */}
@@ -29,10 +50,15 @@ export default function Home() {
         {/* Sticky Glass Header */}
         <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 px-6 py-4 flex items-center justify-between border-b border-white/20">
           <h1 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
-            <span>🌸</span> Sa Đéc Hunt
+            <motion.span
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              🌸
+            </motion.span>
+            Sa Đéc Hunt
           </h1>
-          <div className="w-8 h-8 rounded-full bg-stone-200 overflow-hidden">
-            {/* Placeholder Avatar */}
+          <div className="w-8 h-8 rounded-full bg-stone-200 overflow-hidden border border-white/50">
             <div className="w-full h-full bg-gradient-to-br from-primary to-secondary opacity-50" />
           </div>
         </header>
@@ -77,20 +103,38 @@ export default function Home() {
               Xem tất cả
             </span>
           </div>
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-2 gap-4"
-          >
-            {flowers.map((flower) => (
-              <Link href={`/flower/${flower.id}`} key={flower.id}>
-                <motion.div variants={item}>
-                  <FlowerCard flower={flower} />
-                </motion.div>
-              </Link>
-            ))}
-          </motion.div>
+
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <motion.div
+                key="skeleton"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-2 gap-4"
+              >
+                {[1, 2, 3, 4].map((i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="grid"
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-2 gap-4"
+              >
+                {flowers.map((flower) => (
+                  <Link href={`/flower/${flower.id}`} key={flower.id}>
+                    <motion.div variants={item}>
+                      <FlowerCard flower={flower} />
+                    </motion.div>
+                  </Link>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Bottom Navigation Bar */}
