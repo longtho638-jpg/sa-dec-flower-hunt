@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Camera, Move, Maximize2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 interface ARViewProps {
     isOpen: boolean
@@ -88,9 +89,11 @@ export function ARView({ isOpen, onClose, flowerImage, flowerName }: ARViewProps
                         style={{ scale }}
                     >
                         <div className="relative group">
-                            <img
+                            <Image
                                 src={flowerImage}
                                 alt={flowerName}
+                                width={256}
+                                height={256}
                                 className="w-64 h-auto drop-shadow-2xl filter brightness-110 contrast-110"
                             />
                             {/* Guides */}

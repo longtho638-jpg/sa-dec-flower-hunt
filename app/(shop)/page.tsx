@@ -16,6 +16,7 @@ import { VoiceSearch } from "@/components/VoiceSearch";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FAQSection } from "@/components/FAQSection";
+import Image from "next/image";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -91,9 +92,11 @@ export default function Home() {
               <Link href={`/flower/${flower.id}`} className="block group">
                 <Card className="overflow-hidden border-none shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-white rounded-2xl">
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100">
-                    <img
+                    <Image
                       src={flower.image}
                       alt={flower.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute top-2 right-2 z-10">

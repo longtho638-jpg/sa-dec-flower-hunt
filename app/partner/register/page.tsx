@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Calculator, Sprout, TrendingUp } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function PartnerOnboardingPage() {
     const [pots, setPots] = useState([500])
@@ -22,10 +23,12 @@ export default function PartnerOnboardingPage() {
             {/* Hero Section */}
             <div className="relative overflow-hidden bg-stone-900 py-24 sm:py-32">
                 <div className="absolute inset-0">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=3432&auto=format&fit=crop"
                         alt="Flower garden background"
+                        fill
                         className="h-full w-full object-cover opacity-20"
+                        priority
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40" />
                 </div>

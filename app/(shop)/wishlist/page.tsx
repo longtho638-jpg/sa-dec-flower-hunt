@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FLOWERS, formatPrice } from "@/data/flowers";
 import { ChevronLeft, Heart, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 interface WishlistItem {
     flowerId: number;
@@ -72,9 +73,11 @@ export default function WishlistPage() {
                             >
                                 {/* Image */}
                                 <Link href={`/flower/${flower!.id}`} className="flex-shrink-0">
-                                    <img
+                                    <Image
                                         src={flower!.image}
                                         alt={flower!.name}
+                                        width={80}
+                                        height={80}
                                         className="w-20 h-20 rounded-xl object-cover"
                                     />
                                 </Link>

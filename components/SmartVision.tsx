@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { FLOWERS } from "@/data/flowers"
 import Link from "next/link"
+import Image from "next/image"
 
 export function SmartVision() {
     const [image, setImage] = useState<string | null>(null)
@@ -97,7 +98,12 @@ export function SmartVision() {
                         className="relative"
                     >
                         <div className="relative rounded-3xl overflow-hidden aspect-[3/4] bg-black mb-6">
-                            <img src={image} alt="Uploaded" className="w-full h-full object-cover opacity-80" />
+                            <Image
+                                src={image}
+                                alt="Uploaded"
+                                fill
+                                className="object-cover opacity-80"
+                            />
 
                             {/* Scanning Effect */}
                             {isAnalyzing && (

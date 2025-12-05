@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { User, Phone, MapPin, Loader2 } from "lucide-react";
 import { formatPrice } from "@/data/flowers";
+import Image from "next/image";
 
 interface OrderStep3ConfirmProps {
     flowerName: string;
@@ -43,7 +44,13 @@ export function OrderStep3Confirm({
             {/* Order Summary */}
             <div className="bg-stone-50 rounded-2xl p-4 mb-4">
                 <div className="flex gap-3 items-center mb-3">
-                    <img src={flowerImage} alt={flowerName} className="w-16 h-16 rounded-xl object-cover" />
+                    <Image
+                        src={flowerImage}
+                        alt={flowerName}
+                        width={64}
+                        height={64}
+                        className="w-16 h-16 rounded-xl object-cover"
+                    />
                     <div>
                         <p className="font-bold text-stone-800">{flowerName}</p>
                         <p className="text-sm text-stone-500">Size {selectedSize} x {quantity}</p>
