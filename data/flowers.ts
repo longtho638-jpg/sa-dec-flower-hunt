@@ -44,7 +44,7 @@ export const FLOWERS = [
   {
     id: 4,
     name: "Hoa Giấy Đỏ",
-    image: "https://images.unsplash.com/photo-1534234828563-025c93d31d8e?q=80&w=600",
+    image: "https://images.unsplash.com/photo-1610397648930-477b8c7f0943?q=80&w=600",
     vibe: "Rực Rỡ Quanh Năm 🌈",
     basePrice: 120000,
     salesPitch: "Dễ chăm, nở quanh năm. Phong thủy cực tốt cho nhà mới!",
@@ -55,7 +55,7 @@ export const FLOWERS = [
   {
     id: 5,
     name: "Cát Tường",
-    image: "https://images.unsplash.com/photo-1563241527-9d2b33d36eb3?q=80&w=600",
+    image: "https://images.unsplash.com/photo-1494972308805-463bc619d34e?q=80&w=600",
     vibe: "May Mắn Tràn Trề ✨",
     basePrice: 70000,
     salesPitch: "Tên Cát Tường = Điềm Lành. Ai cũng cần một chậu trong nhà!",
@@ -66,7 +66,7 @@ export const FLOWERS = [
   {
     id: 6,
     name: "Mai Vàng",
-    image: "https://images.unsplash.com/photo-1462275646964-a0e338679cde?q=80&w=600",
+    image: "https://images.unsplash.com/photo-1455659817273-f96807779a8a?q=80&w=600",
     vibe: "Xuân Về Ngập Tràn 🌼",
     basePrice: 200000,
     salesPitch: "Mai Vàng chính gốc miền Tây. Nở đúng Mùng 1 Tết!",
