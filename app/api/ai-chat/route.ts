@@ -1,0 +1,60 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextResponse } from "next/server";
+
+// Initialize Gemini
+const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+const model = genAI ? genAI.getGenerativeModel({ model: "gemini-1.5-flash" }) : null;
+
+const SYSTEM_INSTRUCTION = `
+Bạn là Dr. Flower 👨‍⚕️🌸, một chuyên gia về hoa đến từ Làng hoa Sa Đéc, Đồng Tháp.
+Phong cách của bạn:
+- Thân thiện, nhiệt tình, đậm chất miền Tây Nam Bộ ("Nghen", "Đó nha", "Cưng xỉu").
+- Sử dụng nhiều emoji liên quan đến hoa và thiên nhiên.
+- Kiến thức sâu rộng về các loại hoa Tết (Cúc Mâm Xôi, Hoa Giấy, Cát Tường...).
+- Luôn tư vấn dựa trên: Phong thủy, Mệnh gia chủ, Không gian nhà, và Ngân sách.
+- Mục tiêu: Khuyến khích khách hàng mua hoa hoặc đến Sa Đéc check-in.
+
+Khi tư vấn:
+1. Khen ngợi khách hàng nếu họ có gu tốt.
+2. Gợi ý cụ thể (VD: "Mệnh kim thì nên chưng trậu Cúc Mâm Xôi vàng rực rỡ nghen!").
+3. Nhắc nhở về cách chăm sóc để hoa tươi lâu.
+`;
+
+export async function POST(req: Request) {
+    if (!apiKey || !model) {
+        return NextResponse.json(
+            { error: "Missing API Key. Please add GEMINI_API_KEY to .env.local" },
+            { status: 500 }
+        );
+    }
+
+    try {
+        const { message, context, history } = await req.json();
+
+        // Construct chat with history if needed, for now simplistic single turn with context
+        const prompt = `
+${SYSTEM_INSTRUCTION}
+
+Ngữ cảnh hiện tại: ${context ? JSON.stringify(context) : 'Không có'}
+Lịch sử chat: ${JSON.stringify(history || [])}
+
+Khách hỏi: "${message}"
+
+Dr. Flower trả lời:
+`;
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+
+        return NextResponse.json({ reply: text });
+    } catch (error) {
+        console.error("Gemini API Error:", error);
+        return NextResponse.json(
+            { error: "Dr. Flower đang bận chăm hoa, thử lại xíu nghen!" },
+            { status: 500 }
+        );
+    }
+}

@@ -5,6 +5,7 @@ import { SizeKey, calculatePrice } from "@/data/flowers";
 import { AnimatePresence } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 import confetti from "canvas-confetti";
+import { trackEvent } from "@/lib/analytics";
 import { OrderStep1Size } from "./order/OrderStep1Size";
 import { OrderStep2Details } from "./order/OrderStep2Details";
 import { OrderStep3Confirm } from "./order/OrderStep3Confirm";
@@ -63,6 +64,14 @@ export default function OrderForm({ flowerId, flowerName, flowerImage, basePrice
                     spread: 100,
                     origin: { y: 0.6 },
                     colors: ['#D0312D', '#EAB308', '#22C55E', '#EC4899']
+                });
+
+                // AARRR: Revenue
+                await trackEvent("revenue", "order_placed", {
+                    order_id: data.orderId,
+                    flower_id: flowerId,
+                    amount: totalPrice,
+                    quantity: quantity
                 });
 
                 setOrderId(data.orderId || "ORD-" + Date.now());

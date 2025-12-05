@@ -1,7 +1,7 @@
 "use client";
 
 import { RevenueChart } from "@/components/admin/RevenueChart";
-import { StatsCards } from "@/components/admin/StatsCards";
+import { LiveMetrics } from "@/components/admin/LiveMetrics";
 import { RecentOrders } from "@/components/admin/RecentOrders";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
                     <TabsTrigger value="notifications" disabled>Thông Báo</TabsTrigger>
                 </TabsList>
                 <TabsContent value="overview" className="space-y-4">
-                    <StatsCards />
+                    <LiveMetrics />
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                         <Card className="col-span-4 border-stone-200 shadow-sm">
                             <CardHeader>

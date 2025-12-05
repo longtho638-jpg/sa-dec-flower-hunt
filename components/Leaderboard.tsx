@@ -6,15 +6,64 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-const LEADERBOARD_DATA = [
-    { id: 1, name: "Nguyễn Văn A", points: 2500, flowers: 12, rank: 1, avatar: "https://i.pravatar.cc/150?u=1" },
-    { id: 2, name: "Trần Thị B", points: 2350, flowers: 10, rank: 2, avatar: "https://i.pravatar.cc/150?u=2" },
-    { id: 3, name: "Lê Hoàng C", points: 2100, flowers: 9, rank: 3, avatar: "https://i.pravatar.cc/150?u=3" },
-    { id: 4, name: "Phạm Minh D", points: 1800, flowers: 8, rank: 4, avatar: "https://i.pravatar.cc/150?u=4" },
-    { id: 5, name: "Hoàng Yến E", points: 1500, flowers: 6, rank: 5, avatar: "https://i.pravatar.cc/150?u=5" },
-]
+import { useState, useEffect } from "react"
+import { supabase } from "@/lib/supabase"
+
+interface LeaderboardUser {
+    id: string; // UUID
+    name: string;
+    points: number;
+    flowers: number; // flowers
+    rank: number;
+    avatar: string; // avatar
+}
 
 export function Leaderboard() {
+    const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
+
+    useEffect(() => {
+        fetchLeaderboard();
+
+        // Realtime subscription
+        const channel = supabase
+            .channel('leaderboard_realtime')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'leaderboard' },
+                () => {
+                    fetchLeaderboard();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
+
+    const fetchLeaderboard = async () => {
+        const { data, error } = await supabase
+            .from('leaderboard')
+            .select('*')
+            .order('points', { ascending: false })
+            .limit(10);
+
+        if (!error && data) {
+            const formattedData = data.map((item: any, index: number) => ({
+                id: item.user_id || item.id, // Handle potential schema diff
+                name: item.name,
+                points: item.points,
+                flowers: item.flowers_scanned || 0,
+                rank: index + 1,
+                avatar: item.avatar_url || `https://i.pravatar.cc/150?u=${item.user_id || index}`
+            }));
+            setLeaderboard(formattedData);
+        }
+    };
+
+    // If loading or empty, show placeholders or return null (simplified for now)
+    if (leaderboard.length < 3) return null; // Wait for data
+
     return (
         <div className="w-full max-w-md mx-auto space-y-4">
             {/* Top 3 Podium */}
@@ -28,7 +77,7 @@ export function Leaderboard() {
                 >
                     <div className="relative">
                         <Avatar className="w-16 h-16 border-4 border-stone-200">
-                            <AvatarImage src={LEADERBOARD_DATA[1].avatar} />
+                            <AvatarImage src={leaderboard[1].avatar} />
                             <AvatarFallback>2</AvatarFallback>
                         </Avatar>
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-stone-200 text-stone-600 text-xs font-bold px-2 py-0.5 rounded-full border border-white">
@@ -36,8 +85,8 @@ export function Leaderboard() {
                         </div>
                     </div>
                     <div className="mt-2 text-center">
-                        <p className="font-bold text-sm line-clamp-1 w-20">{LEADERBOARD_DATA[1].name}</p>
-                        <p className="text-xs text-stone-500">{LEADERBOARD_DATA[1].points} pts</p>
+                        <p className="font-bold text-sm line-clamp-1 w-20">{leaderboard[1].name}</p>
+                        <p className="text-xs text-stone-500">{leaderboard[1].points} pts</p>
                     </div>
                     <div className="w-20 h-24 bg-gradient-to-t from-stone-200 to-stone-100 rounded-t-lg mt-2 flex items-end justify-center pb-2">
                         <Medal className="w-8 h-8 text-stone-400" />
@@ -53,7 +102,7 @@ export function Leaderboard() {
                     <div className="relative">
                         <Crown className="w-8 h-8 text-yellow-500 absolute -top-8 left-1/2 -translate-x-1/2 animate-bounce" />
                         <Avatar className="w-20 h-20 border-4 border-yellow-400 shadow-xl shadow-yellow-200">
-                            <AvatarImage src={LEADERBOARD_DATA[0].avatar} />
+                            <AvatarImage src={leaderboard[0].avatar} />
                             <AvatarFallback>1</AvatarFallback>
                         </Avatar>
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full border border-white">
@@ -61,8 +110,8 @@ export function Leaderboard() {
                         </div>
                     </div>
                     <div className="mt-2 text-center">
-                        <p className="font-bold text-sm line-clamp-1 w-24">{LEADERBOARD_DATA[0].name}</p>
-                        <p className="text-xs text-yellow-600 font-bold">{LEADERBOARD_DATA[0].points} pts</p>
+                        <p className="font-bold text-sm line-clamp-1 w-24">{leaderboard[0].name}</p>
+                        <p className="text-xs text-yellow-600 font-bold">{leaderboard[0].points} pts</p>
                     </div>
                     <div className="w-24 h-32 bg-gradient-to-t from-yellow-400 to-yellow-200 rounded-t-lg mt-2 flex items-end justify-center pb-4 shadow-lg">
                         <Trophy className="w-10 h-10 text-yellow-700" />
@@ -78,7 +127,7 @@ export function Leaderboard() {
                 >
                     <div className="relative">
                         <Avatar className="w-16 h-16 border-4 border-orange-200">
-                            <AvatarImage src={LEADERBOARD_DATA[2].avatar} />
+                            <AvatarImage src={leaderboard[2].avatar} />
                             <AvatarFallback>3</AvatarFallback>
                         </Avatar>
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-orange-200 text-orange-700 text-xs font-bold px-2 py-0.5 rounded-full border border-white">
@@ -86,8 +135,8 @@ export function Leaderboard() {
                         </div>
                     </div>
                     <div className="mt-2 text-center">
-                        <p className="font-bold text-sm line-clamp-1 w-20">{LEADERBOARD_DATA[2].name}</p>
-                        <p className="text-xs text-stone-500">{LEADERBOARD_DATA[2].points} pts</p>
+                        <p className="font-bold text-sm line-clamp-1 w-20">{leaderboard[2].name}</p>
+                        <p className="text-xs text-stone-500">{leaderboard[2].points} pts</p>
                     </div>
                     <div className="w-20 h-20 bg-gradient-to-t from-orange-200 to-orange-100 rounded-t-lg mt-2 flex items-end justify-center pb-2">
                         <Medal className="w-8 h-8 text-orange-400" />
@@ -97,7 +146,7 @@ export function Leaderboard() {
 
             {/* List */}
             <div className="bg-white dark:bg-stone-900 rounded-3xl shadow-sm border border-stone-100 dark:border-stone-800 overflow-hidden">
-                {LEADERBOARD_DATA.slice(3).map((user, index) => (
+                {leaderboard.slice(3).map((user, index) => (
                     <motion.div
                         key={user.id}
                         initial={{ opacity: 0, x: -20 }}
