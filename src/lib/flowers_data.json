@@ -1,0 +1,82 @@
+[
+    {
+        "id": "1",
+        "name": "Cúc Mâm Xôi",
+        "personality": "The Money Magnet 💰",
+        "story": "Not just a flower, it's a signal that 'Money is coming' (Tiền về). Round, yellow, and screaming 'Prosperity Pro Max'. Having this is basically flexing your luck for 2026. Keep it calm & enjoy Tet.",
+        "meaning": "Fullness, Wealth, Reunion",
+        "image_url": "https://source.unsplash.com/random/800x1000/?yellow,chrysanthemum"
+    },
+    {
+        "id": "2",
+        "name": "Hồng Nhung Sa Đéc",
+        "personality": "Main Character Energy 🌹",
+        "story": "The OG of romance. Classic, bold, and never flops. A total green flag for your garden. If you want to 'slay' the Tet look, this is the one.",
+        "meaning": "Love, Passion, Charisma",
+        "image_url": "https://source.unsplash.com/random/800x1000/?red,rose"
+    },
+    {
+        "id": "3",
+        "name": "Vạn Thọ",
+        "personality": "Longevity Pro Max 🐢",
+        "story": "Smells like childhood, looks like gold. The anti-aging skincare for your home's aura. Tougher than your ex, brighter than your future.",
+        "meaning": "Longevity, Health, Resilience",
+        "image_url": "https://source.unsplash.com/random/800x1000/?marigold"
+    },
+    {
+        "id": "4",
+        "name": "Dạ Yến Thảo",
+        "personality": "The Chill Pill 🍬",
+        "story": "Hanging out (literally) and bringing soft, healing vibes. The perfect background for your Tet selfies. Low maintenance but high impact. 10/10 would recommend.",
+        "meaning": "Comfort, Soothing, Dreamy",
+        "image_url": "https://source.unsplash.com/random/800x1000/?petunia,flower"
+    },
+    {
+        "id": "5",
+        "name": "Cát Tường",
+        "personality": "Lucky Charm ✨",
+        "story": "Name literally means 'Everything goes smoothly'. The ultimate cheat code for a drama-free year. Soft boy/girl era activated.",
+        "meaning": "Luck, Peace, Harmony",
+        "image_url": "https://source.unsplash.com/random/800x1000/?lisianthus,flower"
+    },
+    {
+        "id": "6",
+        "name": "Hoa Giấy",
+        "personality": "The Glow Up Queen 💅",
+        "story": "Sun or rain, she shines. A resilient queen that takes over the gate with pure brilliance. Giving 'Rich Auntie' vibes without trying too hard.",
+        "meaning": "Protection, Beauty, Resilience",
+        "image_url": "https://source.unsplash.com/random/800x1000/?bougainvillea"
+    },
+    {
+        "id": "7",
+        "name": "Mào Gà",
+        "personality": "Royal Core 👑",
+        "story": "Velvet texture, bold red. A statement piece that says 'I have arrived'. Stand out from the crowd with this unique silhouette. No basic zone allowed.",
+        "meaning": "Heroism, Sacrifice, Uniqueness",
+        "image_url": "https://source.unsplash.com/random/800x1000/?red,celosia"
+    },
+    {
+        "id": "8",
+        "name": "Cúc Đồng Tiền",
+        "personality": "Wallet Whisperer 💸",
+        "story": "Calling abundance into your life. The more blooms, the more 'ting ting' in your bank account. Invest in this for high ROI on happiness.",
+        "meaning": "Wealth, Optimism, Innocence",
+        "image_url": "https://source.unsplash.com/random/800x1000/?gerbera"
+    },
+    {
+        "id": "9",
+        "name": "Mai Vàng",
+        "personality": "The CEO of Spring 🌼",
+        "story": "No Mai, No Tet. Periodt. The absolute GOAT of the festival. Respect the hierarchy. Bringing golden vibes to your feed.",
+        "meaning": "Wealth, Nobility, Traditional Tet",
+        "image_url": "https://source.unsplash.com/random/800x1000/?yellow,apricot,blossom"
+    },
+    {
+        "id": "10",
+        "name": "Cúc Đài Loan",
+        "personality": "The Social Butterfly 🦋",
+        "story": "Colorful, vibrant, and fits everywhere. The extrovert of the garden that gets along with everyone. Instant mood booster.",
+        "meaning": "Cheerfulness, Friendship, Diversity",
+        "image_url": "https://source.unsplash.com/random/800x1000/?colorful,chrysanthemum"
+    }
+]
