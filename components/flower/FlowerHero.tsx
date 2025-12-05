@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ChevronLeft, Share2, Cuboid } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import WishlistButton from "@/components/WishlistButton";
 import { useRouter } from "next/navigation";
@@ -15,10 +16,6 @@ interface FlowerHeroProps {
 
 export function FlowerHero({ image, name, id, onOpenAR }: FlowerHeroProps) {
     const router = useRouter();
-
-import Image from "next/image";
-
-// ...
 
     return (
         <div className="relative w-full aspect-[4/5] md:aspect-video md:h-[60vh] bg-stone-200">
