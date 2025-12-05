@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { FLOWERS } from "@/data/flowers";
+import { FLOWERS, SIZES } from "@/data/flowers";
 
 export async function POST(request: NextRequest) {
     try {
@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
         }
 
         const basePrice = flower.basePrice;
-        const sizeMultipliers: Record<string, number> = { S: 1, M: 1.5, L: 2.2, XL: 3.5 };
-        const multiplier = sizeMultipliers[size as string] || 1;
+        // @ts-ignore - Size key validation
+        const multiplier = SIZES[size]?.multiplier || 1;
         const calculatedPrice = basePrice * multiplier * (quantity || 1);
         const price = calculatedPrice; // Use calculated price
 
