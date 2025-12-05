@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Phone, Heart, Loader2, CheckCircle } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 interface LeadCaptureFormProps {
     flowerId: number;
@@ -45,6 +46,13 @@ export default function LeadCaptureForm({ flowerId, flowerName }: LeadCaptureFor
             if (!response.ok) {
                 throw new Error("Có lỗi xảy ra");
             }
+
+            // AARRR: Activation
+            await trackEvent("activation", "lead_form_submit", {
+                flower_id: flowerId,
+                flower_name: flowerName,
+                phone_hash: phone.replace(/\D/g, "").slice(-3) // Privacy
+            });
 
             setIsSuccess(true);
         } catch (err) {

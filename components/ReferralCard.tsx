@@ -6,15 +6,60 @@ import { Copy, Gift, Share2, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import confetti from "canvas-confetti"
+import { supabase } from "@/lib/supabase"
 
 export function ReferralCard() {
     const [copied, setCopied] = useState(false)
     const [referralCode, setReferralCode] = useState("")
+    const [referralCount, setReferralCount] = useState(0)
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setReferralCode("TET2026-" + Math.floor(Math.random() * 10000))
-    }, [])
+        // 1. Get or create userId
+        let userId = localStorage.getItem("sadec_user_id");
+        if (!userId) {
+            userId = crypto.randomUUID();
+            localStorage.setItem("sadec_user_id", userId!);
+        }
+
+        // 2. Generate deterministic code from userId (simplified)
+        const code = "TET-" + userId!.slice(0, 6).toUpperCase();
+        setReferralCode(code);
+
+        // 3. Fetch count
+        fetchReferralCount(userId!);
+
+        // 4. Realtime subscription for this referrer
+        const channel = supabase
+            .channel('referral_updates')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'referrals', filter: `referrer_id=eq.${userId}` },
+                () => {
+                    setReferralCount(prev => prev + 1);
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
+
+    const fetchReferralCount = async (userId: string) => {
+        const { count, error } = await supabase
+            .from('referrals')
+            .select('*', { count: 'exact', head: true })
+            .eq('referrer_id', userId);
+
+        if (!error && count !== null) {
+            setReferralCount(count);
+        }
+    };
 
     const handleCopy = () => {
         navigator.clipboard.writeText(`https://sadec-flower-hunt.vercel.app?ref=${referralCode}`)
@@ -67,13 +112,17 @@ export function ReferralCard() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-lg text-stone-900 dark:text-white">Tặng bạn bè 50K 🎁</h3>
-                                <p className="text-sm text-stone-500 dark:text-stone-400">Bạn cũng sẽ nhận được 30K!</p>
+                                <p className="text-sm text-stone-500 dark:text-stone-400">
+                                    {referralCount > 0
+                                        ? <span>Đã giới thiệu <strong className="text-pink-600">{referralCount}</strong> bạn!</span>
+                                        : "Bạn cũng sẽ nhận được 30K!"}
+                                </p>
                             </div>
                         </div>
 
                         <div className="bg-white dark:bg-stone-800 rounded-xl p-3 border border-pink-100 dark:border-stone-700 flex items-center justify-between gap-2 mb-4">
                             <code className="font-mono font-bold text-pink-600 text-lg tracking-wider">
-                                {referralCode}
+                                {referralCode || "..."}
                             </code>
                             <Button
                                 size="sm"

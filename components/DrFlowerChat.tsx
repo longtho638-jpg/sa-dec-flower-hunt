@@ -43,37 +43,48 @@ export function DrFlowerChat({ flowerName }: { flowerName: string }) {
         }
 
         setMessages(prev => [...prev, userMsg])
+        const inputValue = input; // Capture current input value
         setInput("")
         setIsTyping(true)
 
         // Simulate AI thinking
-        setTimeout(() => {
-            const botResponse = generateResponse(input, flowerName)
+        try {
+            const response = await generateResponse(inputValue, flowerName)
+
             const botMsg: Message = {
-                id: (Date.now() + 1).toString(),
+                id: Date.now().toString(),
                 role: "bot",
-                content: botResponse
+                content: response
             }
             setMessages(prev => [...prev, botMsg])
+        } finally {
             setIsTyping(false)
-        }, 1500)
+        }
     }
 
-    const generateResponse = (query: string, flower: string): string => {
-        const q = query.toLowerCase()
-        if (q.includes("nước") || q.includes("tưới")) {
-            return `Với ${flower}, bạn nên tưới nước 2 lần/ngày vào sáng sớm và chiều mát. Tránh tưới lên hoa để giữ độ bền nhé! 💧`
+    const generateResponse = async (query: string, flower: string) => {
+        try {
+            const response = await fetch("/api/ai-chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: query,
+                    context: { flowerName: flower },
+                    history: messages.map(m => ({ role: m.role, content: m.content }))
+                })
+            });
+
+            if (!response.ok) throw new Error("API Error");
+
+            const data = await response.json();
+            return data.reply;
+        } catch (error) {
+            console.error(error);
+            // Fallback for offline or error
+            if (query.toLowerCase().includes("giá")) return `Dạ, giá của ${flower} đang tốt lắm á! Bạn xem chi tiết ở trên nghen. 💰`;
+            if (query.toLowerCase().includes("tưới")) return `Cây ${flower} này dễ chịu lắm, tưới nước vừa đủ là ẻm cười tươi rói liền à! 💦`;
+            return `Dạ, Dr. Flower đang bận xíu. Bạn để lại số điện thoại mình tư vấn kỹ hơn nha! 🌸`;
         }
-        if (q.includes("nắng") || q.includes("sáng")) {
-            return `${flower} là loài ưa nắng. Hãy đặt cây ở nơi có ánh sáng mặt trời trực tiếp ít nhất 6 tiếng/ngày để hoa nở rực rỡ nhất. ☀️`
-        }
-        if (q.includes("phân") || q.includes("bón")) {
-            return `Bạn có thể bón phân NPK định kỳ 2 tuần/lần. Nhớ pha loãng và tưới vào gốc, tránh làm cháy lá nhé. 🌱`
-        }
-        if (q.includes("bền") || q.includes("lâu")) {
-            return `Để ${flower} tươi lâu, hãy cắt tỉa lá héo thường xuyên và tránh đặt nơi có gió lùa mạnh. Chúc bạn có một chậu hoa thật đẹp! ✨`
-        }
-        return `Câu hỏi hay quá! Về vấn đề này, Dr. Flower khuyên bạn nên quan sát lá cây thường xuyên. Nếu thấy lá vàng hoặc rủ xuống, hãy kiểm tra lại độ ẩm đất nhé. Bạn cần hỏi thêm gì không? 🤔`
     }
 
     return (
@@ -135,8 +146,8 @@ export function DrFlowerChat({ flowerName }: { flowerName: string }) {
                                         </Avatar>
                                         <div
                                             className={`max-w-[80%] rounded-2xl p-3 text-sm ${msg.role === "user"
-                                                    ? "bg-green-600 text-white rounded-tr-none"
-                                                    : "bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-200 rounded-tl-none shadow-sm"
+                                                ? "bg-green-600 text-white rounded-tr-none"
+                                                : "bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-200 rounded-tl-none shadow-sm"
                                                 }`}
                                         >
                                             {msg.content}
