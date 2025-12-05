@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { flowers } from "@/lib/dummyData";
 import { motion } from "framer-motion";
-import { Search, Heart, Home as HomeIcon, Scan, Gift } from "lucide-react";
+import { Search, Home as HomeIcon, Scan, Gift } from "lucide-react";
+import FlowerCard from "@/components/FlowerCard";
 
 const container = {
   hidden: { opacity: 0 },
@@ -23,109 +24,93 @@ const item = {
 export default function Home() {
   return (
     <main className="min-h-screen pb-32 relative overflow-x-hidden bg-background text-foreground">
-      {/* Hero Section */}
-      <div className="pt-16 px-6 mb-8 text-center relative z-10">
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative"
-        >
-          <span className="inline-block px-4 py-1.5 mb-4 text-xs font-bold tracking-widest text-accent uppercase bg-accent/10 border border-accent/20 rounded-full">
-            Sa Dec Flower Hunt 2026
-          </span>
-          <h1 className="font-serif text-5xl font-black leading-tight mb-4 text-primary drop-shadow-sm">
-            Truy Tìm <br />
-            <span className="text-secondary">Kho Báu Hoa</span>
+      {/* Mobile Container Simulation */}
+      <div className="max-w-md mx-auto bg-[#FDFBF7] min-h-screen shadow-2xl relative">
+        {/* Sticky Glass Header */}
+        <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 px-6 py-4 flex items-center justify-between border-b border-white/20">
+          <h1 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
+            <span>🌸</span> Sa Đéc Hunt
           </h1>
-          <p className="text-stone-900/70 text-base max-w-xs mx-auto leading-relaxed font-medium">
-            Khám phá vẻ đẹp rực rỡ, sưu tầm tem hoa và nhận quà cực chất!
-          </p>
-        </motion.div>
-      </div>
+          <div className="w-8 h-8 rounded-full bg-stone-200 overflow-hidden">
+            {/* Placeholder Avatar */}
+            <div className="w-full h-full bg-gradient-to-br from-primary to-secondary opacity-50" />
+          </div>
+        </header>
 
-      {/* Search Bar */}
-      <div className="px-6 mb-10 sticky top-4 z-20">
-        <div className="relative bg-white/80 backdrop-blur-md rounded-3xl shadow-soft-red flex items-center px-5 py-4 transition-all border border-white/50 focus-within:ring-2 focus-within:ring-primary/20">
-          <Search className="w-6 h-6 text-primary mr-3" />
-          <input
-            type="text"
-            placeholder="Tìm loài hoa yêu thích..."
-            className="bg-transparent border-none outline-none text-stone-900 w-full placeholder:text-stone-900/40 font-bold"
-          />
+        {/* Hero Section */}
+        <div className="pt-8 px-6 mb-6 text-center">
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="relative"
+          >
+            <h2 className="font-serif text-3xl font-black leading-tight mb-2 text-stone-900">
+              Khám Phá <br />
+              <span className="text-secondary">Mùa Hoa 2026</span>
+            </h2>
+            <p className="text-stone-500 text-sm font-medium">
+              Sưu tầm tem hoa, nhận quà cực chất!
+            </p>
+          </motion.div>
         </div>
-      </div>
 
-      {/* Flower Discovery Grid */}
-      <div className="px-4 relative z-10">
-        <div className="flex items-center justify-between mb-6 px-2">
-          <h2 className="text-2xl font-black text-stone-900 font-serif">Khám Phá</h2>
-          <span className="text-sm text-primary font-bold cursor-pointer hover:underline">
-            Xem tất cả
-          </span>
+        {/* Search Bar */}
+        <div className="px-6 mb-8">
+          <div className="relative bg-white rounded-3xl shadow-sm flex items-center px-5 py-3 transition-all border border-stone-100 focus-within:ring-2 focus-within:ring-primary/20">
+            <Search className="w-5 h-5 text-stone-400 mr-3" />
+            <input
+              type="text"
+              placeholder="Tìm loài hoa..."
+              className="bg-transparent border-none outline-none text-stone-900 w-full placeholder:text-stone-400 font-medium text-sm"
+            />
+          </div>
         </div>
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-2 md:grid-cols-4 gap-4"
-        >
-          {flowers.map((flower) => (
-            <Link href={`/flower/${flower.id}`} key={flower.id}>
-              <motion.div
-                variants={item}
-                className="bg-white relative aspect-[4/5] rounded-3xl overflow-hidden group shadow-soft-yellow border border-stone-100"
-              >
-                {/* Image */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={flower.imageUrl}
-                  alt={flower.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
 
-                {/* Heart Icon */}
-                <button className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all z-10 shadow-sm">
-                  <Heart className="w-5 h-5" />
-                </button>
+        {/* Flower Discovery Grid */}
+        <div className="px-4 pb-4">
+          <div className="flex items-center justify-between mb-4 px-2">
+            <h3 className="text-lg font-bold text-stone-900 font-serif">
+              Nổi Bật
+            </h3>
+            <span className="text-xs text-primary font-bold cursor-pointer hover:underline">
+              Xem tất cả
+            </span>
+          </div>
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-2 gap-4"
+          >
+            {flowers.map((flower) => (
+              <Link href={`/flower/${flower.id}`} key={flower.id}>
+                <motion.div variants={item}>
+                  <FlowerCard flower={flower} />
+                </motion.div>
+              </Link>
+            ))}
+          </motion.div>
+        </div>
 
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-transparent to-transparent opacity-90" />
+        {/* Bottom Navigation Bar */}
+        <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none">
+          <div className="bg-white/90 backdrop-blur-xl rounded-full shadow-soft-red flex justify-between items-center py-3 px-6 border border-white/50 w-[90%] max-w-[350px] pointer-events-auto">
+            <button className="flex flex-col items-center gap-1 text-primary">
+              <HomeIcon className="w-6 h-6" />
+            </button>
 
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 p-4 w-full">
-                  <h3 className="text-white font-serif font-bold text-lg leading-tight mb-1 drop-shadow-md">
-                    {flower.name}
-                  </h3>
-                  <p className="text-secondary text-xs font-bold tracking-wide line-clamp-1 bg-black/20 backdrop-blur-sm inline-block px-2 py-0.5 rounded-lg">
-                    {flower.personality}
-                  </p>
-                </div>
-              </motion.div>
-            </Link>
-          ))}
-        </motion.div>
-      </div>
+            <button className="flex flex-col items-center gap-1 text-stone-400 hover:text-accent transition-colors group relative">
+              <div className="absolute -top-10 bg-primary rounded-full p-3 shadow-lg border-4 border-[#FDFBF7] group-hover:scale-110 transition-transform">
+                <Scan className="w-6 h-6 text-white" />
+              </div>
+              <div className="w-6 h-6" /> {/* Spacer */}
+            </button>
 
-      {/* Bottom Navigation Bar */}
-      <div className="fixed bottom-6 left-6 right-6 z-50">
-        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-soft-red flex justify-around items-center py-4 px-2 border border-white/50">
-          <button className="flex flex-col items-center gap-1 text-primary">
-            <HomeIcon className="w-7 h-7" />
-            <span className="text-[10px] font-bold">Trang chủ</span>
-          </button>
-
-          <button className="flex flex-col items-center gap-1 text-stone-400 hover:text-accent transition-colors group">
-            <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white shadow-soft-red -mt-10 border-[6px] border-[#FDFBF7] group-hover:scale-110 transition-transform">
-              <Scan className="w-7 h-7" />
-            </div>
-            <span className="text-[10px] font-bold mt-1">Quét QR</span>
-          </button>
-
-          <button className="flex flex-col items-center gap-1 text-stone-400 hover:text-secondary transition-colors">
-            <Gift className="w-7 h-7" />
-            <span className="text-[10px] font-bold">Bộ sưu tập</span>
-          </button>
+            <button className="flex flex-col items-center gap-1 text-stone-400 hover:text-secondary transition-colors">
+              <Gift className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </div>
     </main>
