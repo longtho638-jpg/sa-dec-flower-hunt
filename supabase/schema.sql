@@ -1,51 +1,45 @@
--- Enable UUID extension
-create extension if not exists "uuid-ossp";
+-- Sa Dec Flower Hunt Database Schema
+-- Run this in Supabase SQL Editor
 
--- USERS table (extends Supabase Auth)
-create table public.users (
-  id uuid references auth.users not null primary key,
-  email text,
-  full_name text,
-  avatar_url text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+-- Users table (stores leads)
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  phone VARCHAR(15) UNIQUE NOT NULL,
+  email VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- FLOWERS table
-create table public.flowers (
-  id uuid default uuid_generate_v4() primary key,
-  name text not null,
-  story text not null, -- The "Story" of the flower (meaning, origin, care tips)
-  image_url text not null,
-  qr_code_id text unique not null, -- The ID encoded in the QR code attached to the pot
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+-- Wishlist table (flower preferences)
+CREATE TABLE IF NOT EXISTS wishlist (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  flower_id INT NOT NULL,
+  flower_name VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, flower_id)
 );
 
--- USER COLLECTIONS table (Digital Stamps)
-create table public.user_collections (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references public.users(id) on delete cascade not null,
-  flower_id uuid references public.flowers(id) on delete cascade not null,
-  collected_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  unique(user_id, flower_id) -- Prevent duplicate collections of the same flower
+-- QR Scans table (gamification tracking)
+CREATE TABLE IF NOT EXISTS qr_scans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  flower_id INT NOT NULL,
+  scanned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  location VARCHAR(255),
+  UNIQUE(user_id, flower_id)
 );
 
--- RLS Policies (Basic setup)
-alter table public.users enable row level security;
-alter table public.flowers enable row level security;
-alter table public.user_collections enable row level security;
+-- Enable RLS
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE wishlist ENABLE ROW LEVEL SECURITY;
+ALTER TABLE qr_scans ENABLE ROW LEVEL SECURITY;
 
--- Users can read their own profile
-create policy "Users can view own profile" on public.users
-  for select using (auth.uid() = id);
+-- RLS Policies (allow anonymous inserts for lead capture)
+CREATE POLICY "Allow anonymous insert" ON users FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anonymous insert" ON wishlist FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anonymous insert" ON qr_scans FOR INSERT WITH CHECK (true);
 
--- Everyone can read flowers
-create policy "Flowers are public" on public.flowers
-  for select using (true);
-
--- Users can read their own collections
-create policy "Users can view own collections" on public.user_collections
-  for select using (auth.uid() = user_id);
-
--- Users can insert into their own collections
-create policy "Users can collect flowers" on public.user_collections
-  for insert with check (auth.uid() = user_id);
+-- Allow read for authenticated users
+CREATE POLICY "Allow read for all" ON users FOR SELECT USING (true);
+CREATE POLICY "Allow read for all" ON wishlist FOR SELECT USING (true);
+CREATE POLICY "Allow read for all" ON qr_scans FOR SELECT USING (true);
