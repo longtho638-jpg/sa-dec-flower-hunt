@@ -16,15 +16,26 @@ interface FlowerHeroProps {
 export function FlowerHero({ image, name, id, onOpenAR }: FlowerHeroProps) {
     const router = useRouter();
 
+import Image from "next/image";
+
+// ...
+
     return (
         <div className="relative w-full aspect-[4/5] md:aspect-video md:h-[60vh] bg-stone-200">
-            <motion.img
-                src={image}
-                alt={name}
-                className="w-full h-full object-cover"
+            <motion.div
+                className="w-full h-full relative"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-            />
+            >
+                <Image
+                    src={image}
+                    alt={name}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                />
+            </motion.div>
 
             {/* Navigation Overlay */}
             <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/40 to-transparent">
