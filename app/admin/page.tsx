@@ -67,6 +67,12 @@ export default function AdminDashboard() {
                 <div className="flex items-center space-x-2">
                     <ThemeToggle />
                     <CalendarDateRangePicker />
+                    <Link href="/admin/gaps">
+                        <Button variant="outline" className="border-stone-200 dark:border-stone-700">
+                            <Map className="mr-2 h-4 w-4 text-indigo-600" />
+                            Gap Roadmap
+                        </Button>
+                    </Link>
                     <Link href="/admin/ipo">
                         <Button variant="outline" className="border-stone-200 dark:border-stone-700">
                             <TrendingUp className="mr-2 h-4 w-4 text-blue-600" />
