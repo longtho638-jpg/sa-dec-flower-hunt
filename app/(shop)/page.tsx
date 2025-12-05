@@ -21,15 +21,22 @@ import { SmartCart } from "@/components/SmartCart";
 import { FortuneFlower } from "@/components/FortuneFlower";
 import { useCartStore } from "@/lib/cartStore";
 import { toast } from "sonner";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const { t } = useLanguage();
-  const addItem = useCartStore((state) => state.addItem);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleAddToCart = (e: React.MouseEvent, flower: any) => {
     e.preventDefault(); // Prevent navigation link
+    if (!isClient) return;
+    const { addItem } = useCartStore.getState();
     addItem({
-      id: flower.id,
+      id: String(flower.id),
       name: flower.name,
       price: flower.basePrice,
       image: flower.image
@@ -136,20 +143,20 @@ export default function Home() {
                         {flower.vibe}
                       </p>
                     </div>
-                    
+
                     <div className="flex items-center justify-between mt-auto">
-                        <p className="font-bold text-red-600 text-sm">
+                      <p className="font-bold text-red-600 text-sm">
                         {formatPrice(flower.basePrice)}
-                        </p>
-                        {flower.inStock !== false && (
-                            <Button 
-                                size="icon" 
-                                className="h-8 w-8 rounded-full bg-stone-900 hover:bg-red-600 transition-colors shadow-md"
-                                onClick={(e) => handleAddToCart(e, flower)}
-                            >
-                                <ShoppingCart className="w-4 h-4 text-white" />
-                            </Button>
-                        )}
+                      </p>
+                      {flower.inStock !== false && (
+                        <Button
+                          size="icon"
+                          className="h-8 w-8 rounded-full bg-stone-900 hover:bg-red-600 transition-colors shadow-md"
+                          onClick={(e) => handleAddToCart(e, flower)}
+                        >
+                          <ShoppingCart className="w-4 h-4 text-white" />
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
