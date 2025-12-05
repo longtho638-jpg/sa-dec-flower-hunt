@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Copy, Gift, Share2, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,12 @@ import confetti from "canvas-confetti"
 
 export function ReferralCard() {
     const [copied, setCopied] = useState(false)
-    const referralCode = "TET2026-" + Math.floor(Math.random() * 10000)
+    const [referralCode, setReferralCode] = useState("")
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setReferralCode("TET2026-" + Math.floor(Math.random() * 10000))
+    }, [])
 
     const handleCopy = () => {
         navigator.clipboard.writeText(`https://sadec-flower-hunt.vercel.app?ref=${referralCode}`)

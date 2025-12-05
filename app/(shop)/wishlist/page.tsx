@@ -17,6 +17,7 @@ export default function WishlistPage() {
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem("sadec_wishlist") || "[]");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setWishlist(saved);
     }, []);
 

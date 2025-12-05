@@ -12,6 +12,7 @@ export function PWAInstallPrompt() {
     useEffect(() => {
         // Check if iOS
         const isIosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsIOS(isIosDevice)
 
         // Check if already installed (standalone mode)

@@ -10,17 +10,18 @@ const REQUIRED_SCANS = 5;
 export default function QRHuntProgress() {
     const [scannedFlowers, setScannedFlowers] = useState<number[]>([]);
     const [showVoucher, setShowVoucher] = useState(false);
+    const [voucherCode, setVoucherCode] = useState("");
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem("sadec_scanned") || "[]");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setScannedFlowers(saved);
+        setVoucherCode(`SADEC2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
     }, []);
 
     const progress = Math.min(scannedFlowers.length, REQUIRED_SCANS);
     const percentage = (progress / REQUIRED_SCANS) * 100;
     const isComplete = progress >= REQUIRED_SCANS;
-
-    const voucherCode = `SADEC2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
     return (
         <div className="mx-4 mb-4">

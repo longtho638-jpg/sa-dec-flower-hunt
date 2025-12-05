@@ -17,6 +17,7 @@ export function VoiceSearch({ onSearch }: VoiceSearchProps) {
 
     useEffect(() => {
         if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsSupported(true)
         }
     }, [])

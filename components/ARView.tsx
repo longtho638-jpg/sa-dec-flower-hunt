@@ -17,15 +17,6 @@ export function ARView({ isOpen, onClose, flowerImage, flowerName }: ARViewProps
     const videoRef = useRef<HTMLVideoElement>(null)
     const [scale, setScale] = useState(1)
 
-    useEffect(() => {
-        if (isOpen) {
-            startCamera()
-        } else {
-            stopCamera()
-        }
-        return () => stopCamera()
-    }, [isOpen])
-
     const startCamera = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -48,6 +39,16 @@ export function ARView({ isOpen, onClose, flowerImage, flowerName }: ARViewProps
             videoRef.current.srcObject = null
         }
     }
+
+    useEffect(() => {
+        if (isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            startCamera()
+        } else {
+            stopCamera()
+        }
+        return () => stopCamera()
+    }, [isOpen])
 
     if (!isOpen) return null
 

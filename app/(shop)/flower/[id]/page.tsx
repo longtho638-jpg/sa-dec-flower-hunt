@@ -3,11 +3,12 @@ import { FLOWERS } from "@/data/flowers";
 import FlowerDetailClient from "@/components/flower/FlowerDetailClient";
 
 interface Props {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const flowerId = Number(params.id);
+    const { id } = await params;
+    const flowerId = Number(id);
     const flower = FLOWERS.find((f) => f.id === flowerId);
 
     if (!flower) {
@@ -28,8 +29,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // This is a Server Component
-export default function FlowerPage({ params }: Props) {
+export default async function FlowerPage({ params }: Props) {
+    const { id } = await params;
     // We pass the ID to the client component
-    // Note: In Next.js 15+, params is a Promise, but for now assuming 14 or standard usage
-    return <FlowerDetailClient id={Number(params.id)} />;
+    return <FlowerDetailClient id={Number(id)} />;
 }

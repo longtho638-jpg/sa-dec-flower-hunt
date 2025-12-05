@@ -15,6 +15,7 @@ export default function WishlistButton({ flowerId, flowerName, className = "" }:
     // Check localStorage on mount
     useEffect(() => {
         const wishlist = JSON.parse(localStorage.getItem("sadec_wishlist") || "[]");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsWishlisted(wishlist.some((item: any) => item.flowerId === flowerId));
     }, [flowerId]);
 

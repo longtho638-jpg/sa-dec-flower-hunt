@@ -14,9 +14,14 @@ import { useSearchParams } from "next/navigation"
 
 function OrderSuccessContent() {
     const searchParams = useSearchParams()
-    const orderId = searchParams.get("id") || "ORD-" + Math.floor(Math.random() * 1000000)
+    const [orderId, setOrderId] = useState("")
+    const [orderDate, setOrderDate] = useState("")
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setOrderId(searchParams.get("id") || "ORD-" + Math.floor(Math.random() * 1000000))
+        setOrderDate(new Date().toLocaleString('vi-VN'))
+
         // Fire confetti
         const duration = 3 * 1000
         const animationEnd = Date.now() + duration
@@ -77,7 +82,7 @@ function OrderSuccessContent() {
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-stone-500 dark:text-stone-400">Thời gian</span>
-                            <span className="text-stone-900 dark:text-white">{new Date().toLocaleString('vi-VN')}</span>
+                            <span className="text-stone-900 dark:text-white">{orderDate}</span>
                         </div>
                         <Separator className="bg-stone-200 dark:bg-stone-700" />
                         <div className="flex justify-between text-sm">

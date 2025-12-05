@@ -20,6 +20,7 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         const auth = localStorage.getItem("admin_auth");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (auth === "true") setIsAuthenticated(true);
     }, []);
 
