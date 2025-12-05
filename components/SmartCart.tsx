@@ -11,7 +11,6 @@ import { MoneyModal } from "./MoneyModal";
 import Image from "next/image";
 
 export function SmartCart() {
-  const { items, removeItem, updateQuantity, getTotal, itemCount } = useCartStore();
   const [isOpen, setIsOpen] = useState(false);
   const [showMoneyModal, setShowMoneyModal] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -20,8 +19,13 @@ export function SmartCart() {
     setIsClient(true);
   }, []);
 
-  const total = getTotal();
-  const count = itemCount();
+  // Only access store after client is ready to prevent hydration mismatch
+  const items = isClient ? useCartStore.getState().items : [];
+  const count = isClient ? useCartStore.getState().itemCount() : 0;
+  const total = isClient ? useCartStore.getState().getTotal() : 0;
+
+  const removeItem = (id: string) => useCartStore.getState().removeItem(id);
+  const updateQuantity = (id: string, delta: number) => useCartStore.getState().updateQuantity(id, delta);
 
   if (!isClient) return null;
 
@@ -88,7 +92,7 @@ export function SmartCart() {
                       <div>
                         <h4 className="font-bold text-stone-900 line-clamp-1">{item.name}</h4>
                         <p className="text-sm font-medium text-red-600">
-                           {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
+                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
                         </p>
                       </div>
                       <div className="flex items-center justify-between mt-2">
@@ -145,9 +149,9 @@ export function SmartCart() {
         </SheetContent>
       </Sheet>
 
-      <MoneyModal 
-        isOpen={showMoneyModal} 
-        onClose={() => setShowMoneyModal(false)} 
+      <MoneyModal
+        isOpen={showMoneyModal}
+        onClose={() => setShowMoneyModal(false)}
         onSuccess={() => setIsOpen(false)}
       />
     </>
