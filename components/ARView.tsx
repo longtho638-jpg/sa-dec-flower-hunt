@@ -18,38 +18,52 @@ export function ARView({ isOpen, onClose, flowerImage, flowerName }: ARViewProps
     const videoRef = useRef<HTMLVideoElement>(null)
     const [scale, setScale] = useState(1)
 
-    const startCamera = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: "environment" }
-            })
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream
-            }
-            setHasPermission(true)
-        } catch (err) {
-            console.error("Camera error:", err)
-            setHasPermission(false)
-        }
-    }
-
-    const stopCamera = () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-            const stream = videoRef.current.srcObject as MediaStream
-            stream.getTracks().forEach(track => track.stop())
-            videoRef.current.srcObject = null
-        }
-    }
-
     useEffect(() => {
+        let stream: MediaStream | null = null;
+        let isActive = true;
+
+        const initCamera = async () => {
+            if (!isOpen) return;
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" }
+                });
+
+                if (!isActive) {
+                    stream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                    // Fix iOS black screen issue
+                    videoRef.current.play().catch(e => console.log("Play error:", e));
+                }
+                // eslint-disable-next-line react-hooks/set-state-in-effect
+                setHasPermission(true);
+            } catch (err) {
+                console.error("Camera error:", err);
+                if (isActive) setHasPermission(false);
+            }
+        };
+
         if (isOpen) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            startCamera()
-        } else {
-            stopCamera()
+            initCamera();
         }
-        return () => stopCamera()
-    }, [isOpen])
+
+        return () => {
+            isActive = false;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            if (videoRef.current && videoRef.current.srcObject) {
+                const oldStream = videoRef.current.srcObject as MediaStream;
+                oldStream.getTracks().forEach(track => track.stop());
+                videoRef.current.srcObject = null;
+            }
+        };
+    }, [isOpen]);
 
     if (!isOpen) return null
 
