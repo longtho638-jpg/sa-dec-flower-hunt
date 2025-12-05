@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { LanguageProvider } from "@/lib/i18n";
 import { StructuredData } from "@/components/StructuredData";
+import { Toaster } from "sonner";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -67,6 +68,7 @@ export default function RootLayout({
             {children}
             <PWAInstallPrompt />
             <StructuredData />
+            <Toaster />
           </LanguageProvider>
         </ThemeProvider>
       </body>

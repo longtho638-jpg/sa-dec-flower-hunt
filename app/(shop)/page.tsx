@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import WishlistButton from "@/components/WishlistButton";
 import QRHuntProgress from "@/components/QRHuntProgress";
 import { motion } from "framer-motion";
-import { Sparkles, Scan } from "lucide-react";
+import { Sparkles, Scan, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,9 +17,25 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FAQSection } from "@/components/FAQSection";
 import Image from "next/image";
+import { SmartCart } from "@/components/SmartCart";
+import { FortuneFlower } from "@/components/FortuneFlower";
+import { useCartStore } from "@/lib/cartStore";
+import { toast } from "sonner";
 
 export default function Home() {
   const { t } = useLanguage();
+  const addItem = useCartStore((state) => state.addItem);
+
+  const handleAddToCart = (e: React.MouseEvent, flower: any) => {
+    e.preventDefault(); // Prevent navigation link
+    addItem({
+      id: flower.id,
+      name: flower.name,
+      price: flower.basePrice,
+      image: flower.image
+    });
+    toast.success(`Đã thêm ${flower.name} vào giỏ!`);
+  };
 
   return (
     <div className="min-h-screen bg-stone-50 pb-28 font-sans">
@@ -37,15 +53,12 @@ export default function Home() {
           </div>
           <div className="flex gap-2 items-center">
             <LanguageToggle />
+            <FortuneFlower />
             <Link href="/scan">
               <Button size="icon" variant="ghost" className="rounded-full bg-stone-100 text-stone-600 hover:bg-green-100 hover:text-green-600">
                 <Scan className="w-5 h-5" />
               </Button>
             </Link>
-            <Badge variant="secondary" className="bg-red-50 text-red-600 hover:bg-red-100 gap-1 rounded-full px-3 h-10">
-              <Sparkles className="w-3 h-3" />
-              2026
-            </Badge>
           </div>
         </div>
       </header>
@@ -89,8 +102,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Link href={`/flower/${flower.id}`} className="block group">
-                <Card className="overflow-hidden border-none shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-white rounded-2xl">
+              <Link href={`/flower/${flower.id}`} className="block group h-full">
+                <Card className="overflow-hidden border-none shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-white rounded-2xl relative">
                   <div className="relative aspect-[3/4] overflow-hidden bg-stone-100">
                     <Image
                       src={flower.image}
@@ -112,22 +125,32 @@ export default function Home() {
                         <Badge variant="destructive" className="font-bold">{t("flower.out_of_stock")}</Badge>
                       </div>
                     )}
-
-                    {/* Gradient Overlay for Text Readability if needed, but we have text below */}
                   </div>
 
                   <CardContent className="p-3 flex-1 flex flex-col justify-between">
-                    <div>
+                    <div className="mb-2">
                       <h3 className="font-bold text-stone-900 line-clamp-1 mb-1 text-[15px] group-hover:text-red-600 transition-colors">
                         {flower.name}
                       </h3>
-                      <p className="text-xs text-stone-500 line-clamp-1 mb-2 font-medium">
+                      <p className="text-xs text-stone-500 line-clamp-1 font-medium">
                         {flower.vibe}
                       </p>
                     </div>
-                    <p className="font-bold text-red-600 text-sm">
-                      {formatPrice(flower.basePrice)}
-                    </p>
+                    
+                    <div className="flex items-center justify-between mt-auto">
+                        <p className="font-bold text-red-600 text-sm">
+                        {formatPrice(flower.basePrice)}
+                        </p>
+                        {flower.inStock !== false && (
+                            <Button 
+                                size="icon" 
+                                className="h-8 w-8 rounded-full bg-stone-900 hover:bg-red-600 transition-colors shadow-md"
+                                onClick={(e) => handleAddToCart(e, flower)}
+                            >
+                                <ShoppingCart className="w-4 h-4 text-white" />
+                            </Button>
+                        )}
+                    </div>
                   </CardContent>
                 </Card>
               </Link>
@@ -153,6 +176,9 @@ export default function Home() {
           </p>
         </div>
       </div>
+
+      {/* Floating Smart Cart */}
+      <SmartCart />
 
       {/* Navbar */}
       <Navbar />
