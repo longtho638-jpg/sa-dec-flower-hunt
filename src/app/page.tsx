@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { flowers } from "@/lib/dummyData";
 import { motion } from "framer-motion";
-import { Scan, Sparkles, MapPin, ArrowRight } from "lucide-react";
+import { Search, Heart, Home as HomeIcon, Scan, Gift } from "lucide-react";
 
 const container = {
   hidden: { opacity: 0 },
@@ -22,90 +22,78 @@ const item = {
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white pb-24 relative overflow-x-hidden">
-      {/* Background Gradients */}
-      <div className="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-tet-red/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-tet-yellow/10 rounded-full blur-[100px]" />
-        <div className="absolute top-[40%] left-[20%] w-[300px] h-[300px] bg-tet-green/10 rounded-full blur-[80px]" />
+    <main className="min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50 pb-28 relative overflow-x-hidden font-sans">
+      {/* Hero Section */}
+      <div className="pt-12 px-6 mb-8 text-center relative">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="relative z-10"
+        >
+          <h1 className="font-serif text-4xl font-bold text-tet-red leading-tight mb-2 drop-shadow-sm">
+            Truy Tìm <br />
+            Kho Báu Hoa <br />
+            Sa Đéc 2026
+          </h1>
+          <p className="text-gray-600 text-sm">Khám phá • Sưu tầm • Nhận quà</p>
+        </motion.div>
+
+        {/* Floating Flower Animation */}
+        <div className="absolute top-0 right-4 w-20 h-20 animate-bounce-slow opacity-80 pointer-events-none">
+          <span className="text-6xl">🌸</span>
+        </div>
+        <div className="absolute top-10 left-4 w-16 h-16 animate-bounce-slow delay-700 opacity-60 pointer-events-none">
+          <span className="text-5xl">🌼</span>
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 px-6 pt-12">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex justify-between items-center mb-8"
-        >
-          <div>
-            <p className="text-tet-yellow font-medium text-sm tracking-wider uppercase mb-1">Sa Dec 2025</p>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent">
-              Flower Hunt
-            </h1>
-          </div>
-          <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
-            <Sparkles className="w-5 h-5 text-tet-yellow" />
-          </div>
-        </motion.div>
-
-        {/* Hero Card */}
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="w-full aspect-[16/9] rounded-2xl bg-gradient-to-br from-tet-red to-red-900 relative overflow-hidden shadow-2xl mb-10 group"
-        >
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-40 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-          <div className="absolute bottom-0 left-0 p-6 w-full">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-2 py-1 rounded-md bg-tet-yellow text-black text-xs font-bold">EVENT</span>
-              <span className="text-white/80 text-xs flex items-center gap-1"><MapPin className="w-3 h-3" /> Sa Dec Flower Village</span>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2 leading-tight">
-              Collect Stamps,<br />
-              <span className="text-tet-yellow">Redeem Gifts 🎁</span>
-            </h2>
-            <p className="text-white/70 text-sm line-clamp-2">
-              Explore the village, scan QR codes on flower pots, and unlock exclusive rewards!
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Section Title */}
-        <div className="flex justify-between items-end mb-6">
-          <h3 className="text-xl font-bold text-white">Popular Flowers</h3>
-          <span className="text-xs text-white/40">10 varieties</span>
+      {/* Search Bar */}
+      <div className="px-6 mb-8 sticky top-4 z-20">
+        <div className="relative glass-morphism rounded-full shadow-lg flex items-center px-4 py-3">
+          <Search className="w-5 h-5 text-gray-400 mr-3" />
+          <input
+            type="text"
+            placeholder="Tìm loài hoa yêu thích..."
+            className="bg-transparent border-none outline-none text-gray-700 w-full placeholder:text-gray-400"
+          />
         </div>
+      </div>
 
-        {/* Flower Grid */}
+      {/* Flower Discovery Grid */}
+      <div className="px-4">
+        <h2 className="font-serif text-xl font-bold text-gray-800 mb-4 px-2">Khám Phá</h2>
         <motion.div
           variants={container}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-2 gap-4"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
           {flowers.map((flower) => (
             <Link href={`/flower/${flower.id}`} key={flower.id}>
               <motion.div
                 variants={item}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-colors group"
+                className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow group bg-white"
               >
-                <div className="aspect-[4/5] relative overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={flower.imageUrl}
-                    alt={flower.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90" />
+                {/* Image */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={flower.imageUrl}
+                  alt={flower.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
 
-                  <div className="absolute bottom-0 left-0 p-3 w-full">
-                    <h4 className="text-white font-bold text-sm mb-0.5 truncate">{flower.name}</h4>
-                    <p className="text-white/60 text-[10px] truncate">{flower.personality}</p>
-                  </div>
+                {/* Heart Icon */}
+                <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-tet-red/80 transition-colors z-10">
+                  <Heart className="w-4 h-4" />
+                </button>
+
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90" />
+
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 p-3 w-full">
+                  <h3 className="text-white font-bold text-sm leading-tight mb-1">{flower.name}</h3>
+                  <p className="text-white/70 text-[10px] line-clamp-1">{flower.personality}</p>
                 </div>
               </motion.div>
             </Link>
@@ -113,18 +101,27 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* Floating Action Button */}
-      <motion.div
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        transition={{ delay: 0.5, type: "spring" }}
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
-      >
-        <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-transform">
-          <Scan className="w-5 h-5" />
-          <span>Scan QR</span>
-        </button>
-      </motion.div>
+      {/* Bottom Navigation Bar */}
+      <div className="fixed bottom-6 left-6 right-6 z-50">
+        <div className="glass-morphism rounded-2xl shadow-2xl flex justify-around items-center py-4 px-2">
+          <button className="flex flex-col items-center gap-1 text-tet-red">
+            <HomeIcon className="w-6 h-6" />
+            <span className="text-[10px] font-bold">Trang chủ</span>
+          </button>
+
+          <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-tet-red transition-colors">
+            <div className="w-12 h-12 bg-tet-red rounded-full flex items-center justify-center text-white shadow-lg -mt-8 border-4 border-white">
+              <Scan className="w-6 h-6" />
+            </div>
+            <span className="text-[10px] font-medium">Quét QR</span>
+          </button>
+
+          <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-tet-red transition-colors">
+            <Gift className="w-6 h-6" />
+            <span className="text-[10px] font-medium">Bộ sưu tập</span>
+          </button>
+        </div>
+      </div>
     </main>
   );
 }
