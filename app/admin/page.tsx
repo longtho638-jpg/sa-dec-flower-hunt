@@ -7,11 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CalendarDateRangePicker } from "@/components/admin/DateRangePicker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, LayoutDashboard, Map, Sprout, Users, Terminal, Bot } from "lucide-react";
+import { Download, LayoutDashboard, Map, Sprout, Users, Terminal, Bot, TrendingUp } from "lucide-react";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GeminiTerminal } from "@/components/admin/GeminiTerminal";
 import { AgentDashboard } from "@/components/admin/AgentDashboard";
+import Link from "next/link";
 
 import { useState, useEffect } from "react";
 import { Lock } from "lucide-react";
@@ -66,6 +67,12 @@ export default function AdminDashboard() {
                 <div className="flex items-center space-x-2">
                     <ThemeToggle />
                     <CalendarDateRangePicker />
+                    <Link href="/admin/ipo">
+                        <Button variant="outline" className="border-stone-200 dark:border-stone-700">
+                            <TrendingUp className="mr-2 h-4 w-4 text-blue-600" />
+                            IPO Readiness
+                        </Button>
+                    </Link>
                     <Button className="bg-stone-900 text-white hover:bg-stone-800">
                         <Download className="mr-2 h-4 w-4" />
                         Export Report
