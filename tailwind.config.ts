@@ -11,18 +11,22 @@ const config: Config = {
             colors: {
                 background: "var(--color-bg)",
                 foreground: "var(--color-text)",
-                cyan: "var(--color-cyan)",
-                purple: "var(--color-purple)",
-                pink: "var(--color-pink)",
-                blue: "var(--color-blue)",
+                primary: "var(--color-primary)",
+                secondary: "var(--color-secondary)",
+                accent: "var(--color-accent)",
+                stone: {
+                    900: "#1C1917",
+                },
             },
             fontFamily: {
-                sans: ["var(--font-sora)", "sans-serif"],
+                sans: ["var(--font-quicksand)", "sans-serif"],
+                serif: ["var(--font-merriweather)", "serif"],
             },
-            animation: {
-                "aurora-drift": "aurora-drift 25s ease-in-out infinite",
-                "aurora-pulse": "aurora-pulse 20s ease-in-out infinite",
-                "fade-in-up": "fadeInUp 0.6s ease-out forwards",
+            borderRadius: {
+                "3xl": "1.5rem",
+            },
+            boxShadow: {
+                "soft-red": "0 10px 40px -10px rgba(217, 65, 65, 0.2)",
             },
         },
     },

@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Sora } from "next/font/google";
+import { Quicksand, Merriweather } from "next/font/google";
 import "./globals.css";
 
-const sora = Sora({
-  variable: "--font-sora",
+const quicksand = Quicksand({
+  variable: "--font-quicksand",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const merriweather = Merriweather({
+  variable: "--font-merriweather",
+  subsets: ["latin"],
+  weight: ["300", "400", "700", "900"],
 });
 
 export const metadata: Metadata = {
@@ -21,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${sora.variable} antialiased font-sans bg-[#0f0f1a] text-white`}
+        className={`${quicksand.variable} ${merriweather.variable} antialiased font-sans bg-[#FDFBF7] text-[#1C1917]`}
       >
         {children}
       </body>
