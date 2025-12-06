@@ -164,38 +164,30 @@ export default function Home() {
           ))}
         </div>
 
+        {/* FAQ Section (AEO) */}
+        <div className="mt-12">
+          <FAQSection />
+        </div>
+
+        {/* Footer CTA */}
+        <div className="mt-12 text-center pb-8">
+          <Button
+            size="lg"
+            className="w-full rounded-full bg-stone-900 text-white hover:bg-stone-800 h-14 text-lg font-bold shadow-xl transition-transform active:scale-95"
+          >
+            {t("home.scan_cta")}
+          </Button>
+          <p className="text-stone-400 text-sm mt-4 font-medium">
+            {t("home.scan_desc")}
+          </p>
+        </div>
       </div>
 
-      {/* Newsletter Subscription */}
-      <div className="max-w-4xl mx-auto px-4">
-        <NewsletterForm />
-      </div>
+      {/* Floating Smart Cart */}
+      <SmartCart />
 
-      {/* FAQ Section (AEO) */}
-      <div className="mt-12">
-        <NewsletterForm />
-        <FAQSection />
-      </div>
-
-      {/* Footer CTA */}
-      <div className="mt-12 text-center pb-8">
-        <Button
-          size="lg"
-          className="w-full rounded-full bg-stone-900 text-white hover:bg-stone-800 h-14 text-lg font-bold shadow-xl transition-transform active:scale-95"
-        >
-          {t("home.scan_cta")}
-        </Button>
-        <p className="text-stone-400 text-sm mt-4 font-medium">
-          {t("home.scan_desc")}
-        </p>
-      </div>
+      {/* Navbar */}
+      <Navbar />
     </div>
-
-      {/* Floating Smart Cart */ }
-  <SmartCart />
-
-  {/* Navbar */ }
-  <Navbar />
-    </div >
   );
 }
