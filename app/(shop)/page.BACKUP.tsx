@@ -1,6 +1,6 @@
 "use client";
 
-import { FL OWERS } from "@/data/flowers";
+import { FLOWERS } from "@/data/flowers";
 
 export default function HomePage() {
     return (
