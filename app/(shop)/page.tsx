@@ -3,12 +3,15 @@
 import { FLOWERS } from "@/data/flowers";
 import Navbar from "@/components/Navbar";
 import QRHuntProgress from "@/components/QRHuntProgress";
+import dynamic from "next/dynamic";
+
+const SmartCart = dynamic(() => import("@/components/SmartCart").then(mod => mod.SmartCart), { ssr: false });
 
 export default function HomePage() {
   return (
     <div className="p-8 pb-28">
-      <h1 className="text-2xl font-bold mb-4">Test Phase 2: + QRHuntProgress</h1>
-      <p className="mb-4">Testing if QRHuntProgress prefetch triggers crash</p>
+      <h1 className="text-2xl font-bold mb-4">Test Phase 3: + SmartCart</h1>
+      <p className="mb-4 text-red-600 font-bold">⚠️ MAIN SUSPECT - Cart uses localStorage</p>
 
       <div className="mb-8">
         <QRHuntProgress />
@@ -22,6 +25,8 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+
+      <SmartCart />
       <Navbar />
     </div>
   );
