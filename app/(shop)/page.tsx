@@ -6,15 +6,17 @@ import QRHuntProgress from "@/components/QRHuntProgress";
 import dynamic from "next/dynamic";
 
 const SmartCart = dynamic(() => import("@/components/SmartCart").then(mod => mod.SmartCart), { ssr: false });
-const TetConfetti = dynamic(() => import("@/components/TetConfetti").then(mod => mod.TetConfetti), { ssr: false });
+const FortuneFlower = dynamic(() => import("@/components/FortuneFlower").then(mod => mod.FortuneFlower), { ssr: false });
 
 export default function HomePage() {
   return (
     <div className="p-8 pb-28">
-      <TetConfetti />
+      <h1 className="text-2xl font-bold mb-4">Test Phase 4B: FortuneFlower ONLY</h1>
+      <p className="mb-4 text-red-600 font-bold">🎯 THE CULPRIT - Should crash here</p>
 
-      <h1 className="text-2xl font-bold mb-4">Test Phase 4A: TetConfetti ONLY</h1>
-      <p className="mb-4 text-red-600">Testing if TetConfetti crashes</p>
+      <div className="mb-4">
+        <FortuneFlower />
+      </div>
 
       <div className="mb-8">
         <QRHuntProgress />
