@@ -15,6 +15,7 @@ interface OrderStep2DetailsProps {
     onNotesChange: (value: string) => void;
     onBack: () => void;
     onNext: () => void;
+    singlePageMode?: boolean;
 }
 
 export function OrderStep2Details({
@@ -27,7 +28,8 @@ export function OrderStep2Details({
     onAddressChange,
     onNotesChange,
     onBack,
-    onNext
+    onNext,
+    singlePageMode = false
 }: OrderStep2DetailsProps) {
     return (
         <motion.div
@@ -84,21 +86,21 @@ export function OrderStep2Details({
                 </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
-                <button
-                    onClick={onBack}
-                    className="flex-1 bg-stone-100 text-stone-700 py-4 rounded-2xl font-bold hover:bg-stone-200 transition-all"
-                >
-                    ← Quay lại
-                </button>
-                <button
-                    onClick={onNext}
-                    disabled={!name || !phone || !address}
-                    className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
-                >
-                    Xác Nhận →
-                </button>
-            </div>
+            {!singlePageMode && (
+                <div className="flex gap-3 pt-4">
+                    <Button variant="outline" onClick={onBack} className="flex-1 rounded-xl">
+                        Quay lại
+                    </Button>
+                    <Button
+                        onClick={onNext}
+                        disabled={!name || !phone || !address}
+                        className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl"
+                    >
+                        Tiếp tục
+                    </Button>
+                </div>
+            )}
         </motion.div>
     );
 }
+```

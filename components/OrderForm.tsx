@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { SizeKey, calculatePrice } from "@/data/flowers";
-import { AnimatePresence } from "framer-motion";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { trackEvent } from "@/lib/analytics";
 import { OrderStep1Size } from "./order/OrderStep1Size";
 import { OrderStep2Details } from "./order/OrderStep2Details";
-import { OrderStep3Confirm } from "./order/OrderStep3Confirm";
 import { OrderSuccess } from "./order/OrderSuccess";
+import { Button } from "@/components/ui/button";
 
 interface OrderFormProps {
     flowerId: number;
@@ -20,7 +19,6 @@ interface OrderFormProps {
 }
 
 export default function OrderForm({ flowerId, flowerName, flowerImage, basePrice, availableSizes }: OrderFormProps) {
-    const [step, setStep] = useState(1); // 1: size, 2: details, 3: confirm
     const [selectedSize, setSelectedSize] = useState<SizeKey>(availableSizes[0]);
     const [quantity, setQuantity] = useState(1);
     const [name, setName] = useState("");
@@ -58,7 +56,6 @@ export default function OrderForm({ flowerId, flowerName, flowerImage, basePrice
             const data = await response.json();
 
             if (data.success) {
-                // Celebration!
                 confetti({
                     particleCount: 150,
                     spread: 100,
@@ -66,7 +63,6 @@ export default function OrderForm({ flowerId, flowerName, flowerImage, basePrice
                     colors: ['#D0312D', '#EAB308', '#22C55E', '#EC4899']
                 });
 
-                // AARRR: Revenue
                 await trackEvent("revenue", "order_placed", {
                     order_id: data.orderId,
                     flower_id: flowerId,
@@ -104,68 +100,80 @@ export default function OrderForm({ flowerId, flowerName, flowerImage, basePrice
                 <div className="flex items-center gap-3">
                     <ShoppingBag className="w-6 h-6 text-white" />
                     <div>
-                        <h2 className="text-lg font-bold text-white">Đặt Hàng Ngay</h2>
+                        <h2 className="text-lg font-bold text-white">Đặt Hàng Nhanh</h2>
                         <p className="text-red-100 text-sm">Giao tận nhà trong 24h</p>
                     </div>
                 </div>
             </div>
 
-            {/* Progress */}
-            <div className="flex px-6 pt-4 gap-2">
-                {[1, 2, 3].map((s) => (
-                    <div
-                        key={s}
-                        className={`flex-1 h-1 rounded-full ${s <= step ? "bg-red-500" : "bg-stone-200"}`}
+            <div className="p-6 space-y-8">
+                {/* Step 1: Size & Quantity */}
+                <div>
+                    <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2">
+                        <span className="bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                        Chọn Loại & Số Lượng
+                    </h3>
+                    <OrderStep1Size
+                        selectedSize={selectedSize}
+                        availableSizes={availableSizes}
+                        basePrice={basePrice}
+                        quantity={quantity}
+                        totalPrice={totalPrice}
+                        onSizeChange={setSelectedSize}
+                        onQuantityChange={setQuantity}
+                        onNext={() => { }}
+                        singlePageMode={true} // Add this prop to hide "Next" button in component if possible, or just ignore
                     />
-                ))}
-            </div>
+                </div>
 
-            <div className="p-6">
-                <AnimatePresence mode="wait">
-                    {step === 1 && (
-                        <OrderStep1Size
-                            selectedSize={selectedSize}
-                            availableSizes={availableSizes}
-                            basePrice={basePrice}
-                            quantity={quantity}
-                            totalPrice={totalPrice}
-                            onSizeChange={setSelectedSize}
-                            onQuantityChange={setQuantity}
-                            onNext={() => setStep(2)}
-                        />
-                    )}
+                {/* Step 2: Information */}
+                <div>
+                    <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2">
+                        <span className="bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+                        Thông Tin Giao Hàng
+                    </h3>
+                    <OrderStep2Details
+                        name={name}
+                        phone={phone}
+                        address={address}
+                        notes={notes}
+                        onNameChange={setName}
+                        onPhoneChange={setPhone}
+                        onAddressChange={setAddress}
+                        onNotesChange={setNotes}
+                        onBack={() => { }}
+                        onNext={() => { }}
+                        singlePageMode={true} // Add this prop to hide buttons
+                    />
+                </div>
 
-                    {step === 2 && (
-                        <OrderStep2Details
-                            name={name}
-                            phone={phone}
-                            address={address}
-                            notes={notes}
-                            onNameChange={setName}
-                            onPhoneChange={setPhone}
-                            onAddressChange={setAddress}
-                            onNotesChange={setNotes}
-                            onBack={() => setStep(1)}
-                            onNext={() => setStep(3)}
-                        />
-                    )}
+                {/* Final Action */}
+                <div className="pt-4 border-t border-stone-100">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="text-stone-500">Tổng thanh toán:</span>
+                        <span className="text-xl font-bold text-red-600">
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice)}
+                        </span>
+                    </div>
 
-                    {step === 3 && (
-                        <OrderStep3Confirm
-                            flowerName={flowerName}
-                            flowerImage={flowerImage}
-                            selectedSize={selectedSize}
-                            quantity={quantity}
-                            totalPrice={totalPrice}
-                            name={name}
-                            phone={phone}
-                            address={address}
-                            isLoading={isLoading}
-                            onBack={() => setStep(2)}
-                            onSubmit={handleSubmit}
-                        />
-                    )}
-                </AnimatePresence>
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={!name || !phone || !address || isLoading}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white font-bold h-12 rounded-xl text-lg shadow-lg shadow-red-200"
+                    >
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                Đang xử lý...
+                            </>
+                        ) : (
+                            "Hoàn Tất Đặt Hàng"
+                        )}
+                    </Button>
+                    <p className="text-center text-xs text-stone-400 mt-3">
+                        Thanh toán khi nhận hàng (COD) • Miễn phí ship Sa Đéc
+                    </p>
+                </div>
             </div>
         </div>
     );
