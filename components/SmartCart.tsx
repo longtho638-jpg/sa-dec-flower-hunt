@@ -32,7 +32,7 @@ export function SmartCart() {
     // Subscribe to changes
     const unsub = useCartStore.subscribe((state) => {
       setCartValues({
-        items: state.items as any,
+        items: state.getSafeItems() as any,
         count: state.itemCount(),
         total: state.getTotal()
       });
@@ -41,7 +41,7 @@ export function SmartCart() {
     // Initial sync
     const state = useCartStore.getState();
     setCartValues({
-      items: state.items as any,
+      items: state.getSafeItems() as any,
       count: state.itemCount(),
       total: state.getTotal()
     });

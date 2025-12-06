@@ -11,6 +11,7 @@ export interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  getSafeItems: () => CartItem[];
   addItem: (item: Omit<CartItem, 'quantity'>) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, delta: number) => void;
@@ -23,7 +24,14 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
-      addItem: (item) => {
+
+      // Safe getter that ALWAYS filters out null/undefined items
+      getSafeItems: () => {
+        const state = get();
+        return (state.items || []).filter((item: any) => item && item.id && item.name);
+      },
+
+      addItem: (item: Omit<CartItem, 'quantity'>) => {
         const currentItems = get().items;
         const existingItem = currentItems.find((i) => i.id === item.id);
 
