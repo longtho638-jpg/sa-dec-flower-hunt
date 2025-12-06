@@ -55,6 +55,7 @@ export function FortuneFlower() {
   };
 
   const share = () => {
+    if (!result || !result.name) return;
     const text = encodeURIComponent(`Tôi vừa bói được ${result.name}: "${fortune}" tại Sa Đéc Flower Hunt! 🧧🌸`);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://sadec-flower-hunt.vercel.app")}&quote=${text}`, '_blank');
   };
@@ -78,7 +79,7 @@ export function FortuneFlower() {
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 text-red-500">
               ▼
             </div>
-            
+
             {/* Wheel */}
             <motion.div
               animate={controls}
@@ -86,36 +87,36 @@ export function FortuneFlower() {
               style={{ transformOrigin: "center" }}
             >
               {wheelFlowers.map((flower, index) => {
-                 const angle = 360 / 6;
-                 return (
-                   <div
+                const angle = 360 / 6;
+                return (
+                  <div
                     key={flower.id}
                     className="absolute w-full h-full flex justify-center pt-2 origin-center"
-                    style={{ 
-                        transform: `rotate(${index * angle}deg)`,
-                        // Clip path logic is complex in pure CSS without SVG, 
-                        // Using simplified visual representation: placing images at cardinal points
-                     }}
-                   >
-                     <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white shadow-sm z-10 bg-white">
-                        <Image src={flower.image} alt={flower.name} fill className="object-cover" />
-                     </div>
-                     {/* Divider lines could go here */}
-                     <div className="absolute top-1/2 left-1/2 w-[1px] h-1/2 bg-purple-100 origin-top -translate-x-1/2 -translate-y-1/2 -z-10"></div>
-                   </div>
-                 )
+                    style={{
+                      transform: `rotate(${index * angle}deg)`,
+                      // Clip path logic is complex in pure CSS without SVG, 
+                      // Using simplified visual representation: placing images at cardinal points
+                    }}
+                  >
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white shadow-sm z-10 bg-white">
+                      <Image src={flower.image} alt={flower.name} fill className="object-cover" />
+                    </div>
+                    {/* Divider lines could go here */}
+                    <div className="absolute top-1/2 left-1/2 w-[1px] h-1/2 bg-purple-100 origin-top -translate-x-1/2 -translate-y-1/2 -z-10"></div>
+                  </div>
+                )
               })}
             </motion.div>
-            
+
             {/* Center Cap */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border-2 border-purple-500 shadow-md z-20 flex items-center justify-center text-purple-500 font-bold text-xs">
-               🌸
+              🌸
             </div>
           </div>
 
           {!result ? (
-            <Button 
-              onClick={spin} 
+            <Button
+              onClick={spin}
               disabled={spinning}
               className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-6 rounded-full text-lg shadow-xl disabled:opacity-50"
             >
@@ -124,7 +125,7 @@ export function FortuneFlower() {
           ) : (
             <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-purple-200 mb-4 shadow-lg">
-                  <Image src={result.image} alt={result.name} width={96} height={96} className="object-cover w-full h-full" />
+                <Image src={result.image} alt={result.name} width={96} height={96} className="object-cover w-full h-full" />
               </div>
               <h3 className="text-xl font-bold text-purple-900 mb-2">{result.name}</h3>
               <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 mb-4">
@@ -135,7 +136,7 @@ export function FortuneFlower() {
               <div className="flex gap-2 justify-center">
                 <Button onClick={spin} variant="outline" className="border-purple-200">Quay lại</Button>
                 <Button onClick={share} className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
-                    <Share2 className="w-4 h-4" /> Khoe Facebook
+                  <Share2 className="w-4 h-4" /> Khoe Facebook
                 </Button>
               </div>
             </div>
