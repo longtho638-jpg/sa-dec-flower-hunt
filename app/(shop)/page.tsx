@@ -21,22 +21,16 @@ import { SmartCart } from "@/components/SmartCart";
 import { FortuneFlower } from "@/components/FortuneFlower";
 import { useCartStore } from "@/lib/cartStore";
 import { toast } from "sonner";
-import { useState, useEffect } from "react";
+import { TetConfetti } from "@/components/TetConfetti";
 
 export default function Home() {
   const { t } = useLanguage();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const addItem = useCartStore((state) => state.addItem);
 
   const handleAddToCart = (e: React.MouseEvent, flower: any) => {
     e.preventDefault(); // Prevent navigation link
-    if (!isClient) return;
-    const { addItem } = useCartStore.getState();
     addItem({
-      id: String(flower.id),
+      id: flower.id,
       name: flower.name,
       price: flower.basePrice,
       image: flower.image
@@ -45,7 +39,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-28 font-sans">
+    <div className="min-h-screen bg-stone-50 pb-28 font-sans relative">
+      <TetConfetti />
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-stone-100 px-6 py-4">
         <div className="flex items-center justify-between max-w-md mx-auto">

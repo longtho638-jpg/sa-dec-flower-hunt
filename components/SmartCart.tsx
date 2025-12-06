@@ -10,20 +10,29 @@ import { MoneyModal } from "./MoneyModal";
 import Image from "next/image";
 
 export function SmartCart() {
-  const { items, removeItem, updateQuantity, getTotal, itemCount } = useCartStore();
+  // Use the store hooks for reactivity
+  const items = useCartStore((state) => state.items);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const getTotal = useCartStore((state) => state.getTotal);
+  const itemCount = useCartStore((state) => state.itemCount);
+
   const [isOpen, setIsOpen] = useState(false);
   const [showMoneyModal, setShowMoneyModal] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // Rehydrate the store on mount to ensure localStorage data is loaded
+    // and matches client-side state
     useCartStore.persist.rehydrate();
-    setIsClient(true);
+    setIsMounted(true);
   }, []);
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!isMounted) return null;
 
   const total = getTotal();
   const count = itemCount();
-
-  if (!isClient) return null;
 
   return (
     <>
@@ -38,6 +47,7 @@ export function SmartCart() {
             <AnimatePresence>
               {count > 0 && (
                 <motion.span
+                  key="badge"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
@@ -49,7 +59,7 @@ export function SmartCart() {
             </AnimatePresence>
           </motion.button>
         </SheetTrigger>
-        <SheetContent className="w-full sm:max-w-md flex flex-col bg-stone-50">
+        <SheetContent className="w-full sm:max-w-md flex flex-col bg-stone-50 z-[60]">
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2 text-2xl">
               <ShoppingCart className="w-6 h-6" /> Giỏ Hàng
