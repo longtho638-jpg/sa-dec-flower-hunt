@@ -85,8 +85,8 @@ export function Leaderboard() {
                         </div>
                     </div>
                     <div className="mt-2 text-center">
-                        <p className="font-bold text-sm line-clamp-1 w-20">{leaderboard[1].name}</p>
-                        <p className="text-xs text-stone-500">{leaderboard[1].points} pts</p>
+                        <p className="font-bold text-sm line-clamp-1 w-20">{leaderboard[1]?.name || 'User'}</p>
+                        <p className="text-xs text-stone-500">{leaderboard[1]?.points || 0} pts</p>
                     </div>
                     <div className="w-20 h-24 bg-gradient-to-t from-stone-200 to-stone-100 rounded-t-lg mt-2 flex items-end justify-center pb-2">
                         <Medal className="w-8 h-8 text-stone-400" />
@@ -102,7 +102,7 @@ export function Leaderboard() {
                     <div className="relative">
                         <Crown className="w-8 h-8 text-yellow-500 absolute -top-8 left-1/2 -translate-x-1/2 animate-bounce" />
                         <Avatar className="w-20 h-20 border-4 border-yellow-400 shadow-xl shadow-yellow-200">
-                            <AvatarImage src={leaderboard[0].avatar} />
+                            <AvatarImage src={leaderboard[0]?.avatar} />
                             <AvatarFallback>1</AvatarFallback>
                         </Avatar>
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full border border-white">
@@ -110,8 +110,8 @@ export function Leaderboard() {
                         </div>
                     </div>
                     <div className="mt-2 text-center">
-                        <p className="font-bold text-sm line-clamp-1 w-24">{leaderboard[0].name}</p>
-                        <p className="text-xs text-yellow-600 font-bold">{leaderboard[0].points} pts</p>
+                        <p className="font-bold text-sm line-clamp-1 w-24">{leaderboard[0]?.name || 'Champion'}</p>
+                        <p className="text-xs text-yellow-600 font-bold">{leaderboard[0]?.points || 0} pts</p>
                     </div>
                     <div className="w-24 h-32 bg-gradient-to-t from-yellow-400 to-yellow-200 rounded-t-lg mt-2 flex items-end justify-center pb-4 shadow-lg">
                         <Trophy className="w-10 h-10 text-yellow-700" />
@@ -127,7 +127,7 @@ export function Leaderboard() {
                 >
                     <div className="relative">
                         <Avatar className="w-16 h-16 border-4 border-orange-200">
-                            <AvatarImage src={leaderboard[2].avatar} />
+                            <AvatarImage src={leaderboard[2]?.avatar} />
                             <AvatarFallback>3</AvatarFallback>
                         </Avatar>
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-orange-200 text-orange-700 text-xs font-bold px-2 py-0.5 rounded-full border border-white">
@@ -135,8 +135,8 @@ export function Leaderboard() {
                         </div>
                     </div>
                     <div className="mt-2 text-center">
-                        <p className="font-bold text-sm line-clamp-1 w-20">{leaderboard[2].name}</p>
-                        <p className="text-xs text-stone-500">{leaderboard[2].points} pts</p>
+                        <p className="font-bold text-sm line-clamp-1 w-20">{leaderboard[2]?.name || 'User'}</p>
+                        <p className="text-xs text-stone-500">{leaderboard[2]?.points || 0} pts</p>
                     </div>
                     <div className="w-20 h-20 bg-gradient-to-t from-orange-200 to-orange-100 rounded-t-lg mt-2 flex items-end justify-center pb-2">
                         <Medal className="w-8 h-8 text-orange-400" />
@@ -157,10 +157,10 @@ export function Leaderboard() {
                         <div className="w-8 text-center font-bold text-stone-400">#{user.rank}</div>
                         <Avatar className="w-10 h-10">
                             <AvatarImage src={user.avatar} />
-                            <AvatarFallback>{user.name[0]}</AvatarFallback>
+                            <AvatarFallback>{(user.name && user.name[0]) || 'U'}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                            <h4 className="font-bold text-stone-900 dark:text-white">{user.name}</h4>
+                            <h4 className="font-bold text-stone-900 dark:text-white">{user.name || 'Anonymous'}</h4>
                             <div className="flex items-center gap-2 text-xs text-stone-500">
                                 <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-500" /> {user.flowers} hoa</span>
                             </div>
