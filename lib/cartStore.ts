@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface CartItem {
   id: string;
@@ -60,6 +60,8 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: 'sadec-cart-storage',
+      storage: createJSONStorage(() => localStorage), // Explicitly use createJSONStorage
+      skipHydration: true, // Important for Next.js SSR to avoid hydration mismatch
     }
   )
 );

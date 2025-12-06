@@ -6,26 +6,22 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Trash2, Plus, Minus, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatPrice } from "@/data/flowers"; // Assuming this exists or I'll reimplement
 import { MoneyModal } from "./MoneyModal";
 import Image from "next/image";
 
 export function SmartCart() {
+  const { items, removeItem, updateQuantity, getTotal, itemCount } = useCartStore();
   const [isOpen, setIsOpen] = useState(false);
   const [showMoneyModal, setShowMoneyModal] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    useCartStore.persist.rehydrate();
     setIsClient(true);
   }, []);
 
-  // Only access store after client is ready to prevent hydration mismatch
-  const items = isClient ? useCartStore.getState().items : [];
-  const count = isClient ? useCartStore.getState().itemCount() : 0;
-  const total = isClient ? useCartStore.getState().getTotal() : 0;
-
-  const removeItem = (id: string) => useCartStore.getState().removeItem(id);
-  const updateQuantity = (id: string, delta: number) => useCartStore.getState().updateQuantity(id, delta);
+  const total = getTotal();
+  const count = itemCount();
 
   if (!isClient) return null;
 
