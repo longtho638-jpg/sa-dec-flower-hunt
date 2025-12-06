@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: ['/admin/', '/api/'],
+            disallow: ['/admin/', '/api/', '/test/'],
         },
-        sitemap: 'https://sadec-flower-hunt.vercel.app/sitemap.xml', // Replace with actual domain
+        sitemap: 'https://sadec-flower-hunt.vercel.app/sitemap.xml',
     };
 }
