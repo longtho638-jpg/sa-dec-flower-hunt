@@ -10,29 +10,48 @@ import { MoneyModal } from "./MoneyModal";
 import Image from "next/image";
 
 export function SmartCart() {
-  // Use the store hooks for reactivity
-  const items = useCartStore((state) => state.items);
-  const removeItem = useCartStore((state) => state.removeItem);
-  const updateQuantity = useCartStore((state) => state.updateQuantity);
-  const getTotal = useCartStore((state) => state.getTotal);
-  const itemCount = useCartStore((state) => state.itemCount);
-
   const [isOpen, setIsOpen] = useState(false);
   const [showMoneyModal, setShowMoneyModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  // Use hooks for actions - these are stable and safe
+  const removeItem = useCartStore((state) => state.removeItem);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+
+  // Local state for values to avoid hydration mismatch
+  const [cartValues, setCartValues] = useState({
+    items: [],
+    count: 0,
+    total: 0
+  });
+
   useEffect(() => {
-    // Rehydrate the store on mount to ensure localStorage data is loaded
-    // and matches client-side state
-    useCartStore.persist.rehydrate();
     setIsMounted(true);
+    useCartStore.persist.rehydrate();
+
+    // Subscribe to changes
+    const unsub = useCartStore.subscribe((state) => {
+      setCartValues({
+        items: state.items as any,
+        count: state.itemCount(),
+        total: state.getTotal()
+      });
+    });
+
+    // Initial sync
+    const state = useCartStore.getState();
+    setCartValues({
+      items: state.items as any,
+      count: state.itemCount(),
+      total: state.getTotal()
+    });
+
+    return () => unsub();
   }, []);
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!isMounted) return null;
+  const { items, count, total } = cartValues;
 
-  const total = getTotal();
-  const count = itemCount();
+  if (!isMounted) return null;
 
   return (
     <>
@@ -77,7 +96,7 @@ export function SmartCart() {
               </div>
             ) : (
               <div className="space-y-4">
-                {items.map((item) => (
+                {items.map((item: any) => (
                   <motion.div
                     layout
                     key={item.id}
