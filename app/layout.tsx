@@ -59,24 +59,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-                try {
-                  var cart = localStorage.getItem('sadec-cart-storage');
-                  if (cart && (cart.includes('null') || cart.includes('undefined'))) {
-                    console.warn('👻 Exorcising Zombie Data (Pre-Hydration Check)...');
-                    localStorage.removeItem('sadec-cart-storage');
-                    localStorage.removeItem('sadec_wishlist');
-                    localStorage.removeItem('sadec_scanned');
-                    window.location.reload();
-                  }
-                } catch (e) { console.error(e); }
-              `
-          }}
-        />
-      </head>
       <body>
         <ThemeProvider
           attribute="class"
