@@ -10,9 +10,16 @@ export function DataPurger() {
             if (cartRaw) {
                 const cart = JSON.parse(cartRaw);
                 if (cart && cart.state && Array.isArray(cart.state.items)) {
-                    const hasNulls = cart.state.items.some((i: any) => i === null || i === undefined);
-                    if (hasNulls) {
-                        console.error("DataPurger: Found null items in cart. PURGING.");
+                    // Check for NULL objects OR objects with missing critical properties (name)
+                    const hasCorruption = cart.state.items.some((i: any) =>
+                        !i ||
+                        !i.name ||
+                        i.name === null ||
+                        i.price === null
+                    );
+
+                    if (hasCorruption) {
+                        console.error("DataPurger: Found CORRUPTED items (null or missing name). PURGING.");
                         localStorage.removeItem("sadec-cart-storage");
                         window.location.reload();
                     }
