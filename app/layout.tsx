@@ -5,6 +5,7 @@ import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { LanguageProvider } from "@/lib/i18n";
 import { StructuredData } from "@/components/StructuredData";
 import { Toaster } from "sonner";
+import Script from "next/script"; // Added Script import
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -48,33 +49,4 @@ export const metadata: Metadata = {
     description: "Săn hoa, quét AR, nhận quà Tết!",
     images: ["https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1200&h=630&fit=crop"],
   },
-};
-
-import { DataPurger } from "@/components/DataPurger";
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="vi" suppressHydrationWarning>
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <LanguageProvider>
-            <DataPurger />
-            {children}
-            <PWAInstallPrompt />
-            <StructuredData />
-            <Toaster />
-          </LanguageProvider>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
 }

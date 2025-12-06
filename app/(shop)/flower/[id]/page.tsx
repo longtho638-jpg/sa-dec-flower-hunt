@@ -31,6 +31,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // This is a Server Component
 export default async function FlowerPage({ params }: Props) {
     const { id } = await params;
-    // We pass the ID to the client component
-    return <FlowerDetailClient id={Number(id)} />;
+    const flowerId = Number(id);
+    const flower = FLOWERS.find((f) => f.id === flowerId);
+
+    if (!flower) {
+        return <FlowerDetailClient id={Number(id)} />;
+    }
+
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: flower.name,
+        image: flower.image,
+        description: flower.salesPitch,
+        brand: {
+            '@type': 'Brand',
+            name: 'Sa Đéc Flower Hunt',
+        },
+        offers: {
+            '@type': 'Offer',
+            url: `https://sadec-flower-hunt.vercel.app/flower/${flower.id}`,
+            priceCurrency: 'VND',
+            price: flower.basePrice,
+            availability: 'https://schema.org/InStock',
+            itemCondition: 'https://schema.org/NewCondition',
+        },
+    };
+
+    return (
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <FlowerDetailClient id={Number(id)} />
+        </>
+    );
 }

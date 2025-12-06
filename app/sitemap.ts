@@ -1,16 +1,14 @@
 import { MetadataRoute } from 'next';
-import { FLOWERS } from '@/data/flowers';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://sadec-flower-hunt.vercel.app'; // Replace with actual domain
+    const baseUrl = 'https://sadec-flower-hunt.vercel.app';
 
-    // Static routes
-    const routes = [
+    // Static pages
+    const staticPages = [
         '',
-        '/scan',
-        '/leaderboard',
         '/partner',
-        '/partner/register',
+        '/orders',
+        '/blog', // Adding blog to sitemap
     ].map((route) => ({
         url: `${baseUrl}${route}`,
         lastModified: new Date(),
@@ -18,13 +16,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: route === '' ? 1 : 0.8,
     }));
 
-    // Dynamic flower routes
-    const flowerRoutes = FLOWERS.map((flower) => ({
-        url: `${baseUrl}/flower/${flower.id}`,
+    // Dynamic flower pages (top 10 for now - normally fetch from DB)
+    const flowerIds = ['hong-sadec', 'cuc-mam-xoi', 'da-yen-thao', 'cat-tuong', 'lan-ho-diep', 'van-tho', 'tu-dang', 'hoa-giay', 'mai-vang', 'sen-hong'];
+    const flowerPages = flowerIds.map((id) => ({
+        url: `${baseUrl}/flower/${id}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
-        priority: 0.9,
+        priority: 0.7,
     }));
 
-    return [...routes, ...flowerRoutes];
+    return [...staticPages, ...flowerPages];
 }
