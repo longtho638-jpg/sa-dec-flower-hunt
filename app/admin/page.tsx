@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CalendarDateRangePicker } from "@/components/admin/DateRangePicker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, LayoutDashboard, Map, Sprout, Users, Terminal, Bot, TrendingUp, PieChart } from "lucide-react";
+import { Download, LayoutDashboard, Map, Sprout, Users, Terminal, Bot, TrendingUp, PieChart, Brain } from "lucide-react";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GeminiTerminal } from "@/components/admin/GeminiTerminal";
@@ -67,6 +67,12 @@ export default function AdminDashboard() {
                 <div className="flex items-center space-x-2">
                     <ThemeToggle />
                     <CalendarDateRangePicker />
+                    <Link href="/admin/psychology">
+                        <Button variant="outline" className="border-stone-200 dark:border-stone-700">
+                            <Brain className="mr-2 h-4 w-4 text-pink-600" />
+                            Psychology
+                        </Button>
+                    </Link>
                     <Link href="/admin/economics">
                         <Button variant="outline" className="border-stone-200 dark:border-stone-700">
                             <PieChart className="mr-2 h-4 w-4 text-purple-600" />
