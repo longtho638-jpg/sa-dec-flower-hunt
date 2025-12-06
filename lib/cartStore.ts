@@ -62,6 +62,19 @@ export const useCartStore = create<CartState>()(
       name: 'sadec-cart-storage',
       storage: createJSONStorage(() => localStorage), // Explicitly use createJSONStorage
       skipHydration: true, // Important for Next.js SSR to avoid hydration mismatch
+      merge: (persistedState: any, currentState) => {
+        if (!persistedState || typeof persistedState !== 'object') {
+          return currentState;
+        }
+        // Sanitize items ensuring they are valid objects with ids
+        const sanitizedItems = (persistedState.items || []).filter((i: any) => i && i.id && i.name);
+
+        return {
+          ...currentState,
+          ...persistedState,
+          items: sanitizedItems,
+        };
+      },
     }
   )
 );
