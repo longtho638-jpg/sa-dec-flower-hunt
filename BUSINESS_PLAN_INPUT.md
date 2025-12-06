@@ -101,6 +101,25 @@
 ### Brand Essence
 **"Vườn hoa Sa Đéc đến tay bạn"** (Sa Đéc flower gardens to your hands)
 
+### 2. Strategic Goals (2025-2027)
+- **Primary Goal**: Achieve **$500,000 USD revenue (approx. 12.5 Billion VND)** in 2026.
+- **Vision**: transform from "Sa Dec Flower Shop" to **"Vietnam's Premier AgriTech Platform"**. WebApps are the solution for the entire industry.
+- **Urgency**: **December Sa Dec Flower Festival** is the launchpad. Must WOW immediately.
+- **Key Milestones**:
+  - **Dec 2025**: **"Festival Launch"** - 10,000 visitors check-in via App (Viral Loop).
+  - **Q1 2026**: Launch "Climate Warrior" flower line (Heat resistant >35°C).
+  - **Q4 2026**: Achieve 50% revenue from B2B AgriTech solutions (SaaS for farmers).
+
+## 3. Product & Value Proposition ("Blue Ocean")
+- **Core Product**: Sa Dec Flowers (Traditional) + Tech-Enabled Value.
+- **Innovation ("Raise")**: 
+  - **Mystery Box AR**: Unboxing experience with AR flower blooming.
+  - **Trust**: Blockchain traceability for every pot (Scan QR for history).
+- **New Offering ("Create")**: 
+  - **Climate Warrior**: Heat-resistant flowers for urban heat islands.
+  - **Metaverse Garden**: Digital twin of the garden on Decentraland (30% investment focus).
+- **Service**: "Plant Therapy Master" courses and "Green Gastronomy" (Flower Kombucha).
+
 ### Value Proposition
 - **Freshness**: Direct from Sa Đéc farms within 24-48 hours
 - **Authenticity**: Real Sa Đéc flowers, not middleman imports
