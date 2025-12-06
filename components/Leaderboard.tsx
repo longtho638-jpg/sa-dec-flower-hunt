@@ -49,14 +49,16 @@ export function Leaderboard() {
             .limit(10);
 
         if (!error && data) {
-            const formattedData = data.map((item: any, index: number) => ({
-                id: item.user_id || item.id, // Handle potential schema diff
-                name: item.name,
-                points: item.points,
-                flowers: item.flowers_scanned || 0,
-                rank: index + 1,
-                avatar: item.avatar_url || `https://i.pravatar.cc/150?u=${item.user_id || index}`
-            }));
+            const formattedData = data
+                .filter((item: any) => item && item.name) // Filter out null entries
+                .map((item: any, index: number) => ({
+                    id: item.user_id || item.id,
+                    name: item.name || 'Anonymous',
+                    points: item.points || 0,
+                    flowers: item.flowers_scanned || 0,
+                    rank: index + 1,
+                    avatar: item.avatar_url || `https://i.pravatar.cc/150?u=${item.user_id || index}`
+                }));
             setLeaderboard(formattedData);
         }
     };
