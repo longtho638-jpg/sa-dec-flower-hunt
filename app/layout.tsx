@@ -50,6 +50,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { DataPurger } from "@/components/DataPurger";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -60,11 +62,12 @@ export default function RootLayout({
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
           <LanguageProvider>
+            <DataPurger />
             {children}
             <PWAInstallPrompt />
             <StructuredData />
