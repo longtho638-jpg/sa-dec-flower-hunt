@@ -86,7 +86,7 @@ export function SmartCart() {
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto py-4">
-            {items.length === 0 ? (
+            {(!items || items.length === 0) ? (
               <div className="flex flex-col items-center justify-center h-64 text-stone-400">
                 <ShoppingCart className="w-16 h-16 mb-4 opacity-20" />
                 <p>Giỏ hàng đang trống</p>
@@ -96,48 +96,50 @@ export function SmartCart() {
               </div>
             ) : (
               <div className="space-y-4">
-                {items.map((item: any) => (
+                {items.filter((i: any) => i && i.name).map((item: any) => (
                   <motion.div
                     layout
-                    key={item.id}
+                    key={item.id || Math.random()}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     className="flex gap-4 bg-white p-3 rounded-xl shadow-sm border border-stone-100"
                   >
                     <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-stone-100">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
+                      {item.image && (
+                        <Image
+                          src={item.image}
+                          alt={item.name || 'Product'}
+                          fill
+                          className="object-cover"
+                        />
+                      )}
                     </div>
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
-                        <h4 className="font-bold text-stone-900 line-clamp-1">{item.name}</h4>
+                        <h4 className="font-bold text-stone-900 line-clamp-1">{item.name || 'Unknown'}</h4>
                         <p className="text-sm font-medium text-red-600">
-                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
+                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price || 0)}
                         </p>
                       </div>
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-2 bg-stone-100 rounded-full px-2 py-1">
                           <button
-                            onClick={() => updateQuantity(item.id, -1)}
+                            onClick={() => item.id && updateQuantity(item.id, -1)}
                             className="p-1 hover:text-red-600 transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                          <span className="text-xs font-bold w-4 text-center">{item.quantity || 1}</span>
                           <button
-                            onClick={() => updateQuantity(item.id, 1)}
+                            onClick={() => item.id && updateQuantity(item.id, 1)}
                             className="p-1 hover:text-green-600 transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
                         </div>
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => item.id && removeItem(item.id)}
                           className="text-stone-400 hover:text-red-500 transition-colors p-2"
                         >
                           <Trash2 className="w-4 h-4" />
