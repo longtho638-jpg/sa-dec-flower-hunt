@@ -6,12 +6,20 @@ import QRHuntProgress from "@/components/QRHuntProgress";
 import dynamic from "next/dynamic";
 
 const SmartCart = dynamic(() => import("@/components/SmartCart").then(mod => mod.SmartCart), { ssr: false });
+const FortuneFlower = dynamic(() => import("@/components/FortuneFlower").then(mod => mod.FortuneFlower), { ssr: false });
+const TetConfetti = dynamic(() => import("@/components/TetConfetti").then(mod => mod.TetConfetti), { ssr: false });
 
 export default function HomePage() {
   return (
     <div className="p-8 pb-28">
-      <h1 className="text-2xl font-bold mb-4">Test Phase 3: + SmartCart</h1>
-      <p className="mb-4 text-red-600 font-bold">⚠️ MAIN SUSPECT - Cart uses localStorage</p>
+      <TetConfetti />
+
+      <h1 className="text-2xl font-bold mb-4">Test Phase 4: + Fortune + Confetti</h1>
+      <p className="mb-4">Adding dynamic components</p>
+
+      <div className="mb-4">
+        <FortuneFlower />
+      </div>
 
       <div className="mb-8">
         <QRHuntProgress />
