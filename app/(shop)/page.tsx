@@ -25,6 +25,7 @@ import { toast } from "sonner";
 const SmartCart = dynamic(() => import("@/components/SmartCart").then(mod => mod.SmartCart), { ssr: false });
 const FortuneFlower = dynamic(() => import("@/components/FortuneFlower").then(mod => mod.FortuneFlower), { ssr: false });
 const TetConfetti = dynamic(() => import("@/components/TetConfetti").then(mod => mod.TetConfetti), { ssr: false });
+const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"), { ssr: false });
 
 export default function Home() {
   const { t } = useLanguage();
@@ -163,30 +164,38 @@ export default function Home() {
           ))}
         </div>
 
-        {/* FAQ Section (AEO) */}
-        <div className="mt-12">
-          <FAQSection />
-        </div>
-
-        {/* Footer CTA */}
-        <div className="mt-12 text-center pb-8">
-          <Button
-            size="lg"
-            className="w-full rounded-full bg-stone-900 text-white hover:bg-stone-800 h-14 text-lg font-bold shadow-xl transition-transform active:scale-95"
-          >
-            {t("home.scan_cta")}
-          </Button>
-          <p className="text-stone-400 text-sm mt-4 font-medium">
-            {t("home.scan_desc")}
-          </p>
-        </div>
       </div>
 
-      {/* Floating Smart Cart */}
-      <SmartCart />
+      {/* Newsletter Subscription */}
+      <div className="max-w-4xl mx-auto px-4">
+        <NewsletterForm />
+      </div>
 
-      {/* Navbar */}
-      <Navbar />
+      {/* FAQ Section (AEO) */}
+      <div className="mt-12">
+        <NewsletterForm />
+        <FAQSection />
+      </div>
+
+      {/* Footer CTA */}
+      <div className="mt-12 text-center pb-8">
+        <Button
+          size="lg"
+          className="w-full rounded-full bg-stone-900 text-white hover:bg-stone-800 h-14 text-lg font-bold shadow-xl transition-transform active:scale-95"
+        >
+          {t("home.scan_cta")}
+        </Button>
+        <p className="text-stone-400 text-sm mt-4 font-medium">
+          {t("home.scan_desc")}
+        </p>
+      </div>
     </div>
+
+      {/* Floating Smart Cart */ }
+  <SmartCart />
+
+  {/* Navbar */ }
+  <Navbar />
+    </div >
   );
 }
