@@ -7,20 +7,16 @@
 ---
 
 ## 🎨 Post 1: Lời Chào (Introduction)
-**Image/Video**: Ảnh chụp cận cảnh một đóa hồng Sa Đéc rực rỡ dưới nắng sớm, hậu cảnh là cánh đồng hoa mờ.
+**Image Impact**: ![Rose Intro](/social-content/post1-intro.png)
+*(Image Generated & Saved to `public/social-content/post1-intro.png`)*
 **Caption**: 
-"Xin chào! 👋 Chúng mình là Sa Đéc Flower Hunt - Cầu nối mang hương sắc Làng hoa Sa Đéc trăm năm đến tận tay bạn. 🌸
-Từ hôm nay, bạn không cần đi xa, chỉ cần ngồi nhà chọn hoa, chúng mình sẽ giao tận nơi những đóa hoa tươi nhất, cắt tại vườn. 
-Follow tụi mình để nhận mẹo chăm hoa và ưu đãi 10% đơn đầu nhé! 🌿
-#sadecflowerhunt #hello #langhoasadec"
+"Xin chào! 👋 Chúng mình là Sa Đéc Flower Hunt...
 
 ## 📚 Post 2: Mẹo Chăm Sóc (Care Tips)
-**Image/Video**: Video ngắn (Reel) quay cảnh cắt gốc hoa trong thau nước (như bài Blog). Text overlay: "Bí kíp giữ hoa tươi 7 ngày".
+**Image Impact**: ![Cutting Tips](/social-content/post2-tips.png)
+*(Image Generated & Saved to `public/social-content/post2-tips.png`)*
 **Caption**:
-"Hóa ra bao năm nay mình cắt hoa sai cách! 😱
-Bí mật của người Sa Đéc: Cắt gốc hoa TRONG NƯỚC để không khí không lọt vào mạch dẫn. Hoa sẽ hút nước ừng ực và tươi lâu hơn hẳn.
-Thử ngay nhé và khoe thành quả với Ad nào! 👇
-#meochamhoa #flowertips #sadecsecret"
+"Hóa ra bao năm nay mình cắt hoa sai cách! 😱...
 
 ## 📸 Post 3: Câu Chuyện (Storytelling)
 **Image/Video**: Ảnh chân dung Chú Ba (hoặc 1 người nông dân) đang cười tươi bên giỏ hoa cúc.
@@ -31,7 +27,8 @@ Mua hoa Sa Đéc không chỉ là mua cái đẹp, mà là ủng hộ tinh thầ
 #nguoisadec #cauchuyenlanghoa #farmers"
 
 ## 🔥 Post 4: Sản Phẩm (Product Showcase) - Hồng Lửa Sa Đéc
-**Image/Video**: Ảnh flatlay bó hồng màu đỏ nhung trên bàn gỗ, bên cạnh là tách trà và cuốn sách.
+**Image Impact**: ![Product Showcase](/social-content/post4-product.png)
+*(Image Generated & Saved to `public/social-content/post4-product.png`)*
 **Caption**:
 "Hồng Lửa Sa Đéc - Đỏ thắm như tình yêu nồng cháy. 🌹
 Dòng hồng cổ này có hương thơm dịu nhẹ, cánh dày và độ bền lên đến 5-7 ngày. Món quà hoàn hảo cho ngày kỷ niệm hoặc... tự thưởng cho bản thân! 

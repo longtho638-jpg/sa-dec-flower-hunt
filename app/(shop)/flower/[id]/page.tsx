@@ -6,6 +6,14 @@ interface Props {
     params: Promise<{ id: string }>;
 }
 
+// Generate static params for the top known flowers to pre-build pages (SSG)
+export async function generateStaticParams() {
+    // In a real app, fetch this from DB
+    return FLOWERS.map((flower) => ({
+        id: String(flower.id),
+    }));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params;
     const flowerId = Number(id);

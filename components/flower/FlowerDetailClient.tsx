@@ -14,6 +14,7 @@ import { ARView } from "@/components/ARView";
 import { FlowerHero } from "@/components/flower/FlowerHero";
 import { FlowerHeader } from "@/components/flower/FlowerHeader";
 import { FlowerDetails } from "@/components/flower/FlowerDetails";
+import { TrustBadges } from "@/components/flower/TrustBadges";
 import { FlowerActions } from "@/components/flower/FlowerActions";
 
 export default function FlowerDetailClient({ id }: { id: number }) {
@@ -83,6 +84,8 @@ export default function FlowerDetailClient({ id }: { id: number }) {
                         basePrice={flower.basePrice}
                         vibe={flower.vibe}
                     />
+
+                    <TrustBadges />
 
                     <Separator className="my-6" />
 
