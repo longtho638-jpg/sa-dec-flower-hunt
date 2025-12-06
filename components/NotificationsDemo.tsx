@@ -5,7 +5,7 @@ import { simulateSmartNotifications } from "@/lib/notifications";
 
 export function NotificationsDemo() {
     useEffect(() => {
-        simulateSmartNotifications();
+        // simulateSmartNotifications();
     }, []);
 
     return null; // This component handles side effects only
