@@ -4,15 +4,10 @@
 const CACHE_NAME = 'sadec-v1.0.0';
 const OFFLINE_URL = '/offline';
 
-// Assets to cache immediately on install
+// Assets to cache immediately on install (only essentials that EXIST)
 const PRECACHE_ASSETS = [
     '/',
-    '/shop',
-    '/scan',
-    '/offline',
     '/manifest.json',
-    '/icon-192x192.png',
-    '/icon-512x512.png',
 ];
 
 // Install Event - Cache essential assets
@@ -21,7 +16,14 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             console.log('[ServiceWorker] Precaching assets');
-            return cache.addAll(PRECACHE_ASSETS);
+            // Cache assets individually to avoid failing on missing files
+            return Promise.allSettled(
+                PRECACHE_ASSETS.map(url =>
+                    cache.add(url).catch(err => {
+                        console.warn(`[ServiceWorker] Failed to cache ${url}:`, err);
+                    })
+                )
+            );
         })
     );
     // Force the waiting service worker to become the active service worker
