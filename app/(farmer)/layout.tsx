@@ -13,11 +13,11 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 const NAV_ITEMS = [
-    { label: "Tổng quan", icon: LayoutDashboard, href: "/farmer" },
-    { label: "Vườn của tôi", icon: Flower2, href: "/farmer/products" },
-    { label: "Đơn hàng", icon: ShoppingBag, href: "/farmer/orders" },
-    { label: "Tài chính", icon: Wallet, href: "/farmer/finance" },
-    { label: "Cài đặt", icon: Settings, href: "/farmer/settings" },
+    { label: "DASHBOARD", icon: LayoutDashboard, href: "/farmer" },
+    { label: "MY_GARDEN", icon: Flower2, href: "/farmer/products" },
+    { label: "ORDERS_LOG", icon: ShoppingBag, href: "/farmer/orders" },
+    { label: "FINANCE_STREAM", icon: Wallet, href: "/farmer/finance" },
+    { label: "SYSTEM_CONFIG", icon: Settings, href: "/farmer/settings" },
 ];
 
 function FarmerSidebar() {
@@ -25,32 +25,40 @@ function FarmerSidebar() {
     const { profile } = useFarmer();
 
     return (
-        <div className="flex flex-col h-full bg-stone-900 text-stone-300">
-            <div className="p-6 border-b border-stone-800">
-                <h1 className="text-xl font-bold text-white flex items-center gap-2">
-                    <span>🌿</span> Sa Dec Farmer
-                </h1>
-                <div className="mt-6 flex items-center gap-3">
-                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-stone-700">
-                        <Image src={profile.avatar} alt={profile.farmerName} fill className="object-cover" sizes="48px" />
+        <div className="flex flex-col h-full bg-[#030303] border-r border-white/10 text-zinc-400 font-mono text-sm">
+            <div className="p-6 border-b border-white/10">
+                <div className="flex items-center gap-2 mb-6">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <h1 className="text-lg font-bold text-white tracking-widest">
+                        SADEC.<span className="text-emerald-500">OS</span>
+                    </h1>
+                </div>
+
+                <div className="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/5 hover:border-emerald-500/30 transition-colors">
+                    <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-white/10">
+                        <Image src={profile.avatar} alt={profile.farmerName} fill className="object-cover" sizes="40px" />
                     </div>
-                    <div>
-                        <p className="text-sm font-bold text-white">{profile.farmerName}</p>
-                        <p className="text-xs text-stone-500">Nông dân số: #{profile.id?.substring(0, 8)}</p>
+                    <div className="overflow-hidden">
+                        <p className="text-xs font-bold text-white truncate">{profile.farmerName}</p>
+                        <p className="text-[10px] text-emerald-500 truncate">ID: {profile.id?.substring(0, 8)}</p>
                     </div>
                 </div>
             </div>
 
-            <nav className="flex-1 p-4 space-y-1">
+            <nav className="flex-1 p-4 space-y-2">
                 {NAV_ITEMS.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                         <Link key={item.href} href={item.href}>
                             <Button
                                 variant="ghost"
-                                className={`w-full justify-start gap-3 rounded-xl mb-1 ${isActive ? 'bg-amber-500 text-stone-900 font-bold hover:bg-amber-400' : 'hover:bg-stone-800 hover:text-white'}`}
+                                className={`w-full justify-start gap-3 rounded-none border-l-2 h-10 mb-1 transition-all duration-300
+                                    ${isActive
+                                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-bold'
+                                        : 'border-transparent hover:bg-white/5 hover:text-white hover:border-white/20'
+                                    }`}
                             >
-                                <item.icon className="w-5 h-5" />
+                                <item.icon className="w-4 h-4" />
                                 {item.label}
                             </Button>
                         </Link>
@@ -58,10 +66,20 @@ function FarmerSidebar() {
                 })}
             </nav>
 
-            <div className="p-4 border-t border-stone-800">
-                <Button variant="ghost" className="w-full justify-start gap-3 text-red-400 hover:bg-red-400/10 hover:text-red-300">
-                    <LogOut className="w-5 h-5" />
-                    Đăng xuất
+            <div className="p-4 border-t border-white/10">
+                <div className="bg-emerald-950/30 rounded border border-emerald-500/20 p-3 mb-4">
+                    <div className="flex justify-between items-center text-[10px] text-emerald-400 mb-1">
+                        <span>SYSTEM STATUS</span>
+                        <span className="animate-pulse">● ONLINE</span>
+                    </div>
+                    <div className="w-full bg-black h-1 rounded-full overflow-hidden">
+                        <div className="bg-emerald-500 w-full h-full animate-[shimmer_2s_infinite]" />
+                    </div>
+                </div>
+
+                <Button variant="ghost" className="w-full justify-start gap-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 font-mono text-xs uppercase hover:border-red-500/50 border border-transparent">
+                    <LogOut className="w-4 h-4" />
+                    Logout_Terminal
                 </Button>
             </div>
         </div>
@@ -72,34 +90,38 @@ function FarmerLayoutContent({ children }: { children: React.ReactNode }) {
     const { isLoading } = useFarmer();
 
     if (isLoading) {
-        return <div className="min-h-screen flex items-center justify-center bg-stone-50 text-stone-400">Đang tải dữ liệu nhà vườn...</div>
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#050505] text-emerald-500 font-mono">
+                <span className="animate-pulse">INITIALIZING_FARMER_NODE...</span>
+            </div>
+        );
     }
 
     return (
-        <div className="flex min-h-screen bg-stone-50">
+        <div className="flex min-h-screen bg-[#050505] text-zinc-300 font-mono selection:bg-emerald-500/30 selection:text-emerald-200">
             {/* Desktop Sidebar */}
             <div className="hidden md:block w-64 shrink-0 fixed inset-y-0 z-50">
                 <FarmerSidebar />
             </div>
 
             {/* Mobile Header */}
-            <div className="md:hidden fixed top-0 w-full z-50 bg-stone-900 border-b border-stone-800 px-4 h-16 flex items-center justify-between">
-                <span className="font-bold text-white">Sa Dec Farmer</span>
+            <div className="md:hidden fixed top-0 w-full z-50 bg-[#030303]/90 backdrop-blur border-b border-white/10 px-4 h-14 flex items-center justify-between">
+                <span className="font-bold text-white tracking-widest text-sm">SADEC.OS</span>
                 <Sheet>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white">
-                            <Menu className="w-6 h-6" />
+                        <Button variant="ghost" size="icon" className="text-emerald-500 hover:bg-emerald-500/10">
+                            <Menu className="w-5 h-5" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="p-0 bg-stone-900 border-stone-800">
+                    <SheetContent side="left" className="p-0 bg-[#030303] border-white/10 w-64">
                         <FarmerSidebar />
                     </SheetContent>
                 </Sheet>
             </div>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-64 p-4 md:p-8 pt-20 md:pt-8 overflow-x-hidden">
-                <div className="max-w-6xl mx-auto">
+            <main className="flex-1 md:ml-64 p-4 md:p-6 pt-16 md:pt-6 overflow-x-hidden">
+                <div className="max-w-7xl mx-auto">
                     {children}
                 </div>
             </main>
