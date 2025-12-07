@@ -19,6 +19,19 @@ export function LiveMetrics() {
         conversionRate: "+19%"
     })
 
+    // Simulation Mode for WOW Effect
+    useEffect(() => {
+        // Pulse "Active Users" every few seconds
+        const interval = setInterval(() => {
+            setMetrics(prev => ({
+                ...prev,
+                activeUsers: prev.activeUsers + Math.floor(Math.random() * 5) - 2, // fluctuate +/- 2
+                orders: Math.random() > 0.8 ? prev.orders + 1 : prev.orders // occasional order
+            }));
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
     useEffect(() => {
         if (!supabase) return;
         // Realtime subscription for Orders
