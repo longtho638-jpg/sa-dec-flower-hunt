@@ -63,7 +63,8 @@ export default function OrderForm({ flowerId, flowerName, flowerImage, basePrice
                     colors: ['#D0312D', '#EAB308', '#22C55E', '#EC4899']
                 });
 
-                await trackEvent("revenue", "order_placed", {
+                await trackEvent("purchase", {
+                    action: "order_placed",
                     order_id: data.orderId,
                     flower_id: flowerId,
                     amount: totalPrice,

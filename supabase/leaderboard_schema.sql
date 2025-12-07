@@ -16,8 +16,8 @@ ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
 
 -- Policies
 CREATE POLICY "leaderboard_select" ON leaderboard FOR SELECT USING (true);
-CREATE POLICY "leaderboard_insert" ON leaderboard FOR INSERT WITH CHECK (true);
-CREATE POLICY "leaderboard_update" ON leaderboard FOR UPDATE USING (true);
+-- INSERT/UPDATE disabled for public to prevent cheating. 
+-- Points must be updated via secure RPC or Service Role.
 
 -- Enable Realtime
 ALTER PUBLICATION supabase_realtime ADD TABLE leaderboard;

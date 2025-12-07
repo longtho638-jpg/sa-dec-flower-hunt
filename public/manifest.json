@@ -1,7 +1,7 @@
 {
-    "name": "Sa Đéc Flower Hunt",
+    "name": "Sa Đéc Flower Hunt - Festival Hoa Xuân 2028",
     "short_name": "Flower Hunt",
-    "description": "Sàn Dropshipping Hoa Tết Sa Đéc",
+    "description": "Săn hoa Sa Đéc, tích điểm đổi quà. Trải nghiệm festival hoa lớn nhất miền Tây!",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
@@ -10,13 +10,22 @@
         {
             "src": "/icon-192x192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
             "src": "/icon-512x512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         }
     ],
-    "orientation": "portrait"
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "vi-VN",
+    "categories": [
+        "shopping",
+        "lifestyle",
+        "entertainment"
+    ]
 }

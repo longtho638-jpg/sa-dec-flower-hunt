@@ -1,18 +1,20 @@
 "use client"
 
-import { Suspense, useEffect, useState } from "react"
-import { motion } from "framer-motion"
-import { Check, Download, Home, Share2, Loader2 } from "lucide-react"
-import Link from "next/link"
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation"
+import Confetti from "react-confetti"
 import confetti from "canvas-confetti"
+import { CheckCircle, Home } from "lucide-react"
+import { motion } from "framer-motion"
+import { Check, Download, Home as HomeIcon, Share2, Loader2 } from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ReferralCard } from "@/components/ReferralCard"
 
-import { useSearchParams } from "next/navigation"
-
-function OrderSuccessContent() {
+function SuccessContent() {
+    const router = useRouter();
     const searchParams = useSearchParams()
     const [orderId, setOrderId] = useState("")
     const [orderDate, setOrderDate] = useState("")
@@ -131,7 +133,7 @@ export default function OrderSuccessPage() {
     return (
         <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex items-center justify-center p-4">
             <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-stone-400" />}>
-                <OrderSuccessContent />
+                <SuccessContent />
             </Suspense>
         </div>
     )

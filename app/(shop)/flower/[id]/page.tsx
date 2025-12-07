@@ -1,66 +1,59 @@
 import { Metadata } from "next";
-import { FLOWERS } from "@/data/flowers";
 import FlowerDetailClient from "@/components/flower/FlowerDetailClient";
+import { getProductById } from "@/lib/api/products";
+import { notFound } from "next/navigation";
 
-interface Props {
-    params: Promise<{ id: string }>;
+interface PageProps {
+    params: Promise<{
+        id: string;
+    }>;
 }
 
-// Generate static params for the top known flowers to pre-build pages (SSG)
-export async function generateStaticParams() {
-    // In a real app, fetch this from DB
-    return FLOWERS.map((flower) => ({
-        id: String(flower.id),
-    }));
-}
+// 1. Generate Metadata dynamically
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+    const params = await props.params;
+    const product = await getProductById(params.id);
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { id } = await params;
-    const flowerId = Number(id);
-    const flower = FLOWERS.find((f) => f.id === flowerId);
-
-    if (!flower) {
+    if (!product) {
         return {
-            title: "Không tìm thấy hoa",
+            title: "Không tìm thấy sản phẩm | Sa Đéc Flower Hunt",
         };
     }
 
     return {
-        title: `${flower.name} | Sa Đéc Flower Hunt`,
-        description: flower.salesPitch,
+        title: `${product.name} - Đặt mua ngay | Sa Đéc Flower Hunt`,
+        description: product.description || "Mua hoa Sa Đéc chính hiệu trực tiếp từ nhà vườn.",
         openGraph: {
-            title: flower.name,
-            description: flower.salesPitch,
-            images: [flower.image],
+            images: product.images || [],
         },
     };
 }
 
-// This is a Server Component
-export default async function FlowerPage({ params }: Props) {
-    const { id } = await params;
-    const flowerId = Number(id);
-    const flower = FLOWERS.find((f) => f.id === flowerId);
+// 2. Main Server Component
+export default async function FlowerPage(props: PageProps) {
+    const params = await props.params;
+    const product = await getProductById(params.id);
 
-    if (!flower) {
-        return <FlowerDetailClient id={Number(id)} />;
+    if (!product) {
+        notFound();
     }
 
+    // JSON-LD for SEO
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'Product',
-        name: flower.name,
-        image: flower.image,
-        description: flower.salesPitch,
+        name: product.name,
+        image: product.image,
+        description: product.description,
         brand: {
             '@type': 'Brand',
             name: 'Sa Đéc Flower Hunt',
         },
         offers: {
             '@type': 'Offer',
-            url: `https://sadec-flower-hunt.vercel.app/flower/${flower.id}`,
+            url: `https://sadec-flower-hunt.vercel.app/flower/${product.id}`,
             priceCurrency: 'VND',
-            price: flower.basePrice,
+            price: product.price,
             availability: 'https://schema.org/InStock',
             itemCondition: 'https://schema.org/NewCondition',
         },
@@ -72,7 +65,8 @@ export default async function FlowerPage({ params }: Props) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            <FlowerDetailClient id={Number(id)} />
+            {/* Pass the full product object to the Client Component */}
+            <FlowerDetailClient product={product} />
         </>
     );
 }

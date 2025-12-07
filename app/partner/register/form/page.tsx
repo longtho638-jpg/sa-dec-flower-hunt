@@ -2,13 +2,16 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { supabase } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Check, Loader2, Sprout, Store, User } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import confetti from "canvas-confetti"
+
+import { StepIndicator } from "@/components/partner/register/StepIndicator"
+import { StepOne } from "@/components/partner/register/StepOne"
+import { StepTwo } from "@/components/partner/register/StepTwo"
+import { StepThree } from "@/components/partner/register/StepThree"
 
 export default function PartnerRegisterForm() {
     const router = useRouter()
@@ -23,20 +26,36 @@ export default function PartnerRegisterForm() {
         e.preventDefault()
         setIsLoading(true)
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        try {
+            // Insert into Supabase partner_leads
+            const formData = new FormData(e.target as HTMLFormElement);
 
-        setIsLoading(false)
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 }
-        })
+            const { error } = await supabase.from('partner_leads').insert({
+                full_name: formData.get('full_name'),
+                phone: formData.get('phone'),
+                garden_name: formData.get('garden_name'),
+                address: formData.get('address'),
+                flower_types: formData.get('flower_types'),
+                status: 'new'
+            });
 
-        // Redirect to Partner Dashboard
-        setTimeout(() => {
-            router.push("/partner")
-        }, 1000)
+            if (error) throw error;
+
+            setIsLoading(false)
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            })
+
+            // Redirect to Partner Dashboard
+            setTimeout(() => {
+                router.push("/partner")
+            }, 1000)
+        } catch (error) {
+            console.error("Partner reg error", error);
+            setIsLoading(false) // Fix infinite loading on error
+        }
     }
 
     return (
@@ -47,22 +66,7 @@ export default function PartnerRegisterForm() {
                     <p className="text-stone-500 dark:text-stone-400">Gia nhập mạng lưới Sa Đéc Flower Hunt</p>
                 </div>
 
-                {/* Progress Steps */}
-                <div className="flex justify-between mb-8 px-8">
-                    {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex flex-col items-center">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${step >= i
-                                    ? "bg-green-600 border-green-600 text-white"
-                                    : "bg-transparent border-stone-300 text-stone-300"
-                                }`}>
-                                {step > i ? <Check className="w-6 h-6" /> : i}
-                            </div>
-                            <span className="text-xs mt-2 text-stone-500">
-                                {i === 1 ? "Thông tin" : i === 2 ? "Vườn hoa" : "Xác nhận"}
-                            </span>
-                        </div>
-                    ))}
-                </div>
+                <StepIndicator step={step} />
 
                 <Card className="border-stone-200 dark:border-stone-800 shadow-xl">
                     <form onSubmit={handleSubmit}>
@@ -79,68 +83,9 @@ export default function PartnerRegisterForm() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {step === 1 && (
-                                <motion.div
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className="space-y-4"
-                                >
-                                    <div className="space-y-2">
-                                        <Label htmlFor="name">Họ và tên</Label>
-                                        <div className="relative">
-                                            <User className="absolute left-3 top-3 h-4 w-4 text-stone-400" />
-                                            <Input id="name" placeholder="Nguyễn Văn A" className="pl-9" required />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="phone">Số điện thoại</Label>
-                                        <Input id="phone" placeholder="0909..." type="tel" required />
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {step === 2 && (
-                                <motion.div
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className="space-y-4"
-                                >
-                                    <div className="space-y-2">
-                                        <Label htmlFor="gardenName">Tên vườn</Label>
-                                        <div className="relative">
-                                            <Store className="absolute left-3 top-3 h-4 w-4 text-stone-400" />
-                                            <Input id="gardenName" placeholder="Vườn hoa Út Cưng" className="pl-9" required />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="address">Địa chỉ vườn</Label>
-                                        <Input id="address" placeholder="Tân Quy Đông, Sa Đéc..." required />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="flowers">Các loại hoa chủ lực</Label>
-                                        <div className="relative">
-                                            <Sprout className="absolute left-3 top-3 h-4 w-4 text-stone-400" />
-                                            <Input id="flowers" placeholder="Cúc mâm xôi, Hồng lửa..." className="pl-9" required />
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {step === 3 && (
-                                <motion.div
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className="space-y-4 text-center py-4"
-                                >
-                                    <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
-                                        <Check className="w-8 h-8 text-green-600" />
-                                    </div>
-                                    <h3 className="text-lg font-medium">Sẵn sàng gia nhập!</h3>
-                                    <p className="text-stone-500 text-sm">
-                                        Bằng việc nhấn "Đăng ký", bạn đồng ý với các điều khoản hợp tác của Sàn Dropshipping Sa Đéc.
-                                    </p>
-                                </motion.div>
-                            )}
+                            {step === 1 && <StepOne />}
+                            {step === 2 && <StepTwo />}
+                            {step === 3 && <StepThree />}
                         </CardContent>
                         <CardFooter className="flex justify-between">
                             {step > 1 ? (
@@ -168,3 +113,4 @@ export default function PartnerRegisterForm() {
         </div>
     )
 }
+

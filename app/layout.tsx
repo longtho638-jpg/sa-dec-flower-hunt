@@ -4,15 +4,15 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { LanguageProvider } from "@/lib/i18n";
 import { StructuredData } from "@/components/StructuredData";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { Toaster } from "sonner";
-import Script from "next/script"; // Added Script import
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#16a34a",
+  themeColor: "#000000",
 };
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Flower Hunt",
   },
   openGraph: {
@@ -61,11 +61,12 @@ export default function RootLayout({
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <LanguageProvider>
+            <ServiceWorkerRegister />
             {children}
             <PWAInstallPrompt />
             <StructuredData />

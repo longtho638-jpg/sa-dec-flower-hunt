@@ -48,7 +48,9 @@ export default function LeadCaptureForm({ flowerId, flowerName }: LeadCaptureFor
             }
 
             // AARRR: Activation
-            await trackEvent("activation", "lead_form_submit", {
+            // AARRR: Activation
+            await trackEvent("lead_capture", {
+                action: "lead_form_submit",
                 flower_id: flowerId,
                 flower_name: flowerName,
                 phone_hash: phone.replace(/\D/g, "").slice(-3) // Privacy

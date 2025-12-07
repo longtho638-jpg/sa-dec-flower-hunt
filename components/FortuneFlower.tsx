@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { motion, useAnimation } from "framer-motion";
 import { Sparkles, Share2, RotateCw, Dna } from "lucide-react";
@@ -68,7 +68,9 @@ export function FortuneFlower() {
           Bói Hoa
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-gradient-to-b from-purple-50 to-white border-purple-100">
+      <DialogContent className="sm:max-w-md bg-gradient-to-b from-purple-50 to-white border-purple-100" aria-describedby="fortune-desc">
+        <DialogTitle className="sr-only">Vận Mệnh Hoa 2026</DialogTitle>
+        <div id="fortune-desc" className="sr-only">Quay vòng quay để bói vận mệnh năm mới cùng các loài hoa Sa Đéc</div>
         <div className="flex flex-col items-center py-6">
           <h2 className="text-2xl font-bold text-purple-800 mb-6 flex items-center gap-2">
             <Dna className="w-6 h-6" /> Vận Mệnh Hoa 2026
@@ -99,7 +101,13 @@ export function FortuneFlower() {
                     }}
                   >
                     <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white shadow-sm z-10 bg-white">
-                      <Image src={flower.image} alt={flower.name} fill className="object-cover" />
+                      <Image
+                        src={flower.image}
+                        alt={flower.name}
+                        fill
+                        className="object-cover"
+                        sizes="48px"
+                      />
                     </div>
                     {/* Divider lines could go here */}
                     <div className="absolute top-1/2 left-1/2 w-[1px] h-1/2 bg-purple-100 origin-top -translate-x-1/2 -translate-y-1/2 -z-10"></div>

@@ -38,7 +38,7 @@ export default function WishlistButton({ flowerId, flowerName, className = "" }:
             setIsWishlisted(true);
 
             // AARRR: Activation
-            trackEvent("activation", "wishlist_add", { flower_id: flowerId, flower_name: flowerName });
+            trackEvent("add_to_wishlist", { flower_id: flowerId, flower_name: flowerName });
         }
     };
 

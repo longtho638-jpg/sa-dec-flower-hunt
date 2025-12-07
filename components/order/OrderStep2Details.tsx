@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { User, Phone, FileText } from "lucide-react";
 import { SmartAddressInput } from "../SmartAddressInput";
+import { Button } from "@/components/ui/button";
 
 interface OrderStep2DetailsProps {
     name: string;
@@ -103,4 +104,3 @@ export function OrderStep2Details({
         </motion.div>
     );
 }
-```

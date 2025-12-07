@@ -106,8 +106,8 @@
 - **Vision**: transform from "Sa Dec Flower Shop" to **"Vietnam's Premier AgriTech Platform"**. WebApps are the solution for the entire industry.
 - **Urgency**: **December Sa Dec Flower Festival** is the launchpad. Must WOW immediately.
 - **Key Milestones**:
-  - **Dec 2025**: **"Festival Launch"** - 10,000 visitors check-in via App (Viral Loop).
-  - **Q1 2026**: Launch "Climate Warrior" flower line (Heat resistant >35°C).
+  - **Dec 2025 (CURRENT)**: **PRODUCT LIVE**. Launched "Festival Check-in" & "Climate Warrior AI" Apps.
+  - **Q1 2026**: Scale "Climate Warrior" via viral TikTok campaign (#HeatMapChallenge).
   - **Q4 2026**: Achieve 50% revenue from B2B AgriTech solutions (SaaS for farmers).
 
 ## 3. Product & Value Proposition ("Blue Ocean")

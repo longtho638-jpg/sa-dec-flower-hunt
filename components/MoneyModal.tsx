@@ -32,7 +32,8 @@ export function MoneyModal({ isOpen, onClose, onSuccess }: MoneyModalProps) {
 
     try {
       // 1. Track Lead
-      trackEvent("acquisition", "lead_form_submit", { ...formData });
+      // 1. Track Lead
+      trackEvent("lead_capture", { action: "lead_form_submit", category: "acquisition", ...formData });
 
       // 2. Save to Supabase
       const { error } = await supabase.from("leads").insert([
@@ -56,7 +57,7 @@ export function MoneyModal({ isOpen, onClose, onSuccess }: MoneyModalProps) {
       });
 
       toast.success("🧧 Chúc mừng! Bạn đã nhận ưu đãi thành công!");
-      
+
       if (onSuccess) onSuccess();
       onClose();
 
@@ -94,7 +95,7 @@ export function MoneyModal({ isOpen, onClose, onSuccess }: MoneyModalProps) {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="phone">Số điện thoại (Zalo)</Label>
             <Input
@@ -120,25 +121,25 @@ export function MoneyModal({ isOpen, onClose, onSuccess }: MoneyModalProps) {
 
           <div className="flex items-center space-x-2 pt-2">
             <input
-                type="checkbox"
-                id="wholesale"
-                className="h-4 w-4 rounded border-stone-300 text-red-600 focus:ring-red-500"
-                checked={formData.wholesale}
-                onChange={(e) => setFormData({ ...formData, wholesale: e.target.checked })}
+              type="checkbox"
+              id="wholesale"
+              className="h-4 w-4 rounded border-stone-300 text-red-600 focus:ring-red-500"
+              checked={formData.wholesale}
+              onChange={(e) => setFormData({ ...formData, wholesale: e.target.checked })}
             />
             <Label htmlFor="wholesale" className="text-sm font-normal cursor-pointer">
               Gửi tôi báo giá sỉ & catalogue hoa 2026
             </Label>
           </div>
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-bold h-12 text-lg shadow-lg"
             disabled={loading}
           >
             {loading ? "Đang xử lý..." : "🧧 NHẬN ƯU ĐÃI NGAY"}
           </Button>
-          
+
           <p className="text-xs text-center text-stone-400 mt-2">
             *Thông tin của bạn được bảo mật tuyệt đối.
           </p>

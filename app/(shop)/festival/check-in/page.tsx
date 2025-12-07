@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Gift, Trophy, QrCode } from "lucide-react";
+import { MapPin, Gift, Trophy, QrCode, AlertTriangle, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Confetti from "react-confetti";
@@ -10,26 +10,76 @@ import Confetti from "react-confetti";
 export default function FestivalCheckInPage() {
     const [step, setStep] = useState<"location" | "form" | "reward">("location");
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({ name: "", phone: "" });
+    const [formData, setFormData] = useState({ name: "", phone: "", email: "" });
+    const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [voucher, setVoucher] = useState("");
+    const [distance, setDistance] = useState(0);
 
-    // Mock Location Check
+    // Real Geolocation Check
     const handleCheckIn = () => {
         setLoading(true);
-        // Simulate GPS check
-        setTimeout(() => {
+        setErrorMsg("");
+
+        if (!navigator.geolocation) {
+            setErrorMsg("Thiết bị không hỗ trợ định vị. Hãy thử bằng điện thoại.");
             setLoading(false);
-            setStep("form");
-        }, 1500);
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                setLocation({ lat: latitude, lng: longitude });
+                // For UX, we verify GPS locally or just move to next step and verify on server
+                // Here we simulate a quick "Locating..." and move to form
+                setTimeout(() => {
+                    setLoading(false);
+                    setStep("form");
+                }, 1000);
+            },
+            (error) => {
+                console.error(error);
+                setErrorMsg("Không thể lấy vị trí. Vui lòng bật GPS và cho phép truy cập.");
+                setLoading(false);
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
+        setErrorMsg("");
+
+        try {
+            const res = await fetch('/api/festival/check-in', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    phone: formData.phone,
+                    email: formData.email,
+                    lat: location?.lat,
+                    lng: location?.lng,
+                    device_info: navigator.userAgent
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || "Có lỗi xảy ra");
+            }
+
+            setVoucher(data.voucher);
+            setDistance(data.distance);
             setStep("reward");
-        }, 1500);
+        } catch (err: any) {
+            setErrorMsg(err.message || "Lỗi kết nối server");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -60,14 +110,22 @@ export default function FestivalCheckInPage() {
                             <div className="bg-black/20 p-4 rounded-2xl border border-white/10 text-center">
                                 <MapPin className="w-8 h-8 mx-auto mb-2 text-yellow-300 animate-bounce" />
                                 <p className="text-sm">Bạn đang ở khu vực Lễ Hội?</p>
-                                <p className="text-xs opacity-70 mt-1">Hệ thống sẽ xác nhận vị trí của bạn</p>
+                                <p className="text-xs opacity-70 mt-1">Hệ thống sẽ xác nhận vị trí GPS của bạn</p>
                             </div>
+
+                            {errorMsg && (
+                                <div className="bg-red-500/80 p-3 rounded-lg text-xs flex items-center gap-2">
+                                    <AlertTriangle className="w-4 h-4 shrink-0" />
+                                    {errorMsg}
+                                </div>
+                            )}
+
                             <Button
                                 onClick={handleCheckIn}
                                 disabled={loading}
                                 className="w-full h-14 bg-white text-red-600 font-bold text-lg hover:bg-gray-100 shadow-lg"
                             >
-                                {loading ? "Đang xác thực..." : "📍 XÁC NHẬN VỊ TRÍ NGAY"}
+                                {loading ? "Đang định vị..." : "📍 XÁC NHẬN VỊ TRÍ NGAY"}
                             </Button>
                         </motion.div>
                     )}
@@ -81,9 +139,21 @@ export default function FestivalCheckInPage() {
                             className="space-y-4"
                         >
                             <div className="text-center space-y-2">
+                                <div className="flex items-center justify-center gap-2 text-green-300 mb-2">
+                                    <CheckCircle className="w-5 h-5" />
+                                    <span className="text-sm font-bold">Đã tìm thấy vị trí</span>
+                                </div>
                                 <h3 className="font-bold text-xl">Một bước nữa thôi!</h3>
                                 <p className="text-sm opacity-80">Nhập thông tin để nhận Voucher vào SĐT</p>
                             </div>
+
+                            {errorMsg && (
+                                <div className="bg-red-500/80 p-3 rounded-lg text-xs flex items-center gap-2">
+                                    <AlertTriangle className="w-4 h-4 shrink-0" />
+                                    {errorMsg}
+                                </div>
+                            )}
+
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <Input
                                     placeholder="Tên của bạn"
@@ -98,6 +168,14 @@ export default function FestivalCheckInPage() {
                                     type="tel"
                                     value={formData.phone}
                                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                    required
+                                />
+                                <Input
+                                    placeholder="Email (Để nhận Voucher)"
+                                    className="h-12 bg-white/90 text-black border-0 placeholder:text-stone-500"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
                                     required
                                 />
                                 <Button
@@ -128,7 +206,7 @@ export default function FestivalCheckInPage() {
                                 <motion.div
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
-                                    delay={0.5}
+                                    transition={{ delay: 0.5 }}
                                     className="absolute top-0 right-10 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full border border-white/50 rotate-12"
                                 >
                                     +500 ĐIỂM
@@ -139,11 +217,12 @@ export default function FestivalCheckInPage() {
                                 <h2 className="text-3xl font-bold text-white mb-2">CHÚC MỪNG!</h2>
                                 <p className="text-lg font-medium text-yellow-100">Bạn nhận được Voucher 50K</p>
                                 <p className="text-sm opacity-70 mt-1">Mã đã được gửi qua Zalo của bạn</p>
+                                {distance > 0 && <p className="text-[10px] opacity-50 mt-2">Khoảng cách xác thực: {distance.toFixed(1)}km</p>}
                             </div>
 
                             <div className="bg-white/90 text-black p-4 rounded-xl">
                                 <div className="text-xs font-mono text-stone-500 uppercase tracking-wide mb-1">Mã Voucher</div>
-                                <div className="text-2xl font-bold font-mono tracking-wider text-red-600">FESTIVAL-2026</div>
+                                <div className="text-2xl font-bold font-mono tracking-wider text-red-600">{voucher}</div>
                             </div>
 
                             <Button

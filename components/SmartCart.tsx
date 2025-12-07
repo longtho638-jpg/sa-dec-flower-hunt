@@ -1,186 +1,167 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useCartStore } from "@/lib/cartStore";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ShoppingBag, X, Minus, Plus, Zap } from "lucide-react";
+import { formatPrice } from "@/data/flowers";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MoneyModal } from "./MoneyModal";
-import Image from "next/image";
+import { toast } from "sonner";
+import { processCheckout } from "@/lib/api/checkout";
 
-export function SmartCart() {
+export const SmartCart = () => {
+  const { items, removeItem, updateQuantity, getTotal } = useCartStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [showMoneyModal, setShowMoneyModal] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  // Use hooks for actions - these are stable and safe
-  const removeItem = useCartStore((state) => state.removeItem);
-  const updateQuantity = useCartStore((state) => state.updateQuantity);
 
-  // Local state for values to avoid hydration mismatch
-  const [cartValues, setCartValues] = useState({
-    items: [],
-    count: 0,
-    total: 0
-  });
 
-  useEffect(() => {
-    setIsMounted(true);
-    useCartStore.persist.rehydrate();
+  const handleOneClickCheckout = async () => {
+    setIsCheckingOut(true);
 
-    // Subscribe to changes
-    const unsub = useCartStore.subscribe((state) => {
-      setCartValues({
-        items: state.getSafeItems() as any,
-        count: state.itemCount(),
-        total: state.getTotal()
+    try {
+      const orderId = await processCheckout(items, getTotal());
+
+      toast.success("Đặt hàng thành công! 🌸", {
+        description: `Mã đơn: ${orderId}. Chúng tôi sẽ liên hệ trong 30 phút.`,
+        duration: 5000,
       });
-    });
 
-    // Initial sync
-    const state = useCartStore.getState();
-    setCartValues({
-      items: state.getSafeItems() as any,
-      count: state.itemCount(),
-      total: state.getTotal()
-    });
+      // Clear cart on success
+      useCartStore.getState().clearCart();
+      setIsOpen(false);
 
-    return () => unsub();
-  }, []);
+    } catch (error: any) {
+      toast.error("Lỗi đặt hàng", {
+        description: error.message || "Vui lòng thử lại sau.",
+      });
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
-  const { items, count, total } = cartValues;
 
-  if (!isMounted) return null;
+  if (items.length === 0) return null;
 
   return (
-    <>
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="fixed bottom-6 right-6 z-50 bg-stone-900 text-white p-4 rounded-full shadow-2xl flex items-center justify-center border-4 border-white"
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="fixed bottom-6 right-6 z-50"
+        >
+          <Button
+            size="lg"
+            className="rounded-full h-16 w-16 bg-gradient-to-r from-red-600 to-rose-600 shadow-xl hover:shadow-2xl border-4 border-white flex flex-col items-center justify-center p-0 gap-0"
           >
-            <ShoppingCart className="w-6 h-6" />
-            <AnimatePresence>
-              {count > 0 && (
-                <motion.span
-                  key="badge"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-white"
-                >
-                  {count}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
-        </SheetTrigger>
-        <SheetContent className="w-full sm:max-w-md flex flex-col bg-stone-50 z-[60]">
-          <SheetHeader>
-            <SheetTitle className="flex items-center gap-2 text-2xl">
-              <ShoppingCart className="w-6 h-6" /> Giỏ Hàng
-            </SheetTitle>
-          </SheetHeader>
+            <ShoppingBag className="w-6 h-6 text-white" />
+            <span className="text-[10px] font-bold text-white leading-none mt-1">
+              {items.length} món
+            </span>
+          </Button>
+        </motion.div>
+      </SheetTrigger>
 
-          <div className="flex-1 overflow-y-auto py-4">
-            {(!items || items.length === 0) ? (
-              <div className="flex flex-col items-center justify-center h-64 text-stone-400">
-                <ShoppingCart className="w-16 h-16 mb-4 opacity-20" />
-                <p>Giỏ hàng đang trống</p>
-                <Button variant="link" onClick={() => setIsOpen(false)}>
-                  Tiếp tục xem hoa
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {items.filter((i: any) => i && i.name).map((item: any) => (
-                  <motion.div
-                    layout
-                    key={item.id || Math.random()}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, x: -100 }}
-                    className="flex gap-4 bg-white p-3 rounded-xl shadow-sm border border-stone-100"
-                  >
-                    <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-stone-100">
-                      {item.image && (
-                        <Image
-                          src={item.image}
-                          alt={item.name || 'Product'}
-                          fill
-                          className="object-cover"
-                        />
-                      )}
+      <SheetContent className="flex flex-col h-full sm:max-w-md w-full">
+        <SheetHeader className="border-b pb-4">
+          <SheetTitle className="flex justify-between items-center text-xl font-bold">
+            Giỏ Hàng ({items.length})
+            <span className="text-red-600">{formatPrice(getTotal())}</span>
+          </SheetTitle>
+        </SheetHeader>
+
+        <div className="flex-1 overflow-y-auto py-4 -mx-4 px-4 space-y-4">
+          <AnimatePresence>
+            {items.map((item) => (
+              <motion.div
+                key={item.id}
+                layout
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex gap-4 p-3 bg-stone-50 rounded-xl"
+              >
+                <div className="h-20 w-20 rounded-lg overflow-hidden bg-white shrink-0 relative">
+                  <img src={item.image} alt={item.name} className="object-cover w-full h-full" />
+                </div>
+
+                <div className="flex-1 flex flex-col justify-between">
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-semibold text-stone-900 line-clamp-2 text-sm">{item.name}</h4>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      className="text-stone-400 hover:text-red-500 p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="flex justify-between items-end">
+                    <span className="font-bold text-stone-900">{formatPrice(item.price)}</span>
+                    <div className="flex items-center gap-3 bg-white rounded-full border px-2 py-1">
+                      <button
+                        onClick={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
+                        className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-stone-100 text-stone-500"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-stone-100 text-stone-900"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
                     </div>
-                    <div className="flex-1 flex flex-col justify-between">
-                      <div>
-                        <h4 className="font-bold text-stone-900 line-clamp-1">{item.name || 'Unknown'}</h4>
-                        <p className="text-sm font-medium text-red-600">
-                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price || 0)}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center gap-2 bg-stone-100 rounded-full px-2 py-1">
-                          <button
-                            onClick={() => item.id && updateQuantity(item.id, -1)}
-                            className="p-1 hover:text-red-600 transition-colors"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="text-xs font-bold w-4 text-center">{item.quantity || 1}</span>
-                          <button
-                            onClick={() => item.id && updateQuantity(item.id, 1)}
-                            className="p-1 hover:text-green-600 transition-colors"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
-                        <button
-                          onClick={() => item.id && removeItem(item.id)}
-                          className="text-stone-400 hover:text-red-500 transition-colors p-2"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        <div className="border-t pt-4 space-y-4">
+          <div className="bg-amber-50 p-3 rounded-lg flex items-start gap-2 text-sm text-amber-800">
+            <Zap className="w-4 h-4 mt-0.5 shrink-0" />
+            <p>Đặt trong <span className="font-bold">15 phút</span> tới để được giao hàng nhanh miễn phí!</p>
           </div>
 
-          {items.length > 0 && (
-            <SheetFooter className="border-t border-stone-200 pt-4 mt-auto">
-              <div className="w-full space-y-4">
-                <div className="flex items-center justify-between text-lg font-bold">
-                  <span>Tổng cộng:</span>
-                  <span className="text-red-600">
-                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total)}
-                  </span>
-                </div>
-                <Button
-                  onClick={() => setShowMoneyModal(true)}
-                  className="w-full bg-stone-900 text-white hover:bg-stone-800 h-12 text-lg font-bold shadow-lg"
-                >
-                  Liên Hệ Đặt Hàng <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-                <p className="text-xs text-center text-stone-500">
-                  *Phí vận chuyển sẽ được tính khi xác nhận đơn hàng.
-                </p>
-              </div>
-            </SheetFooter>
-          )}
-        </SheetContent>
-      </Sheet>
+          <div className="space-y-1">
+            <div className="flex justify-between text-stone-500">
+              <span>Tạm tính</span>
+              <span>{formatPrice(getTotal())}</span>
+            </div>
+            <div className="flex justify-between text-stone-500">
+              <span>Phí ship</span>
+              <span className="text-green-600 font-medium">Miễn phí</span>
+            </div>
+            <div className="flex justify-between text-xl font-bold pt-2 border-t">
+              <span>Tổng cộng</span>
+              <span className="text-red-600">{formatPrice(getTotal())}</span>
+            </div>
+          </div>
 
-      <MoneyModal
-        isOpen={showMoneyModal}
-        onClose={() => setShowMoneyModal(false)}
-        onSuccess={() => setIsOpen(false)}
-      />
-    </>
+          <Button
+            onClick={handleOneClickCheckout}
+            disabled={isCheckingOut}
+            className="w-full h-14 rounded-xl text-lg font-bold bg-stone-900 hover:bg-stone-800 shadow-xl active:scale-95 transition-all"
+          >
+            {isCheckingOut ? (
+              <motion.div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Đang xử lý...
+              </motion.div>
+            ) : (
+              "MUA NGAY (1-CLICK)"
+            )}
+          </Button>
+          <p className="text-xs text-center text-stone-400">
+            Thanh toán khi nhận hàng • Hoàn trả miễn phí
+          </p>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
-}
+};

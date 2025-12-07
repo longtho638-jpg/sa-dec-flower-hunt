@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Thermometer, AlertTriangle, Check, Scan, Leaf, Droplets } from "lucide-react";
+import { Thermometer, AlertTriangle, Scan, Droplets, ShieldCheck, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Mock data for "Resilient" Flowers
@@ -48,7 +48,7 @@ export function ClimateScanner() {
         // Simulate scanning animation
         const interval = setInterval(() => {
             currentTemp += Math.random() > 0.5 ? 1 : 0.5;
-            setTemp(Math.min(38, Number(currentTemp.toFixed(1))));
+            setTemp(Math.min(42, Number(currentTemp.toFixed(1)))); // Allow up to 42 for dramatic effect
         }, 100);
 
         setTimeout(() => {
@@ -58,6 +58,19 @@ export function ClimateScanner() {
             setResultFlower(WARRIOR_FLOWERS[Math.floor(Math.random() * WARRIOR_FLOWERS.length)]);
         }, 2500);
     };
+
+    const handleShare = () => {
+        const text = `🔥 Nhà tôi đang ${temp}°C! Cây cối chết hết, trừ "Chiến Binh" này. Thử thách cùng Climate Warrior! #HeatMapChallenge`;
+        navigator.clipboard.writeText(text);
+        alert("Đã copy nội dung chia sẻ! Hãy đăng lên Facebook/TikTok ngay.");
+    };
+
+    const handleOrder = () => {
+        // Mock Zalo Link
+        window.open(`https://zalo.me/sadecflowerhunt?text=Tôi muốn đặt ${resultFlower.name} mã ${resultFlower.code}`, '_blank');
+    };
+
+    const isHighHeat = temp > 35;
 
     return (
         <div className="w-full max-w-md mx-auto bg-stone-900 text-white rounded-3xl overflow-hidden shadow-2xl border border-stone-700 relative">
@@ -123,15 +136,27 @@ export function ClimateScanner() {
                             animate={{ y: 0, opacity: 1 }}
                             className="text-left"
                         >
-                            <div className="bg-red-500/10 border border-red-500/50 p-4 rounded-xl mb-6 flex gap-3 items-start">
+                            <div className="bg-red-500/10 border border-red-500/50 p-4 rounded-xl mb-4 flex gap-3 items-start">
                                 <AlertTriangle className="text-red-500 shrink-0 mt-1" />
                                 <div>
                                     <h3 className="font-bold text-red-400 text-sm">CẢNH BÁO: NHIỆT ĐỘ CỰC ĐOAN</h3>
                                     <p className="text-xs text-red-200/70 mt-1">
-                                        Khu vực của bạn chịu hiệu ứng "Đảo Nhiệt Đô Thị". Nhiệt độ bề mặt có thể đạt {temp + 5}°C.
+                                        Khu vực của bạn chịu hiệu ứng "Đảo Nhiệt Đô Thị". Nhiệt độ bề mặt có thể đạt {Math.round(temp + 5)}°C.
                                     </p>
                                 </div>
                             </div>
+
+                            {isHighHeat && (
+                                <div className="bg-green-500/10 border border-green-500/30 p-3 rounded-xl mb-6 flex items-center gap-3">
+                                    <ShieldCheck className="text-green-500 w-8 h-8 shrink-0" />
+                                    <div>
+                                        <div className="text-green-400 font-bold text-xs uppercase tracking-wider">Green Guarantee™</div>
+                                        <div className="text-stone-300 text-xs mt-1">
+                                            Cây chết vì nóng? Chúng tôi <strong>đổi cây mới miễn phí</strong> trong 30 ngày.
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="bg-stone-800 rounded-2xl p-4 border border-stone-700">
                                 <div className="text-xs text-stone-400 mb-2 font-mono">ĐỀ XUẤT TỐI ƯU (MATCH: 98%)</div>
@@ -145,7 +170,7 @@ export function ClimateScanner() {
                                         <h3 className="text-xl font-bold text-white mb-1">{resultFlower.name}</h3>
                                         <div className="flex flex-wrap gap-2 mt-2">
                                             <span className="bg-orange-500/20 text-orange-300 text-[10px] px-2 py-1 rounded-full border border-orange-500/30 flex items-center gap-1">
-                                                <Thermometer className="w-3 h-3" /> Chịu nhiệt {resultFlower.tempLimit}°C
+                                                <Thermometer className="w-3 h-3" /> Chịu {resultFlower.tempLimit}°C
                                             </span>
                                             <span className="bg-blue-500/20 text-blue-300 text-[10px] px-2 py-1 rounded-full border border-blue-500/30 flex items-center gap-1">
                                                 <Droplets className="w-3 h-3" /> Nước: {resultFlower.waterNeeds}
@@ -153,16 +178,26 @@ export function ClimateScanner() {
                                         </div>
                                     </div>
                                 </div>
-                                <Button className="w-full mt-4 bg-green-600 hover:bg-green-700 font-bold text-white">
-                                    CHỌN CHIẾN BINH NÀY
+                                <Button
+                                    onClick={handleOrder}
+                                    className="w-full mt-4 bg-green-600 hover:bg-green-700 font-bold text-white h-12"
+                                >
+                                    ĐẶT MUA NGAY (ZALO)
                                 </Button>
                             </div>
 
                             <button
-                                onClick={() => setStatus("idle")}
-                                className="w-full text-center text-stone-500 text-xs mt-4 hover:text-stone-300 underline"
+                                onClick={handleShare}
+                                className="w-full flex items-center justify-center gap-2 text-center text-stone-400 text-xs mt-6 hover:text-white transition-colors"
                             >
-                                Quét lại vị trí khác
+                                <Share2 className="w-4 h-4" /> Chia sẻ kết quả (#HeatMapChallenge)
+                            </button>
+
+                            <button
+                                onClick={() => setStatus("idle")}
+                                className="w-full text-center text-stone-500 text-[10px] mt-4 hover:text-stone-300 underline"
+                            >
+                                QUÉT LẠI VỊ TRÍ KHÁC
                             </button>
                         </motion.div>
                     )}

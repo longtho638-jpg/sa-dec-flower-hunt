@@ -4,6 +4,22 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 // GET: Fetch orders for a partner (by phone)
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
+
+    // Security Check: Verify Auth Token
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.split(' ')[1];
+
+    if (!token && isSupabaseConfigured) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (token) {
+        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+    }
+
     const phone = searchParams.get("phone");
 
     if (!phone) {

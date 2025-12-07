@@ -13,8 +13,21 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'plus.unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+      },
     ],
   },
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/dashboard',
+  //       destination: '/admin',
+  //       permanent: true,
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

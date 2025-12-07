@@ -9,7 +9,7 @@ export function GardenProfile() {
         <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
             <div className="flex items-center gap-3 mb-3">
                 <Avatar className="w-12 h-12 border-2 border-white shadow-sm">
-                    <AvatarImage src="/avatars/garden-owner.png" />
+                    <AvatarImage src="/avatars/garden-owner.svg" />
                     <AvatarFallback className="bg-orange-100 text-orange-700 font-bold">UH</AvatarFallback>
                 </Avatar>
                 <div>

@@ -19,12 +19,12 @@ export default function Navbar() {
             <span className="text-xs font-bold">Trang chủ</span>
           </Link>
 
-          <button className="flex flex-col items-center gap-1 text-stone-400 hover:text-red-600 transition-colors -mt-8">
+          <Link href="/scan" className="flex flex-col items-center gap-1 text-stone-400 hover:text-red-600 transition-colors -mt-8">
             <div className="bg-gradient-to-br from-red-500 to-red-600 p-4 rounded-full shadow-xl border-4 border-white">
               <ScanLine className="w-7 h-7 text-white" />
             </div>
             <span className="text-xs font-bold mt-2">Quét QR</span>
-          </button>
+          </Link>
 
           <Link
             href="/orders"

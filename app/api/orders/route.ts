@@ -1,153 +1,122 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { FLOWERS, SIZES } from "@/data/flowers";
+import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
-    try {
-        const body = await request.json();
-        const {
-            flowerId,
-            flowerName,
-            size,
-            quantity,
-            // price, // REMOVED: Do not trust client price
-            customerName,
-            customerPhone,
-            address,
-            notes
-        } = body;
-
-        // Validate required fields
-        if (!flowerId || !size || !customerPhone || !address) {
-            return NextResponse.json(
-                { error: "Missing required fields" },
-                { status: 400 }
-            );
-        }
-
-        // Security: Recalculate price on server
-        const flower = FLOWERS.find(f => f.id === flowerId);
-        if (!flower) {
-            return NextResponse.json({ error: "Invalid flower ID" }, { status: 400 });
-        }
-
-        const basePrice = flower.basePrice;
-        // @ts-ignore - Size key validation
-        const multiplier = SIZES[size]?.multiplier || 1;
-        const calculatedPrice = basePrice * multiplier * (quantity || 1);
-        const price = calculatedPrice; // Use calculated price
-
-        // Generate order ID
-        const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
-
-        // If Supabase is not configured, return demo success
-        if (!isSupabaseConfigured) {
-            console.log("[DEMO MODE] Order created:", { orderId, flowerId, flowerName, size, quantity, price, customerName, customerPhone });
-            return NextResponse.json({
-                success: true,
-                orderId,
-                message: "Order created (demo mode)",
-                demo: true
-            });
-        }
-
-        // Real Supabase flow
-        const client = supabase as any;
-
-        // Get or create user
-        let { data: existingUser } = await client
-            .from("users")
-            .select("id")
-            .eq("phone", customerPhone)
-            .single();
-
-        let userId: string | null = null;
-
-        if (!existingUser) {
-            const { data: newUser } = await client
-                .from("users")
-                .insert({ phone: customerPhone })
-                .select("id")
-                .single();
-            userId = newUser?.id;
-        } else {
-            userId = existingUser.id;
-        }
-
-        // Create order
-        const { data: order, error: orderError } = await client
-            .from("orders")
-            .insert({
-                user_id: userId,
-                flower_id: flowerId,
-                flower_name: flowerName,
-                size,
-                quantity,
-                price,
-                customer_name: customerName,
-                customer_phone: customerPhone,
-                address,
-                notes,
-                status: 'pending'
-            })
-            .select("id")
-            .single();
-
-        if (orderError) {
-            console.error("Order creation error:", orderError);
-            return NextResponse.json(
-                { error: "Failed to create order" },
-                { status: 500 }
-            );
-        }
-
-        return NextResponse.json({
-            success: true,
-            orderId: order?.id || orderId,
-            message: "Order created successfully"
-        });
-
-    } catch (error) {
-        console.error("Order error:", error);
-        return NextResponse.json(
-            { error: "Internal server error" },
-            { status: 500 }
-        );
-    }
-}
-
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
-    const phone = searchParams.get("phone");
+    const phone = searchParams.get('phone');
 
     if (!phone) {
-        return NextResponse.json(
-            { error: "Phone number required" },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
     }
 
-    if (!isSupabaseConfigured) {
+    // Initialize Supabase with Service Role Key to bypass RLS for phone-based lookup
+    // This is secure because we are strictly filtering by the provided phone number
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    // Verify environment configuration
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseServiceKey) {
+        console.error('[API/Orders] CRITICAL: Missing SUPABASE_SERVICE_ROLE_KEY');
         return NextResponse.json({
-            orders: [],
-            demo: true
+            error: 'Server Misconfiguration: Missing Service Key. Cannot query orders securey.'
+        }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    try {
+        // Step 1: Find orders by phone using arrow operator (PostgREST syntax)
+        // casting to text is implicit with ->> w
+        // Step 1: Find orders (fetching simplified lists to filter in memory if syntax fails)
+        // Note: Direct JSON filtering can be flaky depending on Supabase version. 
+        // We'll try a flexible approach: Get recent orders and filter in JS if needed, 
+        // OR use the contained operator which is standard.
+
+
+        // DEBUG QUERY: Select ALL columns to see what actually exists
+        // and avoid crashing on specific missing columns.
+        const { data: allOrders, error: orderError } = await supabase
+            .from('orders')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(100);
+
+        if (allOrders && allOrders.length > 0) {
+            console.log('[API/Orders] Actual Table Columns:', Object.keys(allOrders[0]));
+            if (!allOrders[0].hasOwnProperty('shipping_address')) {
+                console.error('[API/Orders] CRITICAL: shipping_address column is REALLY missing from returned data.');
+            }
+        } else {
+            console.log('[API/Orders] No orders found to inspect structure.');
+        }
+
+        if (orderError) {
+            console.error('[API/Orders] DB Error:', orderError);
+            throw orderError;
+        }
+
+        // Filter in memory to ensure phone match works regardless of JSON structure depth
+        const orders = allOrders.filter(o => {
+            const addr = o.shipping_address as any;
+            return addr?.phone === phone || addr?.customer_phone === phone;
         });
-    }
 
-    const client = supabase as any;
+        if (orderError) {
+            console.error('[API/Orders] Order fetch error:', orderError);
+            throw orderError;
+        }
 
-    const { data: orders, error } = await client
-        .from("orders")
-        .select("*")
-        .eq("customer_phone", phone)
-        .order("created_at", { ascending: false });
+        if (!orders || orders.length === 0) {
+            return NextResponse.json({ orders: [] });
+        }
 
-    if (error) {
-        return NextResponse.json(
-            { error: "Failed to fetch orders" },
-            { status: 500 }
+        const orderIds = orders.map(o => o.id);
+
+        // Step 2: Get items
+        const { data: items, error: itemError } = await supabase
+            .from('order_items')
+            .select(`
+                id,
+                order_id,
+                quantity,
+                price_at_purchase,
+                product:products (
+                    name,
+                    metadata
+                )
+            `)
+            .in('order_id', orderIds);
+
+        if (itemError) {
+            console.error('[API/Orders] Item fetch error:', itemError);
+            throw itemError;
+        }
+
+        // Step 3: Merge data with safety checks
+        const formattedOrders = (items || []).map(item => {
+            const order = orders.find(o => o.id === item.order_id);
+            const product = item.product as any;
+
+            return {
+                id: item.id,
+                flower_name: product?.name || 'Sản phẩm không xác định',
+                size: product?.metadata?.size || 'Tiêu chuẩn',
+                quantity: item.quantity,
+                price: (item.price_at_purchase || 0) * (item.quantity || 1),
+                status: order?.status || 'pending',
+                address: order?.shipping_address?.address || 'Tại vườn',
+                created_at: order?.created_at || new Date().toISOString()
+            };
+        });
+
+        // Sort descending
+        formattedOrders.sort((a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
-    }
 
-    return NextResponse.json({ orders });
+        return NextResponse.json({ orders: formattedOrders });
+
+    } catch (error: any) {
+        console.error('[API/Orders] Uncaught error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 }

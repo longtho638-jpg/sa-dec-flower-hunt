@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 // Initialize Gemini
 const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -22,7 +23,7 @@ Khi tư vấn:
 3. Nhắc nhở về cách chăm sóc để hoa tươi lâu.
 `;
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     if (!apiKey || !model) {
         return NextResponse.json(
             { error: "Missing API Key. Please add GEMINI_API_KEY to .env.local" },
@@ -31,6 +32,19 @@ export async function POST(req: Request) {
     }
 
     try {
+        // Security Check: Verify Auth Token
+        const authHeader = req.headers.get('Authorization');
+        const token = authHeader?.split(' ')[1];
+
+        if (!token) {
+            return NextResponse.json({ error: 'Unauthorized: Missing Token' }, { status: 401 });
+        }
+
+        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized: Invalid Token' }, { status: 401 });
+        }
+
         const { message, context, history } = await req.json();
 
         // Construct chat with history if needed, for now simplistic single turn with context
