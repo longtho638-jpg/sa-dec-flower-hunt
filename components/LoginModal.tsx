@@ -73,20 +73,20 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <Card className="w-full max-w-md relative shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <Card className="w-full max-w-md relative shadow-2xl bg-zinc-950 border-zinc-800 text-zinc-100">
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-stone-400 hover:text-stone-600"
+                    className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
                 >
                     <X className="w-5 h-5" />
                 </button>
 
                 <CardHeader>
-                    <CardTitle className="text-2xl">
+                    <CardTitle className="text-2xl font-bold text-white">
                         {mode === 'login' ? 'Đăng nhập' : 'Đăng ký'}
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-zinc-400">
                         {mode === 'login'
                             ? 'Đăng nhập để theo dõi đơn hàng và tích điểm'
                             : 'Tạo tài khoản mới để bắt đầu săn hoa'}
@@ -97,15 +97,15 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <form onSubmit={mode === 'login' ? handleLogin : handleSignup} className="space-y-4">
                         {mode === 'signup' && (
                             <div>
-                                <label className="text-sm font-medium text-stone-700">Họ tên</label>
+                                <label className="text-sm font-medium text-zinc-300">Họ tên</label>
                                 <div className="relative mt-1">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                                     <Input
                                         type="text"
                                         placeholder="Nguyễn Văn A"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="pl-10"
+                                        className="pl-10 bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-green-500 focus:ring-green-500/20"
                                         required
                                     />
                                 </div>
@@ -113,30 +113,30 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         )}
 
                         <div>
-                            <label className="text-sm font-medium text-stone-700">Email</label>
+                            <label className="text-sm font-medium text-zinc-300">Email</label>
                             <div className="relative mt-1">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                                 <Input
                                     type="email"
                                     placeholder="email@example.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="pl-10"
+                                    className="pl-10 bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-green-500 focus:ring-green-500/20"
                                     required
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium text-stone-700">Mật khẩu</label>
+                            <label className="text-sm font-medium text-zinc-300">Mật khẩu</label>
                             <div className="relative mt-1">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                                 <Input
                                     type="password"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="pl-10"
+                                    className="pl-10 bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-green-500 focus:ring-green-500/20"
                                     required
                                 />
                             </div>
@@ -144,7 +144,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                         <Button
                             type="submit"
-                            className="w-full bg-green-600 hover:bg-green-700 text-white"
+                            className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-2"
                             disabled={loading}
                         >
                             {loading ? 'Đang xử lý...' : mode === 'login' ? 'Đăng nhập' : 'Đăng ký'}
@@ -154,7 +154,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <button
                                 type="button"
                                 onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                                className="text-sm text-green-600 hover:underline"
+                                className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors"
                             >
                                 {mode === 'login'
                                     ? 'Chưa có tài khoản? Đăng ký ngay'
@@ -163,13 +163,14 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </div>
 
                         {/* Quick Login (Demo) */}
-                        <div className="pt-4 border-t border-stone-200">
-                            <p className="text-xs text-center text-stone-500 mb-2">Đăng nhập nhanh (Demo)</p>
-                            <div className="grid grid-cols-2 gap-2">
+                        <div className="pt-4 border-t border-zinc-800 mt-6">
+                            <p className="text-xs text-center text-zinc-500 mb-3 uppercase tracking-wider font-semibold">Demo Accounts</p>
+                            <div className="grid grid-cols-2 gap-3">
                                 <Button
                                     type="button"
                                     variant="outline"
                                     size="sm"
+                                    className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800 hover:border-zinc-600"
                                     onClick={() => {
                                         setEmail('farmer1@sadec.local');
                                         setPassword('password123');
@@ -182,13 +183,14 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     type="button"
                                     variant="outline"
                                     size="sm"
+                                    className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800 hover:border-zinc-600"
                                     onClick={() => {
                                         setEmail('customer1@example.com');
                                         setPassword('password123');
                                         toast.info('Sử dụng tài khoản demo Customer');
                                     }}
                                 >
-                                    🛒 Customer
+                                    🛒 Buyer
                                 </Button>
                             </div>
                         </div>
