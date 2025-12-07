@@ -1,7 +1,7 @@
 // Service Worker for Sa Dec Flower Hunt PWA
-// Version: 1.0.0
+// Version: 1.0.1
 
-const CACHE_NAME = 'sadec-v1.0.0';
+const CACHE_NAME = 'sadec-v1.0.1';
 const OFFLINE_URL = '/offline';
 
 // Assets to cache immediately on install (only essentials that EXIST)
