@@ -1,10 +1,18 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
+import { verifyWebhookData } from '@/lib/payos';
 
 export async function POST(req: NextRequest) {
     try {
-        const cookieStore = cookies();
+        const body = await req.json();
+
+        // 0. Security Check: Verify PayOS Signature
+        // Must verify that the request comes from PayOS
+        if (!verifyWebhookData(body)) {
+            console.error('[Webhook] Invalid PayOS signature');
+            return NextResponse.json({ error: 'Invalid signature' }, { status: 403 });
+        }
+
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -16,7 +24,6 @@ export async function POST(req: NextRequest) {
             }
         );
 
-        const body = await req.json();
         const { webhookId, orderId, userId, amount, paymentMethod, orderCode, code } = body;
 
         // Handle PayOS simplified webhook format if needed

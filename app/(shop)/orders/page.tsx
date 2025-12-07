@@ -5,15 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
     ChevronLeft,
-    Package,
     Clock,
     CheckCircle,
     Truck,
     XCircle,
-    Phone,
     Loader2,
-    ShoppingBag
+    ShoppingBag,
+    LogIn
 } from "lucide-react";
+import { LoginModal } from "@/components/LoginModal";
+import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
 
 interface Order {
     id: string;
@@ -35,38 +37,47 @@ const STATUS_CONFIG = {
 };
 
 export default function OrdersPage() {
-    const [phone, setPhone] = useState("");
     const [orders, setOrders] = useState<Order[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [userEmail, setUserEmail] = useState("");
 
     useEffect(() => {
-        const savedPhone = localStorage.getItem("user_phone");
-        if (savedPhone) {
-            setPhone(savedPhone);
-            setIsLoggedIn(true);
-            fetchOrders(savedPhone);
-        }
+        checkAuth();
     }, []);
 
-    const fetchOrders = async (userPhone: string) => {
+    const checkAuth = async () => {
+        if (!supabase) {
+            setIsLoading(false);
+            return;
+        }
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            setIsLoggedIn(true);
+            setUserEmail(session.user.email || "");
+            fetchOrders();
+        } else {
+            setIsLoggedIn(false);
+            setIsLoading(false);
+        }
+    };
+
+    const fetchOrders = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`/api/orders?phone=${userPhone}`);
+            const res = await fetch(`/api/orders`);
+            if (res.status === 401) {
+                setIsLoggedIn(false);
+                return;
+            }
             const data = await res.json();
             setOrders(data.orders || []);
         } catch (error) {
             console.error("Fetch error:", error);
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const handleLogin = () => {
-        if (phone.length >= 10) {
-            localStorage.setItem("user_phone", phone);
-            setIsLoggedIn(true);
-            fetchOrders(phone);
         }
     };
 
@@ -84,10 +95,21 @@ export default function OrdersPage() {
         });
     };
 
-    // Login Screen
-    if (!isLoggedIn) {
+    const handleLogout = async () => {
+        if (supabase) {
+            await supabase.auth.signOut();
+            setIsLoggedIn(false);
+            setOrders([]);
+            setUserEmail("");
+        }
+    };
+
+    // Login Screen (Guest State)
+    if (!isLoading && !isLoggedIn) {
         return (
             <div className="min-h-screen bg-[#FDFBF7]">
+                <LoginModal isOpen={showLoginModal} onClose={() => { setShowLoginModal(false); checkAuth(); }} />
+
                 {/* Header */}
                 <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md px-4 py-4 border-b border-stone-100 flex items-center gap-3">
                     <Link href="/" className="w-10 h-10 bg-stone-100 rounded-full flex items-center justify-center">
@@ -103,43 +125,31 @@ export default function OrdersPage() {
                             transition={{ duration: 2, repeat: Infinity }}
                             className="text-6xl mb-4"
                         >
-                            📦
+                            🔐
                         </motion.div>
-                        <h2 className="text-xl font-bold text-stone-800 mb-2">Xem đơn hàng</h2>
-                        <p className="text-stone-500">Nhập SĐT đã đặt hàng để xem</p>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div className="relative">
-                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
-                            <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder="Số điện thoại của bạn"
-                                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-stone-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none text-lg"
-                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                            />
-                        </div>
-
-                        <motion.button
-                            onClick={handleLogin}
-                            disabled={phone.length < 10}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg disabled:opacity-50"
+                        <h2 className="text-xl font-bold text-stone-800 mb-2">Đăng nhập để xem</h2>
+                        <p className="text-stone-500 mb-6">
+                            Vui lòng đăng nhập để xem lịch sử đơn hàng của bạn.
+                        </p>
+                        
+                        <Button 
+                            onClick={() => setShowLoginModal(true)}
+                            className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg rounded-xl shadow-lg"
                         >
-                            Xem Đơn Hàng
-                        </motion.button>
+                            <LogIn className="w-5 h-5 mr-2" />
+                            Đăng nhập / Đăng ký
+                        </Button>
                     </div>
                 </div>
             </div>
         );
     }
 
-    // Orders List
+    // Orders List (Authenticated)
     return (
         <div className="min-h-screen bg-[#FDFBF7] pb-8">
+            <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+            
             {/* Header */}
             <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md px-4 py-4 border-b border-stone-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -148,36 +158,32 @@ export default function OrdersPage() {
                     </Link>
                     <div>
                         <h1 className="text-xl font-bold text-stone-800">Đơn Hàng</h1>
-                        <p className="text-sm text-stone-500">{phone}</p>
+                        <p className="text-xs text-stone-500 truncate max-w-[150px]">{userEmail}</p>
                     </div>
                 </div>
                 <button
-                    onClick={() => {
-                        localStorage.removeItem("user_phone");
-                        setIsLoggedIn(false);
-                        setOrders([]);
-                    }}
+                    onClick={handleLogout}
                     className="text-sm text-red-500 font-bold"
                 >
-                    Đổi SĐT
+                    Đăng xuất
                 </button>
             </header>
 
             <div className="px-4 pt-6">
                 {isLoading ? (
                     <div className="flex justify-center py-12">
-                        <Loader2 className="w-8 h-8 animate-spin text-red-500" />
+                        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
                     </div>
                 ) : orders.length === 0 ? (
                     <div className="text-center py-16">
                         <ShoppingBag className="w-16 h-16 text-stone-200 mx-auto mb-4" />
                         <h2 className="text-lg font-bold text-stone-600 mb-2">Chưa có đơn hàng</h2>
                         <p className="text-stone-400 text-sm mb-6">
-                            Bạn chưa đặt hàng nào với SĐT này
+                            Bạn chưa có đơn hàng nào.
                         </p>
                         <Link
                             href="/"
-                            className="inline-block bg-red-500 text-white px-6 py-3 rounded-full font-bold"
+                            className="inline-block bg-green-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-green-700 transition-colors"
                         >
                             Mua Hoa Ngay
                         </Link>

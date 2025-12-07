@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Initialize inside handler to avoid build-time errors
+// const supabase = createClient(...);
 
 /**
  * Track analytics events
@@ -12,6 +10,11 @@ const supabase = createClient(
  */
 export async function POST(request: NextRequest) {
     try {
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
         const { event_name, properties, userId } = await request.json();
 
         // Insert to analytics table if it exists

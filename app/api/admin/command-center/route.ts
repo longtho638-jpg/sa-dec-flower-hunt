@@ -1,20 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createClient } from '@/lib/supabase';
+import { cookies } from 'next/headers';
+import { createClient as createSupabaseJsClient } from '@supabase/supabase-js';
 
 /**
  * Live Dashboard Metrics API
  * GET /api/admin/command-center
  * Returns real-time platform metrics
+ * SECURED: Requires Admin Authentication
  */
 export async function GET(request: NextRequest) {
     try {
+        const cookieStore = cookies();
+        const supabase = createClient(cookieStore);
+
+        // 1. Auth Check
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // 2. Role Check (Admin)
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+        if (!profile || profile.role !== 'admin') {
+            return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+        }
+
+        // 3. Data Access
+        // Initialize Admin Client for global data access (bypassing RLS for aggregation)
+        const adminDb = createSupabaseJsClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
         // Get live metrics from view
-        const { data: metrics, error: metricsError } = await supabase
+        const { data: metrics, error: metricsError } = await adminDb
             .from('dashboard_live_metrics')
             .select('*')
             .single();
@@ -40,20 +65,20 @@ export async function GET(request: NextRequest) {
         }
 
         // Get revenue trend (last 7 days)
-        const { data: revenueTrend } = await supabase
+        const { data: revenueTrend } = await adminDb
             .from('revenue_daily')
             .select('*')
             .limit(7)
             .order('date', { ascending: true });
 
         // Get top farmers
-        const { data: topFarmers } = await supabase
+        const { data: topFarmers } = await adminDb
             .from('top_farmers')
             .select('*')
             .limit(5);
 
         // Get recent activity (last 10 orders)
-        const { data: recentOrders } = await supabase
+        const { data: recentOrders } = await adminDb
             .from('orders')
             .select('id, recipient_name, final_price, status, created_at')
             .order('created_at', { ascending: false })

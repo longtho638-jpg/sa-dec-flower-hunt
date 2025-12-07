@@ -27,12 +27,27 @@ export default function AdminDashboard() {
         if (auth === "true") setIsAuthenticated(true);
     }, []);
 
-    const handleLogin = () => {
-        if (password === "admin123") { // Simple mock password
-            localStorage.setItem("admin_auth", "true");
-            setIsAuthenticated(true);
-        } else {
-            alert("Sai mật khẩu!");
+    const handleLogin = async () => {
+        try {
+            const response = await fetch('/api/admin/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                localStorage.setItem("admin_auth", "true");
+                setIsAuthenticated(true);
+            } else {
+                alert("Sai mật khẩu!");
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
         }
     };
 

@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Initialize inside handler
+// const supabase = createClient(...)
 
 /**
  * QR code scan redirect and tracking
@@ -16,6 +14,11 @@ export async function GET(
 ) {
     try {
         const { code } = await params;
+
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
 
         // Find QR code
         const { data: qrCode, error: qrError } = await supabase

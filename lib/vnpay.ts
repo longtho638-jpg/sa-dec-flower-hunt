@@ -7,8 +7,8 @@ import querystring from 'querystring';
  */
 
 // VNPay Configuration (from environment variables)
-const VNPAY_TMN_CODE = process.env.VNPAY_TMN_CODE || 'DEMO'; // Merchant Code
-const VNPAY_HASH_SECRET = process.env.VNPAY_HASH_SECRET || 'DEMOSECRET'; // Secret key
+const VNPAY_TMN_CODE = process.env.VNPAY_TMN_CODE || ''; // Merchant Code
+const VNPAY_HASH_SECRET = process.env.VNPAY_HASH_SECRET || ''; // Secret key
 const VNPAY_URL = process.env.VNPAY_URL || 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
 const VNPAY_RETURN_URL = process.env.NEXT_PUBLIC_APP_URL + '/api/payment/callback';
 
