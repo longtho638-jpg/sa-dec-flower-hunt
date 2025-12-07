@@ -71,10 +71,10 @@ export async function POST(
         // Handle escrow logic based on status
         if (status === 'delivered') {
             // Auto-release escrow after delivery (or schedule for 7 days)
-            await handleEscrowRelease(orderId, 'buyer_confirmed');
+            await handleEscrowRelease(supabase, orderId, 'buyer_confirmed');
         } else if (status === 'cancelled') {
             // Refund to buyer
-            await handleEscrowRefund(orderId, 'order_cancelled');
+            await handleEscrowRefund(supabase, orderId, 'order_cancelled');
         }
 
         return NextResponse.json({
@@ -92,7 +92,7 @@ export async function POST(
 /**
  * Release escrow to farmer
  */
-async function handleEscrowRelease(orderId: string, reason: string) {
+async function handleEscrowRelease(supabase: any, orderId: string, reason: string) {
     try {
         // Get transaction
         const { data: transaction } = await supabase
@@ -169,7 +169,7 @@ async function handleEscrowRelease(orderId: string, reason: string) {
 /**
  * Refund escrow to buyer
  */
-async function handleEscrowRefund(orderId: string, reason: string) {
+async function handleEscrowRefund(supabase: any, orderId: string, reason: string) {
     try {
         // Update transaction
         await supabase
