@@ -51,7 +51,9 @@ export default function MyGardenPage() {
 
                     // Ideally, we would add this new product to the list or open a modal to edit.
                     // For this demo, we can alert or log it.
-                    console.log("AI Data:", data);
+                    if (process.env.NODE_ENV !== 'production') {
+                        console.log("AI Data received for auto-fill");
+                    }
 
                 } catch (err) {
                     console.error(err);

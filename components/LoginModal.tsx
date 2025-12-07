@@ -38,21 +38,38 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
             if (user) {
                 // Fetch profile to get role
-                const { data: profile } = await supabase
+                const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('role')
                     .eq('id', user.id)
                     .single();
 
-                toast.success("Đăng nhập thành công!");
+                if (profileError) {
+                    console.error("Profile Fetch Error:", profileError);
+                    toast.error(`Lỗi Profile: ${profileError.message}`);
+                    // Fallback to reload if profile fails
+                    window.location.reload();
+                    return;
+                }
+
+                toast.success(`Đăng nhập thành công! Vai trò: ${profile?.role}`);
+
+                // Add explicit delay to ensure toast is seen
+                await new Promise(r => setTimeout(r, 1000));
+
                 onClose();
 
                 // Redirect based on role
                 if (profile?.role === 'farmer') {
+                    console.log("Redirecting to /farmer");
                     router.push('/farmer');
+                    router.refresh(); // Ensure strict refresh
                 } else if (profile?.role === 'admin') {
+                    console.log("Redirecting to /admin");
                     router.push('/admin');
+                    router.refresh();
                 } else {
+                    console.log("Reloading for Customer");
                     window.location.reload(); // Customer or others stay on shop
                 }
             }
