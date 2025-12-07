@@ -76,7 +76,7 @@ export class GoalService {
      * Mark goal as achieved
      */
     static async markGoalAchieved(goalId: string) {
-        const { error } = await supabaseAdmin
+        const { error } = await getSupabaseAdmin()
             .from('autonomous_goals')
             .update({
                 status: 'achieved',
@@ -180,7 +180,7 @@ export class GoalService {
      * Complete department task
      */
     static async completeTask(taskId: string, output: any) {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('department_tasks')
             .update({
                 status: 'completed',
