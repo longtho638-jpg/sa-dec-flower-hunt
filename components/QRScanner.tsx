@@ -19,29 +19,35 @@ export function QRScanner() {
             if (text.startsWith("SADEC-") || text.includes("sadec")) {
                 // Giả lập logic cộng điểm
                 const scanned = JSON.parse(localStorage.getItem("sadec_scanned") || "[]");
-                
+
                 // Check duplicate (đơn giản hóa: dùng text làm ID)
-                const scanId = text.split("-").pop() || Date.now(); 
-                
+                const scanId = text.split("-").pop() || Date.now();
+
                 if (!scanned.includes(Number(scanId)) && !isNaN(Number(scanId))) {
-                     scanned.push(Number(scanId));
-                     localStorage.setItem("sadec_scanned", JSON.stringify(scanned));
-                     toast.success("Đã tìm thấy một vườn hoa mới! 🎉");
+                    scanned.push(Number(scanId));
+                    localStorage.setItem("sadec_scanned", JSON.stringify(scanned));
+                    toast.success("Đã tìm thấy một vườn hoa mới! 🎉");
                 } else if (isNaN(Number(scanId))) {
-                     // Mock cho mã test không phải số
-                     const randomId = Math.floor(Math.random() * 1000) + 100;
-                     scanned.push(randomId);
-                     localStorage.setItem("sadec_scanned", JSON.stringify(scanned));
-                     toast.success("Đã tìm thấy kho báu! 🌸");
+                    // Mock cho mã test không phải số
+                    const randomId = Math.floor(Math.random() * 1000) + 100;
+                    scanned.push(randomId);
+                    localStorage.setItem("sadec_scanned", JSON.stringify(scanned));
+                    toast.success("Đã tìm thấy kho báu! 🌸");
                 } else {
-                     toast.info("Bạn đã quét vườn này rồi!");
+                    toast.info("Bạn đã quét vườn này rồi!");
                 }
 
                 // Play success sound if possible
                 try {
                     const audio = new Audio('/success.mp3'); // Cần file âm thanh hoặc bỏ qua
-                    audio.play().catch(() => {});
-                } catch (e) {}
+                    audio.play().catch((playError) => {
+                        console.error('[QRScanner] Audio playback failed:', playError);
+                    });
+                } catch (error) {
+                    // Fix #7: Empty catch block antipattern
+                    console.error('[QRScanner] Audio initialization failed:', error);
+                    // Optional: Notify user via UI state
+                }
 
             } else {
                 toast.error("Mã QR không hợp lệ (Không phải mã Sa Đéc Flower Hunt)");
@@ -60,13 +66,13 @@ export function QRScanner() {
                 onScan={(result) => result[0] && handleScan(result[0].rawValue)}
                 onError={(error) => console.log(error)}
                 components={{
-                    finder: false, 
+                    finder: false,
                 }}
                 styles={{
                     container: { width: "100%", height: "100%" }
                 }}
             />
-            
+
             {/* Overlay UI */}
             <div className="absolute inset-0 border-2 border-white/20 rounded-3xl pointer-events-none">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border-2 border-white rounded-2xl opacity-50">

@@ -1,28 +1,34 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Fix #6: Remove DB Mock Fallback
+export function createClient(cookieStore?: any) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Create a mock client for build time or when env vars are missing
-const createMockClient = () => ({
-    from: () => ({
-        select: () => ({
-            eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
-            order: () => ({ limit: () => Promise.resolve({ data: [], error: null }) }),
-        }),
-        insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: { id: 'mock' }, error: null }) }) }),
-    }),
-    channel: () => ({
-        on: () => ({ subscribe: () => ({}) }),
-        unsubscribe: () => Promise.resolve(),
-    }),
-    removeChannel: () => Promise.resolve(),
-});
+    if (!url) {
+        throw new Error('NEXT_PUBLIC_SUPABASE_URL is required based on Security Audit Fix #6');
+    }
 
-// Export as any to avoid strict type checks on mock vs real client differences during rapid development
-export const supabase: any =
-    supabaseUrl && supabaseAnonKey
-        ? createClient(supabaseUrl, supabaseAnonKey)
-        : createMockClient();
+    if (!key) {
+        throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY is required based on Security Audit Fix #6');
+    }
 
-export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+    return createServerClient(url, key, {
+        cookies: {
+            getAll() {
+                return cookieStore ? cookieStore.getAll() : [];
+            },
+            setAll(cookiesToSet) {
+                if (cookieStore) {
+                    try {
+                        cookiesToSet.forEach(({ name, value, options }) =>
+                            cookieStore.set(name, value, options)
+                        );
+                    } catch {
+                        // unexpected error
+                    }
+                }
+            },
+        },
+    });
+}

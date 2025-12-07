@@ -1,201 +1,72 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent`;
 
-/**
- * Gemini Service - Intelligent Content Generation
- * Hybrid approach: Use Gemini API only for critical thinking tasks
- */
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-
-export class GeminiService {
-
-    /**
-     * Generate marketing content using Gemini 2.0 Flash
-     */
-    static async generateMarketingContent(params: {
-        topic: string;
-        persona: string;
-        goal: string;
-        context: string;
-    }): Promise<string> {
-        try {
-            const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-
-            const prompt = `You are a marketing content expert for Sa Dec Flower Hunt, an AgriTech e-commerce platform.
-
-Topic: ${params.topic}
-Target Persona: ${params.persona}
-Goal: ${params.goal}
-Context: ${params.context}
-
-Generate a compelling, authentic piece of content (300-500 words) that:
-1. Highlights the beauty and cultural heritage of Sa Dec flowers
-2. Connects emotionally with the target persona
-3. Includes a clear call-to-action
-4. Uses storytelling, not corporate speak
-
-Output in Vietnamese (informal, friendly tone).`;
-
-            const result = await model.generateContent(prompt);
-            const response = result.response;
-            return response.text();
-
-        } catch (error) {
-            console.error('Gemini API Error:', error);
-            // Fallback to template if API fails
-            return `[Template] ${params.topic} - ${params.context}`;
-        }
-    }
-
-    /**
-     * Generate sales strategy using Gemini
-     */
-    static async generateSalesStrategy(params: {
-        targetMarket: string;
-        productType: string;
-        challenges: string;
-        goals: string;
-    }): Promise<any> {
-        try {
-            const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-
-            const prompt = `You are a B2B/B2C sales strategist for an AgriTech flower marketplace.
-
-Target Market: ${params.targetMarket}
-Product: ${params.productType}
-Challenges: ${params.challenges}
-Goals: ${params.goals}
-
-Generate a detailed sales strategy in JSON format with these keys:
-{
-  "prospecting_channels": ["channel1", "channel2"],
-  "key_message": "main value proposition",
-  "objection_handling": [{"objection": "...", "response": "..."}],
-  "suggested_tactics": ["tactic1", "tactic2"],
-  "estimated_conversion_rate": "X%"
+export async function callGemini(prompt: string) {
+    return callGeminiWithRetry(prompt);
 }
 
-Be specific to Vietnam market and flower industry. Return ONLY valid JSON.`;
+// Robust retry implementation (Fix #5)
+async function callGeminiWithRetry(
+    prompt: string,
+    maxRetries = 3
+): Promise<string> {
+    let lastError: Error | null = null;
+    const apiKey = process.env.GEMINI_API_KEY; // Use server-side key by default
 
-            const result = await model.generateContent(prompt);
-            const response = result.response;
-            const text = response.text();
-
-            // Try to parse as JSON
-            try {
-                return JSON.parse(text.replace(/```json\n?/g, '').replace(/```\n?/g, ''));
-            } catch {
-                return { raw_output: text };
-            }
-
-        } catch (error) {
-            console.error('Gemini API Error:', error);
-            return { error: 'API failed', fallback: true };
-        }
+    if (!apiKey) {
+        throw new Error("GEMINI_API_KEY is missing");
     }
 
-    /**
-     * Make strategic decision using Gemini reasoning
-     */
-    static async makeStrategicDecision(params: {
-        goals: any[];
-        currentMetrics: any;
-        recentActions: string[];
-    }): Promise<{
-        directive: string;
-        departments: string[];
-        reasoning: string;
-    }> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
-            const prompt = `You are the CEO of Sa Dec Flower Hunt. Analyze the situation and make a strategic decision.
-
-GOALS:
-${JSON.stringify(params.goals, null, 2)}
-
-CURRENT METRICS:
-${JSON.stringify(params.currentMetrics, null, 2)}
-
-RECENT ACTIONS:
-${params.recentActions.join('\n')}
-
-Based on this data, decide which department(s) to activate today and why.
-
-Return JSON:
-{
-  "directive": "clear instruction for today",
-  "departments": ["Marketing", "Sales", "Finance"],
-  "reasoning": "why this decision makes sense"
-}
-
-Be decisive and strategic. Return ONLY valid JSON.`;
-
-            const result = await model.generateContent(prompt);
-            const response = result.response;
-            const text = response.text();
-
-            try {
-                return JSON.parse(text.replace(/```json\n?/g, '').replace(/```\n?/g, ''));
-            } catch {
-                // Fallback to simple logic
-                return {
-                    directive: "Continue growth momentum",
-                    departments: ["Marketing"],
-                    reasoning: "API parsing failed, using fallback"
-                };
-            }
-
-        } catch (error) {
-            console.error('Gemini API Error:', error);
-            return {
-                directive: "Maintain operations",
-                departments: ["Marketing"],
-                reasoning: "API failed, using safe fallback"
-            };
-        }
-    }
-    /**
-     * Generate content from image using Gemini Vision capabilities
-     */
-    static async generateFromImage(params: {
-        imageBase64: string;
-        mimeType: string;
-        prompt: string;
-    }): Promise<any> {
-        try {
-            const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-
-            const result = await model.generateContent([
-                params.prompt,
-                {
-                    inlineData: {
-                        data: params.imageBase64,
-                        mimeType: params.mimeType,
-                    },
+            const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-            ]);
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                }),
+                signal: controller.signal,
+            });
 
-            const response = result.response;
-            const text = response.text();
+            clearTimeout(timeoutId);
 
-            try {
-                return JSON.parse(text.replace(/```json\n?/g, '').replace(/```\n?/g, ''));
-            } catch {
-                return {
-                    description: text,
-                    raw_output: true
-                };
+            if (!response.ok) {
+                throw new Error(`Gemini API returned ${response.status}`);
             }
 
-        } catch (error) {
-            console.error('Gemini Vision API Error:', error);
-            // Return structured error for UI handling
-            return {
-                error: true,
-                message: "Không thể phân tích ảnh lúc này. Vui lòng thử lại sau.",
-                fallback_description: "Hoa đẹp rực rỡ, thích hợp chưng Tết."
-            };
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        } catch (error: any) {
+            lastError = error;
+
+            // Check if timeout
+            if (error.name === 'AbortError') {
+                console.warn(`[Gemini] Timeout on attempt ${attempt}/${maxRetries}`);
+                if (attempt < maxRetries) {
+                    // Exponential backoff
+                    await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 1000));
+                    continue;
+                }
+                throw new Error('Gemini API timeout (30s)');
+            }
+
+            // Check if retryable error
+            if (error.message?.includes('ECONNRESET') || error.message?.includes('ETIMEDOUT')) {
+                console.warn(`[Gemini] Retryable error on attempt ${attempt}/${maxRetries}:`, error.message);
+                if (attempt < maxRetries) {
+                    await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 1000));
+                    continue;
+                }
+            }
+
+            // Non-retryable error
+            throw error;
         }
     }
+
+    throw lastError || new Error('Gemini API failed after retries');
 }

@@ -1,52 +1,79 @@
-import PayOS from "@payos/node";
+import PayOS from '@payos/node';
 
-/**
- * PayOS Payment Gateway Integration
- * Simpler, faster, cheaper alternative to VNPay
- */
+let payOS: any | null = null;
 
-// PayOS Configuration
-const PAYOS_CLIENT_ID = process.env.PAYOS_CLIENT_ID || '';
-const PAYOS_API_KEY = process.env.PAYOS_API_KEY || '';
-const PAYOS_CHECKSUM_KEY = process.env.PAYOS_CHECKSUM_KEY || '';
+function initPayOS() {
+    const clientId = process.env.PAYOS_CLIENT_ID;
+    const apiKey = process.env.PAYOS_API_KEY;
+    const checksumKey = process.env.PAYOS_CHECKSUM_KEY;
 
-// Instantiate PayOS client
-let payOS: any;
+    if (!clientId || !apiKey || !checksumKey) {
+        throw new Error(
+            'PayOS credentials missing. Required env vars:\n' +
+            '  - PAYOS_CLIENT_ID\n' +
+            '  - PAYOS_API_KEY\n' +
+            '  - PAYOS_CHECKSUM_KEY'
+        );
+    }
+
+    // PayOS constructor signature: clientId, apiKey, checksumKey
+    payOS = new (PayOS as any)(clientId, apiKey, checksumKey);
+    return payOS;
+}
+
+// Initialize at module load
 try {
-    payOS = new (PayOS as any)(PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY);
+    payOS = initPayOS();
+    console.log('[PayOS] ✓ Initialized successfully');
 } catch (error) {
-    console.warn('PayOS initialization warning:', error);
-    payOS = null;
+    console.error('[PayOS] ✗ Initialization failed:', error);
+    // Only throw in production strict mode, otherwise warn to allow build
+    if (process.env.NODE_ENV === 'production' && !process.env.CI) {
+        // Warn but don't crash build, crash runtime if used
+    }
+}
+
+// Getter with validation
+export function getPayOS() {
+    if (!payOS) {
+        // Try one last time lazy init
+        try {
+            return initPayOS();
+        } catch (e) {
+            throw new Error(
+                'PayOS not initialized. Check environment variables:\n' +
+                'PAYOS_CLIENT_ID, PAYOS_API_KEY, PAYOS_CHECKSUM_KEY'
+            );
+        }
+    }
+    return payOS;
 }
 
 export interface PayOSPaymentData {
-    orderCode: number; // Unique order code (timestamp recommended)
-    amount: number; // Total amount in VND
-    description: string; // Order description
+    orderCode: number;
+    amount: number;
+    description: string;
+    items: any[];
+    returnUrl?: string;
+    cancelUrl?: string;
     buyerName?: string;
     buyerEmail?: string;
     buyerPhone?: string;
     buyerAddress?: string;
-    items?: Array<{
-        name: string;
-        quantity: number;
-        price: number;
-    }>;
-    returnUrl?: string; // URL to redirect after payment
-    cancelUrl?: string; // URL to redirect if cancelled
 }
 
+// Wrapper types
 export interface PayOSWebhookData {
+    code: string;
+    desc: string;
+    data: any;
+    signature: string;
     orderCode: number;
     amount: number;
-    description: string;
-    accountNumber: string;
     reference: string;
     transactionDateTime: string;
     currency: string;
     paymentLinkId: string;
-    code: string; // '00' = success
-    desc: string;
     counterAccountBankId?: string;
     counterAccountBankName?: string;
     counterAccountName?: string;
@@ -58,11 +85,8 @@ export interface PayOSWebhookData {
 /**
  * Create payment link
  */
-export async function createPaymentLink(data: PayOSPaymentData): Promise<{
-    checkoutUrl: string;
-    paymentLinkId: string;
-    orderCode: number;
-}> {
+export async function createPaymentLink(data: PayOSPaymentData) {
+    const client = getPayOS();
     try {
         const paymentData = {
             orderCode: data.orderCode,
@@ -72,22 +96,12 @@ export async function createPaymentLink(data: PayOSPaymentData): Promise<{
             buyerEmail: data.buyerEmail,
             buyerPhone: data.buyerPhone,
             buyerAddress: data.buyerAddress,
-            items: data.items || [{
-                name: data.description,
-                quantity: 1,
-                price: data.amount
-            }],
+            items: data.items,
             returnUrl: data.returnUrl || `${process.env.NEXT_PUBLIC_APP_URL}/payment-result/success`,
             cancelUrl: data.cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/payment-result/failed?reason=cancelled`,
         };
 
-        const response = await payOS.createPaymentLink(paymentData);
-
-        return {
-            checkoutUrl: response.checkoutUrl,
-            paymentLinkId: response.paymentLinkId,
-            orderCode: response.orderCode,
-        };
+        return await client.createPaymentLink(paymentData);
     } catch (error: any) {
         console.error('PayOS createPaymentLink error:', error);
         throw new Error(error.message || 'Failed to create payment link');
@@ -98,35 +112,12 @@ export async function createPaymentLink(data: PayOSPaymentData): Promise<{
  * Verify webhook signature
  */
 export function verifyWebhookData(webhookData: PayOSWebhookData): boolean {
+    const client = getPayOS();
     try {
-        return payOS.verifyPaymentWebhookData(webhookData);
+        return client.verifyPaymentWebhookData(webhookData);
     } catch (error) {
         console.error('PayOS webhook verification error:', error);
         return false;
-    }
-}
-
-/**
- * Get payment information
- */
-export async function getPaymentInfo(orderCode: number) {
-    try {
-        return await payOS.getPaymentLinkInformation(orderCode);
-    } catch (error: any) {
-        console.error('PayOS getPaymentInfo error:', error);
-        throw new Error(error.message || 'Failed to get payment info');
-    }
-}
-
-/**
- * Cancel payment link
- */
-export async function cancelPaymentLink(orderCode: number, reason?: string) {
-    try {
-        return await payOS.cancelPaymentLink(orderCode, reason);
-    } catch (error: any) {
-        console.error('PayOS cancelPaymentLink error:', error);
-        throw new Error(error.message || 'Failed to cancel payment');
     }
 }
 
@@ -157,20 +148,3 @@ export function getPayOSMessage(code: string): string {
 export function generateOrderCode(): number {
     return Math.floor(Date.now() / 1000); // Unix timestamp
 }
-
-/**
- * Example usage:
- * 
- * // Create payment
- * const { checkoutUrl } = await createPaymentLink({
- *   orderCode: generateOrderCode(),
- *   amount: 100000,
- *   description: 'Thanh toán đơn hàng #123',
- *   buyerName: 'Nguyen Van A',
- *   buyerEmail: 'user@example.com',
- *   buyerPhone: '0901234567',
- * });
- * 
- * // Verify webhook
- * const isValid = verifyWebhookData(webhookData);
- */

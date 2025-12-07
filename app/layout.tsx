@@ -51,6 +51,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -59,20 +61,22 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <LanguageProvider>
-            <ServiceWorkerRegister />
-            {children}
-            <PWAInstallPrompt />
-            <StructuredData />
-            <Toaster />
-          </LanguageProvider>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
+            <LanguageProvider>
+              <ServiceWorkerRegister />
+              {children}
+              <PWAInstallPrompt />
+              <StructuredData />
+              <Toaster />
+            </LanguageProvider>
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
