@@ -1,4 +1,4 @@
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient, createServerClient } from '@supabase/ssr';
 
 // Legacy Helper for checking config
 export const isSupabaseConfigured =
