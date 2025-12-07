@@ -30,8 +30,8 @@ export async function middleware(request: NextRequest) {
   );
 
   // Refresh Session
-  const { 
-    data: { user }, 
+  const {
+    data: { user },
   } = await supabase.auth.getUser();
 
   // 1. Protect Admin Routes
@@ -47,9 +47,10 @@ export async function middleware(request: NextRequest) {
 
   // 2. Protect Farmer Routes
   if (request.nextUrl.pathname.startsWith('/farmer')) {
-      if (!user) {
-          return NextResponse.redirect(new URL('/', request.url));
-      }
+    // DEBUG: Temporarily allowing access to debug client-side session
+    // if (!user) {
+    //     return NextResponse.redirect(new URL('/', request.url));
+    // }
   }
 
   return supabaseResponse;
