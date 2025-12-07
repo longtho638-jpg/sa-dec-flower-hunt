@@ -8,12 +8,15 @@ import { User, Mail, Lock, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 
+import { useRouter } from "next/navigation";
+
 interface LoginModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
+    const router = useRouter();
     const [mode, setMode] = useState<'login' | 'signup'>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -26,16 +29,33 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
         try {
             if (!supabase) return;
-            const { error } = await supabase.auth.signInWithPassword({
+            const { data: { user }, error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
 
             if (error) throw error;
 
-            toast.success("Đăng nhập thành công!");
-            onClose();
-            window.location.reload(); // Refresh to pick up session
+            if (user) {
+                // Fetch profile to get role
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
+
+                toast.success("Đăng nhập thành công!");
+                onClose();
+
+                // Redirect based on role
+                if (profile?.role === 'farmer') {
+                    router.push('/farmer');
+                } else if (profile?.role === 'admin') {
+                    router.push('/admin');
+                } else {
+                    window.location.reload(); // Customer or others stay on shop
+                }
+            }
         } catch (error: any) {
             toast.error(error.message || "Đăng nhập thất bại");
         } finally {
