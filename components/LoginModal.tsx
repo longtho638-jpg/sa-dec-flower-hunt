@@ -23,6 +23,8 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const [isRedirecting, setIsRedirecting] = useState(false);
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -47,34 +49,32 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 if (profileError) {
                     console.error("Profile Fetch Error:", profileError);
                     toast.error(`Lỗi Profile: ${profileError.message}`);
-                    // Fallback to reload if profile fails
                     window.location.reload();
                     return;
                 }
 
-                toast.success(`Đăng nhập thành công! Vai trò: ${profile?.role}`);
+                toast.success(`Đăng nhập thành công!`);
+                setIsRedirecting(true); // Disable inputs, show redirect state
 
-                // Add explicit delay to ensure toast is seen
-                await new Promise(r => setTimeout(r, 1000));
-
-                onClose();
-
-                // Redirect based on role
+                // Redirect logic - DO NOT CLOSE MODAL
                 if (profile?.role === 'farmer') {
-                    console.log("Redirecting to /farmer");
-                    window.location.href = '/farmer'; // Hard redirect to ensure context switch
+                    toast.loading("Đang chuyển hướng đến Dashboard...");
+                    window.location.href = '/farmer';
                 } else if (profile?.role === 'admin') {
-                    console.log("Redirecting to /admin");
-                    window.location.href = '/admin'; // Hard redirect
+                    toast.loading("Đang chuyển hướng đến Admin...");
+                    window.location.href = '/admin';
                 } else {
-                    console.log("Reloading for Customer");
+                    toast.loading("Đang tải lại...");
                     window.location.reload();
                 }
             }
         } catch (error: any) {
             toast.error(error.message || "Đăng nhập thất bại");
-        } finally {
             setLoading(false);
+        } finally {
+            if (!isRedirecting) {
+                setLoading(false);
+            }
         }
     };
 
