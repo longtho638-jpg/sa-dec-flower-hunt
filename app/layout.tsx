@@ -72,7 +72,18 @@ export default function RootLayout({
               <ServiceWorkerRegister />
               {children}
               <PWAInstallPrompt />
-              <StructuredData />
+              <PWAInstallPrompt />
+              <StructuredData data={{
+                "@type": "SoftwareApplication",
+                "name": "Sa Đéc Flower Hunt 2026",
+                "applicationCategory": "TravelApplication",
+                "operatingSystem": "Web",
+                "offers": {
+                  "@type": "Offer",
+                  "price": "0",
+                  "priceCurrency": "VND"
+                }
+              }} />
               <Toaster />
             </LanguageProvider>
           </ThemeProvider>
