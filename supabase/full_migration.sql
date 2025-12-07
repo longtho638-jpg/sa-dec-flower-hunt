@@ -342,8 +342,16 @@ RETURNS TABLE (
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
+DECLARE
+  v_role text;
 BEGIN
-  IF auth.role() = 'anon' THEN RAISE EXCEPTION 'Unauthorized'; END IF;
+  -- Security Check: Admin Role Required
+  SELECT role INTO v_role FROM profiles WHERE id = auth.uid();
+  
+  IF v_role IS DISTINCT FROM 'admin' THEN
+    RAISE EXCEPTION 'Forbidden: Admin access required';
+  END IF;
+
   RETURN QUERY
   SELECT
     (SELECT COALESCE(SUM(total_amount), 0) FROM orders),
@@ -363,10 +371,14 @@ RETURNS TABLE (
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
+DECLARE
+  v_role text;
 BEGIN
-  -- Security Check: Must be authenticated
-  IF auth.role() = 'anon' THEN
-    RAISE EXCEPTION 'Unauthorized';
+  -- Security Check: Admin Role Required
+  SELECT role INTO v_role FROM profiles WHERE id = auth.uid();
+  
+  IF v_role IS DISTINCT FROM 'admin' THEN
+    RAISE EXCEPTION 'Forbidden: Admin access required';
   END IF;
 
   RETURN QUERY
