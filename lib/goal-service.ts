@@ -25,7 +25,8 @@ const createAdminClient = () => {
     return createClient(supabaseUrl, supabaseKey);
 };
 
-export const supabaseAdmin = createAdminClient();
+// Use a getter to ensure we only access env vars at runtime, not build time
+export const getSupabaseAdmin = () => createAdminClient();
 
 /**
  * Goal Tracking Service
@@ -37,7 +38,7 @@ export class GoalService {
      * Get all active goals
      */
     static async getActiveGoals() {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('autonomous_goals')
             .select('*')
             .eq('status', 'active')
@@ -51,7 +52,7 @@ export class GoalService {
      * Update goal progress
      */
     static async updateGoalProgress(goalId: string, currentValue: number) {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('autonomous_goals')
             .update({
                 current_value: currentValue,
@@ -96,7 +97,7 @@ export class GoalService {
         metrics_snapshot: any;
         ceo_report: string;
     }) {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('execution_log')
             .insert(log)
             .select()
@@ -110,7 +111,7 @@ export class GoalService {
      * Get current business metrics
      */
     static async getCurrentMetrics() {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('performance_metrics')
             .select('*')
             .order('metric_date', { ascending: false })
@@ -137,7 +138,7 @@ export class GoalService {
     }) {
         const today = new Date().toISOString().split('T')[0];
 
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('performance_metrics')
             .upsert({
                 metric_date: today,
@@ -161,7 +162,7 @@ export class GoalService {
         task_description: string;
         priority?: string;
     }) {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await getSupabaseAdmin()
             .from('department_tasks')
             .insert({
                 ...task,

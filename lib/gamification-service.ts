@@ -24,7 +24,8 @@ const createSafeClient = () => {
     return createClient(supabaseUrl, supabaseKey);
 };
 
-const supabase = createSafeClient();
+// Use getter to ensure runtime-only access
+const getSupabase = () => createSafeClient();
 
 /**
  * Gamification Service - "Flower Hunt" Logic
@@ -37,7 +38,7 @@ export class GamificationService {
      */
     static async scanFlowerQR(userId: string, flowerId: string) {
         // 1. Check if already scanned
-        const { data: existing } = await supabase
+        const { data: existing } = await getSupabase()
             .from('flower_hunts')
             .select('*')
             .eq('user_id', userId)
@@ -49,7 +50,7 @@ export class GamificationService {
         }
 
         // 2. Add scan record
-        const { error: scanError } = await supabase
+        const { error: scanError } = await getSupabase()
             .from('flower_hunts')
             .insert({
                 user_id: userId,
@@ -72,14 +73,14 @@ export class GamificationService {
     static async addPoints(userId: string, amount: number, source: string) {
         // Implement point tracking logic (e.g., updating a profiles table)
         // For MVP, we'll assume a 'profiles' table with a 'points' column
-        const { error } = await supabase.rpc('add_user_points', {
+        const { error } = await getSupabase().rpc('add_user_points', {
             user_id_param: userId,
             points_param: amount
         });
 
         if (error) {
             // Fallback: manual update if RPC doesn't exist
-            const { data: profile } = await supabase
+            const { data: profile } = await getSupabase()
                 .from('profiles')
                 .select('points')
                 .eq('id', userId)
@@ -87,7 +88,7 @@ export class GamificationService {
 
             const newPoints = (profile?.points || 0) + amount;
 
-            await supabase
+            await getSupabase()
                 .from('profiles')
                 .update({ points: newPoints })
                 .eq('id', userId);
@@ -98,7 +99,7 @@ export class GamificationService {
      * Get Leaderboard
      */
     static async getLeaderboard() {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
             .from('profiles')
             .select('username, points, avatar_url')
             .order('points', { ascending: false })
