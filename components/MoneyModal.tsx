@@ -36,6 +36,7 @@ export function MoneyModal({ isOpen, onClose, onSuccess }: MoneyModalProps) {
       trackEvent("lead_capture", { action: "lead_form_submit", category: "acquisition", ...formData });
 
       // 2. Save to Supabase
+      if (!supabase) return;
       const { error } = await supabase.from("leads").insert([
         {
           name: formData.name,

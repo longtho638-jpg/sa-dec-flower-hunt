@@ -42,6 +42,7 @@ export function FarmerAuthProvider({ children }: { children: React.ReactNode }) 
         const checkAuth = async () => {
             try {
                 // 1. Check Session
+                if (!supabase) return;
                 const { data: { session } } = await supabase.auth.getSession();
                 if (!session) {
                     setIsLoading(false);
@@ -116,6 +117,7 @@ export function FarmerAuthProvider({ children }: { children: React.ReactNode }) 
         };
 
         const fetchMetrics = async (userId: string) => {
+            if (!supabase) return;
             // A. Pending Orders (items)
             const { count } = await supabase
                 .from('order_items')
@@ -165,10 +167,11 @@ export function FarmerAuthProvider({ children }: { children: React.ReactNode }) 
         checkAuth();
 
         // Listen for auth changes
+        if (!supabase) return;
         const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
             if (event === 'SIGNED_OUT') {
                 setProfile(null);
-                if (subscription) supabase.removeChannel(subscription);
+                if (subscription) supabase?.removeChannel(subscription);
                 router.push('/');
             } else if (event === 'SIGNED_IN') {
                 checkAuth(); // Re-init
@@ -177,12 +180,12 @@ export function FarmerAuthProvider({ children }: { children: React.ReactNode }) 
 
         return () => {
             authSub.unsubscribe();
-            if (subscription) supabase.removeChannel(subscription);
+            if (subscription) supabase?.removeChannel(subscription);
         };
     }, [router]);
 
     const signOut = async () => {
-        await supabase.auth.signOut();
+        if (supabase) await supabase.auth.signOut();
         router.push('/');
     };
 

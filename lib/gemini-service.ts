@@ -1,12 +1,51 @@
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-pro-001:generateContent`;
 
 export async function callGemini(prompt: string) {
-    return callGeminiWithRetry(prompt);
+    return GeminiService.generateText(prompt);
 }
+
+export const GeminiService = {
+    generateText: async (prompt: string) => {
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }],
+        };
+        return callGeminiWithRetry(payload);
+    },
+
+    generateFromImage: async ({ imageBase64, mimeType, prompt }: { imageBase64: string, mimeType: string, prompt: string }) => {
+        const payload = {
+            contents: [{
+                parts: [
+                    { text: prompt },
+                    {
+                        inline_data: {
+                            mime_type: mimeType,
+                            data: imageBase64
+                        }
+                    }
+                ]
+            }]
+        };
+        return callGeminiWithRetry(payload);
+    },
+
+    generateMarketingContent: async ({ topic, persona, goal, context }: { topic: string, persona: string, goal: string, context?: string }) => {
+        const prompt = `
+        You are a marketing expert.
+        Persona: ${persona}
+        Topic: ${topic}
+        Goal: ${goal}
+        Context: ${context || ''}
+        
+        Generate engaging marketing content.
+        `;
+        return GeminiService.generateText(prompt);
+    }
+};
 
 // Robust retry implementation (Fix #5)
 async function callGeminiWithRetry(
-    prompt: string,
+    requestBody: any,
     maxRetries = 3
 ): Promise<string> {
     let lastError: Error | null = null;
@@ -26,9 +65,7 @@ async function callGeminiWithRetry(
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                }),
+                body: JSON.stringify(requestBody),
                 signal: controller.signal,
             });
 

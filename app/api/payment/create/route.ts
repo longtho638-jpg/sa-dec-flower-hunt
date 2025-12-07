@@ -1,9 +1,16 @@
+
 import { NextResponse } from 'next/server';
 import { createPaymentLink, generateOrderCode } from '@/lib/payos';
 import { supabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
     try {
+        if (!supabase) {
+            return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
+        }
+
+        const { data: { user } } = await supabase.auth.getUser();
+
         const { orderId } = await request.json();
 
         if (!orderId) {
@@ -45,7 +52,7 @@ export async function POST(request: Request) {
         const { checkoutUrl, paymentLinkId } = await createPaymentLink({
             orderCode,
             amount: order.final_price,
-            description: `Đơn hàng #${orderId.substring(0, 8)}`,
+            description: `Đơn hàng #${orderId.substring(0, 8)} `,
             buyerName: order.recipient_name,
             buyerPhone: order.recipient_phone,
             buyerAddress: order.recipient_address,

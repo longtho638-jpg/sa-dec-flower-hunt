@@ -13,6 +13,10 @@ async function authenticateRequest(req: NextRequest) {
         return { error: 'Unauthorized: Missing Token', status: 401 };
     }
 
+    if (!supabase) {
+        return { error: "Supabase not configured", status: 503 };
+    }
+
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
         return { error: 'Unauthorized: Invalid Token', status: 401 };
@@ -29,6 +33,10 @@ export async function POST(req: NextRequest) {
 
         if (!token) {
             return NextResponse.json({ error: 'Unauthorized: Missing Token' }, { status: 401 });
+        }
+
+        if (!supabase) {
+            return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
         }
 
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);

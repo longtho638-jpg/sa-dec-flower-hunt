@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { CartItem } from "@/lib/cartStore";
 
 export async function processCheckout(items: CartItem[], total: number) {
+    if (!supabase) throw new Error("Supabase not configured");
     // 1. Get current user (or guest)
     const { data: { user } } = await supabase.auth.getUser();
 

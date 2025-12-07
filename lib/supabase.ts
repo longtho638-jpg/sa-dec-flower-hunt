@@ -1,4 +1,19 @@
 import { createServerClient } from '@supabase/ssr';
+import { createClient as createSupabaseJsClient } from '@supabase/supabase-js';
+
+// Legacy Helper for checking config
+export const isSupabaseConfigured =
+    !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+// Singleton Client for Client Components (Backwards Compatibility)
+// Warning: Usage in Server Components is discouraged due to shared state, use createClient(cookieStore) instead.
+export const supabase = isSupabaseConfigured
+    ? createSupabaseJsClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    : undefined;
 
 // Fix #6: Remove DB Mock Fallback
 export function createClient(cookieStore?: any) {

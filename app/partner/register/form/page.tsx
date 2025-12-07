@@ -30,6 +30,11 @@ export default function PartnerRegisterForm() {
             // Insert into Supabase partner_leads
             const formData = new FormData(e.target as HTMLFormElement);
 
+            if (!supabase) {
+                console.error("Supabase not configured");
+                return;
+            }
+
             const { error } = await supabase.from('partner_leads').insert({
                 full_name: formData.get('full_name'),
                 phone: formData.get('phone'),

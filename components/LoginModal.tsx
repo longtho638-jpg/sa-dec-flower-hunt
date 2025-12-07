@@ -25,6 +25,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
         setLoading(true);
 
         try {
+            if (!supabase) return;
             const { error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
@@ -47,6 +48,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
         setLoading(true);
 
         try {
+            if (!supabase) return;
             const { error } = await supabase.auth.signUp({
                 email,
                 password,

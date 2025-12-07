@@ -28,6 +28,8 @@ export function ReferralCard() {
         // 3. Fetch count
         fetchReferralCount(userId!);
 
+        if (!supabase) return;
+
         // 4. Realtime subscription for this referrer
         const channel = supabase
             .channel('referral_updates')
@@ -46,11 +48,12 @@ export function ReferralCard() {
             .subscribe();
 
         return () => {
-            supabase.removeChannel(channel);
+            supabase?.removeChannel(channel);
         };
     }, []);
 
     const fetchReferralCount = async (userId: string) => {
+        if (!supabase) return;
         const { count, error } = await supabase
             .from('referrals')
             .select('*', { count: 'exact', head: true })

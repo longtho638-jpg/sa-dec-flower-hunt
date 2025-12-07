@@ -15,6 +15,8 @@ export interface AdminStats {
 }
 
 export async function getDailyRevenue(): Promise<DailyRevenue[]> {
+    if (!supabase) return [];
+
     const { data, error } = await supabase.rpc('get_daily_revenue');
 
     if (error) {
@@ -28,6 +30,8 @@ export async function getDailyRevenue(): Promise<DailyRevenue[]> {
 }
 
 export async function getAdminStats(): Promise<AdminStats | null> {
+    if (!supabase) return null;
+
     const { data, error } = await supabase.rpc('get_admin_stats');
 
     if (error) {

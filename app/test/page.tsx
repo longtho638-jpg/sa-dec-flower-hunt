@@ -31,6 +31,7 @@ export default function TestPage() {
 
     // 2. Connection Check (Leaderboard)
     try {
+      if (!supabase) throw new Error("Supabase not configured");
       const { data, error } = await supabase.from('leaderboard').select('count', { count: 'exact', head: true });
       if (error) throw error;
       setChecks(prev => ({ ...prev, connection: 'success' }));
@@ -60,12 +61,13 @@ export default function TestPage() {
 
     // 4. Realtime Check
     try {
+      if (!supabase) throw new Error("Supabase not configured");
       const channel = supabase.channel('test_channel');
       channel.subscribe((status: string) => {
         if (status === 'SUBSCRIBED') {
           setChecks(prev => ({ ...prev, realtime: 'success' }));
           addLog("✅ Realtime Subscribed");
-          supabase.removeChannel(channel);
+          supabase?.removeChannel(channel);
         }
       });
     } catch (err: any) {
@@ -91,8 +93,8 @@ export default function TestPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {Object.entries(checks).map(([key, status]) => (
               <div key={key} className={`p-3 rounded-lg border text-center ${status === 'success' ? 'bg-green-50 border-green-200 text-green-700' :
-                  status === 'failure' ? 'bg-red-50 border-red-200 text-red-700' :
-                    'bg-gray-50 border-gray-200 text-gray-500'
+                status === 'failure' ? 'bg-red-50 border-red-200 text-red-700' :
+                  'bg-gray-50 border-gray-200 text-gray-500'
                 }`}>
                 <div className="text-sm font-medium uppercase tracking-wider mb-1">{key}</div>
                 <div className="font-bold">{status}</div>

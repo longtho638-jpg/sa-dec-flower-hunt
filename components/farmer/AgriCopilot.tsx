@@ -49,6 +49,7 @@ export function AgriCopilot() {
 
         try {
             // Security: Attach Session Token
+            if (!supabase) return;
             const { data: { session } } = await supabase.auth.getSession();
             const headers: HeadersInit = { "Content-Type": "application/json" };
             if (session?.access_token) {

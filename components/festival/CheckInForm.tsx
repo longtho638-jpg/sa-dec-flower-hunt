@@ -39,6 +39,7 @@ export function CheckInForm() {
             }
 
             // 2. Insert into Supabase
+            if (!supabase) return;
             const { error } = await supabase.from('festival_leads').insert({
                 name: formData.name,
                 phone: formData.phone,

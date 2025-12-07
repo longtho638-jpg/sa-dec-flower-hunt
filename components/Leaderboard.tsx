@@ -24,6 +24,8 @@ export function Leaderboard() {
     useEffect(() => {
         fetchLeaderboard();
 
+        if (!supabase) return;
+
         // Realtime subscription
         const channel = supabase
             .channel('leaderboard_realtime')
@@ -37,11 +39,12 @@ export function Leaderboard() {
             .subscribe();
 
         return () => {
-            supabase.removeChannel(channel);
+            supabase?.removeChannel(channel);
         };
     }, []);
 
     const fetchLeaderboard = async () => {
+        if (!supabase) return;
         const { data, error } = await supabase
             .from('leaderboard')
             .select('*')

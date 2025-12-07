@@ -20,6 +20,7 @@ export function LiveMetrics() {
     })
 
     useEffect(() => {
+        if (!supabase) return;
         // Realtime subscription for Orders
         const channel = supabase
             .channel('admin_dashboard')
@@ -38,7 +39,7 @@ export function LiveMetrics() {
             .subscribe()
 
         return () => {
-            supabase.removeChannel(channel)
+            supabase?.removeChannel(channel)
         }
     }, [])
 

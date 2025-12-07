@@ -120,6 +120,12 @@ function FarmerProtection({ children }: { children: React.ReactNode }) {
     // Helper Login for Dev/Demo purposes since we removed global mock
     const handleLogin = async () => {
         setIsLoggingIn(true);
+        if (!supabase) {
+            toast.error("Supabase client not initialized");
+            setIsLoggingIn(false);
+            return;
+        }
+
         const { error } = await supabase.auth.signInWithPassword({
             email,
             password

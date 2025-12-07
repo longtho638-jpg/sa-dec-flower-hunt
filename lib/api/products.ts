@@ -39,6 +39,8 @@ const mapProduct = (row: any): Product => {
 };
 
 export async function getProducts() {
+    if (!supabase) return [];
+
     const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -53,6 +55,8 @@ export async function getProducts() {
 }
 
 export async function getProductById(idOrName: string) {
+    if (!supabase) return null;
+
     // Try UUID first
     let query = supabase.from('products').select('*');
 
@@ -105,6 +109,8 @@ export async function getProductById(idOrName: string) {
 }
 
 export async function getFeaturedProducts() {
+    if (!supabase) return [];
+
     const { data, error } = await supabase
         .from('products')
         .select('*')

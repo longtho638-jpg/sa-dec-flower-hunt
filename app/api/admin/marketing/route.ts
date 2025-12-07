@@ -14,6 +14,10 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!supabase) {
+        return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
+    }
+
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -39,7 +43,13 @@ export async function GET(request: Request) {
 
 export async function POST(req: Request) {
     // Security Check
-    const authHeader = req.headers.get('Authorization');
+    const authHeader = req.headers.get("authorization");
+    if (!supabase) {
+        return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
+    }
+    if (!authHeader) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const token = authHeader?.split(' ')[1];
 
     if (!token) {
