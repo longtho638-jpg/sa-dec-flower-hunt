@@ -62,15 +62,13 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 // Redirect based on role
                 if (profile?.role === 'farmer') {
                     console.log("Redirecting to /farmer");
-                    router.push('/farmer');
-                    router.refresh(); // Ensure strict refresh
+                    window.location.href = '/farmer'; // Hard redirect to ensure context switch
                 } else if (profile?.role === 'admin') {
                     console.log("Redirecting to /admin");
-                    router.push('/admin');
-                    router.refresh();
+                    window.location.href = '/admin'; // Hard redirect
                 } else {
                     console.log("Reloading for Customer");
-                    window.location.reload(); // Customer or others stay on shop
+                    window.location.reload();
                 }
             }
         } catch (error: any) {
