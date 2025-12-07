@@ -33,6 +33,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
         }
 
+        // CRITICAL: Idempotency Check to prevent double payment
+        // PayOS may send multiple webhooks for the same transaction
+        if (transaction.status === 'completed') {
+            console.log(`[Webhook] Transaction ${transaction.id} already completed. Ignoring duplicate event.`);
+            return NextResponse.json({ success: true, message: 'Already processed' });
+        }
+
         const orderId = transaction.order_id;
         const isSuccess = isSuccessPayment(webhookData.code);
 

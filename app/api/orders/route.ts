@@ -9,6 +9,13 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
     }
 
+    // CRITICAL: Input Validation
+    // Validate Vietnamese phone number format (10-11 digits, starts with 0 or 84)
+    const phoneRegex = /^(0|84)(3|5|7|8|9)[0-9]{8}$/;
+    if (!phoneRegex.test(phone)) {
+        return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 });
+    }
+
     // Initialize Supabase with Service Role Key to bypass RLS for phone-based lookup
     // This is secure because we are strictly filtering by the provided phone number
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
