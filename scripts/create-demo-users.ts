@@ -21,7 +21,7 @@ async function createDemoUsers() {
 
     const users = [
         {
-            email: 'farmer1@sadec.local',
+            email: 'farmer1@sadec.com',
             password: 'password123',
             full_name: 'Demo Farmer',
             role: 'farmer'

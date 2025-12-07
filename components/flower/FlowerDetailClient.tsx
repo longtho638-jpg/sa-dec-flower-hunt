@@ -20,6 +20,7 @@ import { ProductReviews } from "@/components/ProductReviews";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { UrgencyTriggers } from "@/components/flower/UrgencyTriggers";
 import type { Product } from "@/lib/api/products";
+import { safeJsonLd } from "@/lib/utils-seo";
 
 export default function FlowerDetailClient({ product }: { product: Product }) {
     const [showAR, setShowAR] = useState(false);
@@ -46,7 +47,7 @@ export default function FlowerDetailClient({ product }: { product: Product }) {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
-                    __html: JSON.stringify({
+                    __html: safeJsonLd({
                         "@context": "https://schema.org",
                         "@type": "Product",
                         "name": product.name,

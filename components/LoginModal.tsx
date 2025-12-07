@@ -192,7 +192,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     size="sm"
                                     className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800 hover:border-zinc-600"
                                     onClick={() => {
-                                        setEmail('farmer1@sadec.local');
+                                        setEmail('farmer1@sadec.com');
                                         setPassword('password123');
                                         toast.info('Sử dụng tài khoản demo Farmer');
                                     }}

@@ -7,6 +7,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Sparkles } from "lucide-react";
+import { safeJsonLd } from "@/lib/utils-seo";
 
 const FAQS = [
     {
@@ -46,7 +47,7 @@ export function FAQSection() {
         <section className="py-12 bg-white rounded-3xl shadow-sm border border-stone-100 px-6 mb-12">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
 
             <div className="flex items-center gap-2 mb-6">

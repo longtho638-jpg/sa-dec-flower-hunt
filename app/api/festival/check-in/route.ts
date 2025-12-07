@@ -34,7 +34,9 @@ export async function POST(req: Request) {
         if (lat && lng) {
             distance = calculateDistance(CENTER_LAT, CENTER_LNG, lat, lng);
             if (distance > ALLOWED_RADIUS_KM) {
-                console.log(`[Check-in] Distant check-in: ${distance}km away.`);
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log(`[Check-in] Distant check-in: ${distance}km away.`);
+                }
             }
         }
 
@@ -47,7 +49,9 @@ export async function POST(req: Request) {
                     subject: '🎁 Voucher 10% từ Làng Hoa Sa Đéc',
                     react: WelcomeEmail({ name, discountCode: 'FESTIVAL-2026' }),
                 });
-                console.log(`[EMAIL SENT] Voucher sent to ${email}`);
+                if (process.env.NODE_ENV !== 'production') {
+                     console.log(`[EMAIL SENT] Voucher sent`);
+                }
             } catch (emailError) {
                 console.error('[EMAIL ERROR] Failed to send voucher:', emailError);
                 // Don't block the user flow if email fails
@@ -55,7 +59,9 @@ export async function POST(req: Request) {
         }
 
         // Log the Lead
-        console.log(`[LEAD CAPTURED] ${name} - ${phone} - ${email || 'No Email'} - Dist: ${distance.toFixed(2)}km`);
+        if (process.env.NODE_ENV !== 'production') {
+             console.log(`[LEAD CAPTURED] New check-in recorded.`);
+        }
 
         return NextResponse.json({
             success: true,

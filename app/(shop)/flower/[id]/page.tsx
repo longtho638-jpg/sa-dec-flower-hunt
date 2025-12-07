@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import FlowerDetailClient from "@/components/flower/FlowerDetailClient";
 import { getProductById } from "@/lib/api/products";
 import { notFound } from "next/navigation";
+import { safeJsonLd } from "@/lib/utils-seo";
 
 interface PageProps {
     params: Promise<{
@@ -63,7 +64,7 @@ export default async function FlowerPage(props: PageProps) {
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
             {/* Pass the full product object to the Client Component */}
             <FlowerDetailClient product={product} />
