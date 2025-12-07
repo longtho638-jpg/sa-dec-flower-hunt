@@ -1,15 +1,13 @@
-import { createServerClient } from '@supabase/ssr';
-import { createClient as createSupabaseJsClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 // Legacy Helper for checking config
 export const isSupabaseConfigured =
     !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
     !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Singleton Client for Client Components (Backwards Compatibility)
-// Warning: Usage in Server Components is discouraged due to shared state, use createClient(cookieStore) instead.
+// Singleton Client for Client Components
 export const supabase = isSupabaseConfigured
-    ? createSupabaseJsClient(
+    ? createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
