@@ -19,7 +19,7 @@ export default function LoginDebugPage() {
             // 1. Check Env Vars
             const hasUrl = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
             const hasKey = !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-            setStatus(s => ({ ...s, env: { hasUrl, hasKey } }));
+            setStatus((s: any) => ({ ...s, env: { hasUrl, hasKey } }));
             addLog(`Env Vars Check: URL=${hasUrl}, Key=${hasKey}`);
 
             if (!hasUrl || !hasKey) {
@@ -36,7 +36,7 @@ export default function LoginDebugPage() {
                 } else {
                     addLog(`✅ Auth Session OK. User: ${session?.user?.email || 'Not Logged In'}`);
                 }
-                setStatus(s => ({ ...s, session: !!session }));
+                setStatus((s: any) => ({ ...s, session: !!session }));
 
                 // 3. Check DB Connection (Public Table)
                 addLog("Checking DB Connection (profiles)...");
