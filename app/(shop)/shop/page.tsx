@@ -82,6 +82,12 @@ export default function Home() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-4 font-mono text-xs text-emerald-700">
+            <Link href="/scan">
+              <Button variant="outline" size="sm" className="bg-black border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400 font-mono text-[10px] h-8 flex items-center gap-2">
+                <Scan className="w-3 h-3" />
+                ACCESS_CAMERA
+              </Button>
+            </Link>
             <span>NET_ID: 8492-AX</span>
             <span>SECURE_LINK</span>
           </div>
@@ -213,7 +219,9 @@ export default function Home() {
         {/* Footer CTA */}
         <div className="mt-20 text-center pb-8 border-t border-emerald-900/30 pt-10">
           <h3 className="text-stone-500 text-xs font-mono uppercase tracking-[0.2em] mb-4">Are you ready to innovate?</h3>
-          <GlitchButton text="INITIATE_SCAN_SEQUENCE" onClick={() => console.log('Scan')} className="w-64 mx-auto" />
+          <Link href="/scan" className="inline-block">
+            <GlitchButton text="INITIATE_SCAN_SEQUENCE" onClick={() => { }} className="w-64 mx-auto" />
+          </Link>
           <div className="mt-4 text-[9px] text-emerald-900 font-mono">
             SADEC_OS SECURE CONNECTION // ENCRYPTED
           </div>
