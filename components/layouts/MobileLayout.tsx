@@ -106,8 +106,8 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                             <p className="text-[10px] font-bold font-mono text-emerald-500 mb-2 uppercase flex items-center gap-2">
                                 <Zap className="w-3 h-3" /> CURRENT_OBJECTIVE
                             </p>
-                            <p className="text-[10px] text-stone-400 font-mono">> SCAN FLOWERS AT GARDEN</p>
-                            <p className="text-[10px] text-stone-400 font-mono">> EARN CREDITS</p>
+                            <p className="text-[10px] text-stone-400 font-mono">&gt; SCAN FLOWERS AT GARDEN</p>
+                            <p className="text-[10px] text-stone-400 font-mono">&gt; EARN CREDITS</p>
                         </div>
                     </div>
                 </div>
