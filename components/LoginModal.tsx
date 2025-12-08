@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/lib/i18n";
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -17,6 +18,7 @@ interface LoginModalProps {
 
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const router = useRouter();
+    const { t } = useLanguage();
     const [mode, setMode] = useState<'login' | 'signup'>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -48,31 +50,31 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 if (profileError) {
                     console.error("Profile Fetch Error:", profileError);
-                    toast.error(`Lỗi Profile: ${profileError.message}`);
+                    toast.error(`${t("common.error")}: ${profileError.message}`);
                     window.location.reload();
                     return;
                 }
 
-                toast.success(`Đăng nhập thành công!`);
+                toast.success(t("auth.toast.success_login"));
 
                 // Redirect logic based on role
                 if (profile?.role === 'farmer') {
                     setIsRedirecting(true);
-                    toast.loading("Đang chuyển hướng đến Dashboard...");
+                    toast.loading(t("auth.toast.redirect_farmer"));
                     window.location.href = '/farmer';
                 } else if (profile?.role === 'admin') {
                     setIsRedirecting(true);
-                    toast.loading("Đang chuyển hướng đến Admin...");
+                    toast.loading(t("auth.toast.redirect_admin"));
                     window.location.href = '/admin';
                 } else {
                     // Customer: Redirect to Shop Dashboard (Deep Fix)
                     setIsRedirecting(true);
-                    toast.loading("Đang chuyển hướng đến Shop...");
+                    toast.loading(t("auth.toast.redirect_shop"));
                     window.location.href = '/shop';
                 }
             }
         } catch (error: any) {
-            toast.error(error.message || "Đăng nhập thất bại");
+            toast.error(error.message || t("auth.error.generic"));
             setLoading(false);
         } finally {
             if (!isRedirecting) {

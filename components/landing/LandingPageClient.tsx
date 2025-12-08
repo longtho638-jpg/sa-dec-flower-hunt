@@ -17,12 +17,15 @@ import { NeuralNetwork } from "@/components/ui/neural-network";
 import { StreamingChart, DnaSpinner, GlobeNetwork } from "@/components/ui/animated-charts";
 import { CreditScoreVisual, InventoryVisual, LogisticsMapVisual } from "@/components/ui/node-visuals";
 
+import { useLanguage } from "@/lib/i18n";
+
 interface LandingPageProps {
     config: MarketingConfig;
 }
 
 export function LandingPageClient({ config }: LandingPageProps) {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const { t } = useLanguage();
 
     return (
         <AuroraBackground className="overflow-x-hidden selection:bg-emerald-500/30">
@@ -45,10 +48,10 @@ export function LandingPageClient({ config }: LandingPageProps) {
                         <div className="hidden md:flex items-center gap-6 text-[10px] font-mono text-stone-500 tracking-widest uppercase">
                             <div className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span>System: Nominal</span>
+                                <span>{t("common.sys_nominal")}</span>
                             </div>
-                            <span className="hover:text-emerald-400 cursor-pointer transition-colors">Nodes: 1,402</span>
-                            <span className="hover:text-emerald-400 cursor-pointer transition-colors">Volume: $2.4M</span>
+                            <span className="hover:text-emerald-400 cursor-pointer transition-colors">{t("common.nodes")}: 1,402</span>
+                            <span className="hover:text-emerald-400 cursor-pointer transition-colors">{t("common.volume")}: $2.4M</span>
                         </div>
 
                         <Button
@@ -56,7 +59,7 @@ export function LandingPageClient({ config }: LandingPageProps) {
                             variant="outline"
                             className="bg-emerald-900/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10 font-mono text-[10px] tracking-widest h-8"
                         >
-                            LOGIN_TERMINAL
+                            {t("nav.login_terminal")}
                         </Button>
                     </nav>
                 </header>
@@ -79,25 +82,25 @@ export function LandingPageClient({ config }: LandingPageProps) {
                             >
                                 <div className="h-[1px] w-8 bg-emerald-500/50"></div>
                                 <span className="text-[10px] font-mono text-emerald-400 tracking-[0.3em] uppercase">
-                                    Official Data Terminal v3.0
+                                    {t("landing.hero.badge")}
                                 </span>
                             </motion.div>
 
                             <div className="mb-6">
                                 <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-2 font-mono">
-                                    NATIONAL <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">AGRI-OS</span>
+                                    {t("landing.hero.title_prefix")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">{t("landing.hero.title_highlight")}</span>
                                 </h1>
                                 <p className="text-stone-500 font-mono text-sm tracking-widest uppercase">
-                                    Operating System for the $1B Flower Economy
+                                    {t("landing.hero.subtitle")}
                                 </p>
                             </div>
 
-                            <h2 className="text-xl text-stone-300 font-light mb-8 max-w-xl leading-relaxed border-l-2 border-emerald-500/20 pl-4">
-                                Khai mở tiềm năng <span className="text-emerald-400 font-semibold">1 Tỷ USD</span> của ngành hoa kiểng Việt Nam thông qua hạ tầng dữ liệu và công nghệ sinh học tập trung.
-                            </h2>
+                            <h2 className="text-xl text-stone-300 font-light mb-8 max-w-xl leading-relaxed border-l-2 border-emerald-500/20 pl-4"
+                                dangerouslySetInnerHTML={{ __html: t("landing.mission") }}
+                            />
 
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <GlitchButton text="KÍCH HOẠT VỐN" onClick={() => setIsLoginModalOpen(true)} className="w-52 bg-emerald-600 hover:bg-emerald-500 font-mono text-xs tracking-widest" />
+                                <GlitchButton text={t("landing.cta.capital")} onClick={() => setIsLoginModalOpen(true)} className="w-52 bg-emerald-600 hover:bg-emerald-500 font-mono text-xs tracking-widest" />
                                 <Button size="lg" variant="ghost" className="text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 px-6 rounded-none font-mono text-xs tracking-widest">
                                     <Activity className="mr-2 w-4 h-4" /> VIEW_DECK.PDF
                                 </Button>
