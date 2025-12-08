@@ -71,7 +71,7 @@ export function FloatingAgentButton() {
                         <Link href="/agents" className="block">
                             <div className="p-2 border-t border-stone-800 hover:bg-stone-900 transition-colors">
                                 <p className="text-[10px] text-emerald-400 text-center uppercase tracking-wider">
-                                    Xem tất cả 24 Agents →
+                                    Xem tất cả 24 Agents [Demo] →
                                 </p>
                             </div>
                         </Link>

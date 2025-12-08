@@ -104,7 +104,10 @@ export function UrgencyBanner({ onOpenWizard }: UrgencyBannerProps) {
 
                         {/* Subtext */}
                         <p className="text-[10px] text-stone-500 mt-4">
-                            * Hỗ trợ setup tài khoản 1-1 với chuyên gia, trị giá ₫500,000
+                            * Chương trình khuyến mãi - số lượng có thể thay đổi
+                        </p>
+                        <p className="text-[9px] text-stone-600">
+                            [Demo countdown - không phải offer thực]
                         </p>
                     </div>
                 </div>

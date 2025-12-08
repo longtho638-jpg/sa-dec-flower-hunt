@@ -16,8 +16,8 @@ const TICKER_ITEMS = [
 export const LiveTicker = () => {
     return (
         <div className="fixed bottom-0 left-0 right-0 h-10 bg-black/90 border-t border-emerald-500/20 backdrop-blur-md z-50 flex items-center overflow-hidden font-mono text-xs">
-            <div className="flex items-center absolute left-0 bg-emerald-900/40 h-full px-4 z-10 border-r border-emerald-500/20 text-emerald-400 font-bold tracking-widest">
-                MARKET LIVE_
+            <div className="flex items-center absolute left-0 bg-stone-900/80 h-full px-4 z-10 border-r border-stone-700 text-stone-500 font-bold tracking-widest">
+                DEMO DATA_
             </div>
 
             <motion.div

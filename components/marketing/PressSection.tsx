@@ -19,8 +19,8 @@ const MEDIA_LOGOS = [
 
 const PRESS_QUOTE = {
     quote: "Nền tảng số hóa chuỗi cung ứng hoa kiểng đầu tiên tại Việt Nam, kết nối trực tiếp nhà vườn Sa Đéc với thị trường toàn quốc.",
-    source: "VTV1 - Chuyển động 24h",
-    date: "Tháng 12, 2024"
+    source: "Tầm nhìn SADEC.OS",
+    date: "Vision Statement"
 };
 
 export function PressSection({ onOpenWizard }: PressSectionProps) {
@@ -80,20 +80,24 @@ export function PressSection({ onOpenWizard }: PressSectionProps) {
 
                 {/* CTAs */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                        variant="outline"
-                        className="border-stone-700 text-stone-400 hover:bg-stone-900"
-                    >
-                        <Download className="w-4 h-4 mr-2" />
-                        Press Kit (PDF)
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="border-stone-700 text-stone-400 hover:bg-stone-900"
-                    >
-                        <Camera className="w-4 h-4 mr-2" />
-                        Logo Pack (ZIP)
-                    </Button>
+                    <a href="/assets/press-kit.md" download="SADEC_Press_Kit.md">
+                        <Button
+                            variant="outline"
+                            className="border-stone-700 text-stone-400 hover:bg-stone-900 w-full"
+                        >
+                            <Download className="w-4 h-4 mr-2" />
+                            Press Kit (MD)
+                        </Button>
+                    </a>
+                    <a href="/assets/brand-assets.md" download="SADEC_Brand_Assets.md">
+                        <Button
+                            variant="outline"
+                            className="border-stone-700 text-stone-400 hover:bg-stone-900 w-full"
+                        >
+                            <Camera className="w-4 h-4 mr-2" />
+                            Brand Assets
+                        </Button>
+                    </a>
                     <Button
                         onClick={() => onOpenWizard?.("media")}
                         className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold"

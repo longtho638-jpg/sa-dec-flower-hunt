@@ -22,8 +22,8 @@ const STEPS = [
         id: 3,
         icon: Clock,
         title: "Chờ Duyệt",
-        duration: "2 giờ",
-        description: "AI kiểm tra chất lượng"
+        duration: "~2 giờ",
+        description: "Admin xét duyệt thủ công"
     },
     {
         id: 4,

@@ -7,38 +7,38 @@ const COMPARISON_DATA = [
     {
         feature: "Thời gian giao hàng",
         traditional: "3-5 ngày",
-        sadec: "24 giờ",
-        improvement: "75% nhanh hơn",
+        sadec: "1-2 ngày*",
+        improvement: "50%+ nhanh",
     },
     {
         feature: "Phí trung gian",
         traditional: "30-40%",
-        sadec: "5-8%",
-        improvement: "80% tiết kiệm",
+        sadec: "~10%*",
+        improvement: "Tiết kiệm",
     },
     {
         feature: "Thanh toán",
         traditional: "15-30 ngày",
-        sadec: "24 giờ",
-        improvement: "Tức thì",
+        sadec: "24-48h",
+        improvement: "Nhanh hơn",
     },
     {
         feature: "Cold Chain",
         traditional: "Không có",
-        sadec: "18.5°C",
-        improvement: "Tươi 100%",
+        sadec: "[Mục tiêu]*",
+        improvement: "Planned",
     },
     {
         feature: "AI Pricing",
         traditional: "Thủ công",
-        sadec: "Real-time",
-        improvement: "Tối ưu giá",
+        sadec: "Hỗ trợ AI",
+        improvement: "Có AI",
     },
     {
         feature: "Truy xuất nguồn gốc",
         traditional: "Không",
-        sadec: "QR Code",
-        improvement: "Minh bạch",
+        sadec: "QR Profile",
+        improvement: "Cơ bản",
     },
 ];
 
@@ -49,11 +49,12 @@ export function ComparisonTable() {
                 {/* Header */}
                 <div className="text-center mb-10">
                     <p className="text-[10px] text-emerald-500 uppercase tracking-widest font-mono mb-2">
-                        🔍 SO SÁNH
+                        🔍 SO SÁNH MỤC TIÊU
                     </p>
                     <h2 className="text-2xl font-light text-white">
                         SADEC.OS vs <span className="text-stone-500 font-mono">Truyền Thống</span>
                     </h2>
+                    <p className="text-[9px] text-stone-600 mt-2">[Giá trị mục tiêu - đang triển khai]</p>
                 </div>
 
                 {/* Table */}
