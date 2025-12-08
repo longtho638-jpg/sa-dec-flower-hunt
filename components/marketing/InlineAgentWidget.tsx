@@ -56,7 +56,7 @@ export function InlineAgentWidget() {
                 {/* Header */}
                 <div className="text-center mb-10">
                     <p className="text-[10px] text-emerald-500 uppercase tracking-widest font-mono mb-2">
-                        🤖 AI AGENTS
+                        🤖 AI AGENTS <span className="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded ml-2">Demo</span>
                     </p>
                     <h2 className="text-2xl font-light text-white mb-2">
                         <span className="text-emerald-400 font-bold font-mono">24 AI Agents</span> Tự Động Hóa
@@ -64,6 +64,7 @@ export function InlineAgentWidget() {
                     <p className="text-sm text-stone-500 max-w-md mx-auto">
                         BizPlan CLI Toolkit cho automation marketing, tài chính, và chiến lược kinh doanh
                     </p>
+                    <p className="text-[9px] text-stone-600 mt-2">[Chế độ demo - output mô phỏng]</p>
                 </div>
 
                 {/* Featured Agents Grid */}
@@ -99,7 +100,7 @@ export function InlineAgentWidget() {
                                 ) : (
                                     <>
                                         <Play className="w-3 h-3 mr-1" />
-                                        Run
+                                        Demo
                                     </>
                                 )}
                             </Button>

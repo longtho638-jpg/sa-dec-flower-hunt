@@ -33,8 +33,9 @@ export function PressSection({ onOpenWizard }: PressSectionProps) {
                         📰 BÁO CHÍ & TRUYỀN THÔNG
                     </p>
                     <h2 className="text-2xl font-light text-white">
-                        Được <span className="text-emerald-400 font-bold font-mono">TRUYỀN THÔNG</span> đưa tin
+                        Media <span className="text-emerald-400 font-bold font-mono">MỤC TIÊU</span>
                     </h2>
+                    <p className="text-[10px] text-stone-600 mt-2">[Đang tiếp cận - chưa có bài viết chính thức]</p>
                 </div>
 
                 {/* Media Logos */}

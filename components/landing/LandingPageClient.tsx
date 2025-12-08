@@ -282,7 +282,7 @@ export function LandingPageClient({ config }: LandingPageProps) {
                             {/* R&D Foundation (Bonus) - NOW CLICKABLE */}
                             <BentoGridItem
                                 title="R&D / GENETICS"
-                                description={<span className="text-[11px]">Core: <b>Công Nghệ Giống</b><br /><span className="text-stone-500">DNA Sequencing & IP Protection.</span></span>}
+                                description={<span className="text-[11px]">Core: <b>Công Nghệ Giống</b><br /><span className="text-stone-500">R&D Pipeline & IP Registry [Coming Soon]</span></span>}
                                 header={<div className="h-full min-h-[9rem] w-full border border-emerald-500/10 bg-black/40"><DnaSpinner /></div>}
                                 icon={<Dna className="h-4 w-4 text-emerald-400" />}
                                 className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm cursor-pointer hover:border-emerald-500/50 transition-colors"

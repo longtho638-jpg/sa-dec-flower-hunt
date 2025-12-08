@@ -25,7 +25,7 @@ export const CreditScoreVisual = () => {
                         transition={{ duration: 1.5, delay: 0.5 }}
                     />
                 </div>
-                <div className="text-[8px] text-stone-500 mt-2">RISK: LOW // IOT DATA VERIFIED</div>
+                <div className="text-[8px] text-stone-500 mt-2">RISK: LOW // CREDIT MODEL v1.0</div>
             </div>
         </div>
     );
@@ -39,7 +39,7 @@ export const LogisticsMapVisual = () => {
             <div className="w-full space-y-2 relative z-10">
                 <div className="flex justify-between items-center text-[9px] font-mono text-stone-400 border-b border-white/5 pb-1">
                     <span>ROUTE: SDC-HCM</span>
-                    <span className="text-emerald-400">IN_TRANSIT</span>
+                    <span className="text-stone-600">[TARGET]</span>
                 </div>
                 <div className="flex justify-between items-center">
                     <div className="flex flex-col">

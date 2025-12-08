@@ -37,7 +37,7 @@ export function InvestorSection() {
                 {/* Partner Logos */}
                 <div className="mb-12">
                     <p className="text-[10px] text-stone-600 uppercase tracking-widest font-mono text-center mb-4">
-                        Đối tác chiến lược
+                        Đối tác tiềm năng<span className="text-stone-700 ml-2">[đang đàm phán]</span>
                     </p>
                     <div className="flex items-center justify-center gap-4 flex-wrap">
                         {PARTNER_LOGOS.map((partner, i) => (

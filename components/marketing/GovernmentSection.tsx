@@ -50,8 +50,9 @@ export function GovernmentSection({ onOpenWizard }: GovernmentSectionProps) {
                         🏛️ HỢP TÁC CHÍNH PHỦ & TỔ CHỨC
                     </p>
                     <h2 className="text-2xl font-light text-white">
-                        Được <span className="text-emerald-400 font-bold font-mono">CHỨNG NHẬN</span> bởi
+                        Đang <span className="text-emerald-400 font-bold font-mono">ĐĂNG KÝ</span> tham gia
                     </h2>
+                    <p className="text-[10px] text-stone-600 mt-2">[Chương trình mục tiêu - đang triển khai]</p>
                 </div>
 
                 {/* Government Programs */}
