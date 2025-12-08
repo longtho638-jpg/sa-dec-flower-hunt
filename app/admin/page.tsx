@@ -76,11 +76,12 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div className="flex-1 space-y-4 p-8 pt-6 bg-stone-50 dark:bg-stone-950 min-h-screen transition-colors duration-300">
+        <div className="flex-1 space-y-4 p-8 pt-6 bg-stone-950 min-h-screen transition-colors duration-300">
             <div className="flex items-center justify-between space-y-2">
-                <h2 className="text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Command Center</h2>
+                <h2 className="text-2xl font-bold tracking-[0.1em] text-white font-mono">
+                    COMMAND<span className="text-emerald-400">_CENTER</span>
+                </h2>
                 <div className="flex items-center space-x-2">
-                    <ThemeToggle />
                     <CalendarDateRangePicker />
                     <Link href="/admin/psychology">
                         <Button variant="outline" className="border-stone-200 dark:border-stone-700">
