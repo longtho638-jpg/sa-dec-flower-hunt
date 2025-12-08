@@ -22,19 +22,19 @@ async function createDemoUsers() {
     const users = [
         {
             email: 'farmer1@sadec.com',
-            password: 'password123',
+            password: 'Sadec@2025_Secure!',
             full_name: 'Demo Farmer',
             role: 'farmer'
         },
         {
             email: 'customer1@example.com',
-            password: 'password123',
+            password: 'Sadec@2025_Secure!',
             full_name: 'Demo Customer',
             role: 'customer'
         }
     ];
 
-    // Strategy: Try Login -> Get ID -> Upsert Profile
+    // Strategy: Try Login -> Get ID -> Update Password -> Upsert Profile
     // If Login fail -> Create User -> Upsert Profile
 
     for (const u of users) {
@@ -42,17 +42,27 @@ async function createDemoUsers() {
 
         console.log(`Checking ${u.email}...`);
 
-        // 1. Try Login
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        // 1. Try Login OLD PASSWORD (to migrate)
+        const { data: signInOld } = await supabase.auth.signInWithPassword({
+            email: u.email,
+            password: 'password123'
+        });
+
+        // 2. Try Login NEW PASSWORD
+        const { data: signInNew } = await supabase.auth.signInWithPassword({
             email: u.email,
             password: u.password
         });
 
-        if (signInData.user) {
-            console.log(`✅ Login Success: ${u.email}`);
-            userId = signInData.user.id;
+        if (signInNew.user) {
+            userId = signInNew.user.id;
+            console.log(`✅ Logged in (New Pwd): ${u.email}`);
+        } else if (signInOld.user) {
+            userId = signInOld.user.id;
+            console.log(`⚠️  Migrating Password for ${u.email}...`);
+            await supabase.auth.admin.updateUserById(userId, { password: u.password });
         } else {
-            // 2. Try Create (Admin)
+            // 3. Create User
             console.log(`User not found, creating ${u.email}...`);
             const { data: createData, error: createError } = await supabase.auth.admin.createUser({
                 email: u.email,
@@ -69,7 +79,7 @@ async function createDemoUsers() {
             }
         }
 
-        // 3. Upsert Profile
+        // 4. Upsert Profile
         if (userId) {
             const { error: profileError } = await supabase
                 .from('profiles')
@@ -86,7 +96,7 @@ async function createDemoUsers() {
                 console.log(`✅ Upserted Profile for ${u.email}`);
             }
 
-            // 4. If Farmer, create Wallet
+            // 5. If Farmer, create Wallet
             if (u.role === 'farmer') {
                 await supabase.from('farmer_wallets').upsert({
                     farmer_id: userId,
