@@ -65,12 +65,8 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     toast.loading("Đang chuyển hướng đến Admin...");
                     window.location.href = '/admin';
                 } else {
-                    // Customer: close modal and stay on homepage
-                    toast.success("Chào mừng! Bạn đã đăng nhập.");
-                    setTimeout(() => {
-                        onClose();
-                        router.refresh(); // Refresh to update auth UI
-                    }, 500);
+                    // Customer: just close modal and stay on current page
+                    onClose();
                 }
             }
         } catch (error: any) {
