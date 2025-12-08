@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Cyberpunk Font */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
+
+
 @layer base {
   :root {
     /* Midnight Garden Theme - Light Mode (Futuristic Clean) */
@@ -158,9 +162,6 @@
 /* ========================================
    AGRI-OS DESIGN SYSTEM ENHANCEMENTS
    ======================================== */
-
-/* Import Cyberpunk Font */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 
 /* Agri-OS Color Tokens */
 :root {
