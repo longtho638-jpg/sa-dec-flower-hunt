@@ -140,7 +140,7 @@ export default function DashboardPage() {
                                         style: 'currency',
                                         currency: 'VND',
                                         notation: 'compact'
-                                    }).format(liveMetrics.revenueToday)}`}
+                                    }).format(liveMetrics?.revenueToday || 0)}`}
                                 />
                             </div>
                         </ThreeDCard>
@@ -185,10 +185,10 @@ export default function DashboardPage() {
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-lg font-bold text-white shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                                        {liveMetrics.topSellingProduct.name}
+                                        {liveMetrics?.topSellingProduct?.name || "No Data"}
                                     </p>
                                     <p className="text-sm text-purple-400 mt-1 font-mono">
-                                        {liveMetrics.topSellingProduct.quantity} UNITS DEPLOYED
+                                        {liveMetrics?.topSellingProduct?.quantity || 0} UNITS DEPLOYED
                                     </p>
                                 </CardContent>
                             </ThreeDCard>
