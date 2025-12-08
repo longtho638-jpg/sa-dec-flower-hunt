@@ -143,8 +143,8 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         <button
                             onClick={() => setMode('login')}
                             className={`py-2 text-xs font-mono font-bold uppercase transition-all rounded ${mode === 'login'
-                                    ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                                    : 'text-emerald-600 hover:text-emerald-400'
+                                ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                                : 'text-emerald-600 hover:text-emerald-400'
                                 }`}
                         >
                             {t("auth.tab.login")}
@@ -152,8 +152,8 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         <button
                             onClick={() => setMode('signup')}
                             className={`py-2 text-xs font-mono font-bold uppercase transition-all rounded ${mode === 'signup'
-                                    ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                                    : 'text-emerald-600 hover:text-emerald-400'
+                                ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                                : 'text-emerald-600 hover:text-emerald-400'
                                 }`}
                         >
                             {t("auth.tab.signup")}
@@ -213,14 +213,38 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                             {loading ? t("auth.btn.processing") : (mode === 'login' ? t("auth.btn.login") : t("auth.btn.signup"))}
                         </Button>
-                                >
-                        🛒 Buyer
-                    </Button>
-                </div>
+
+                        {/* Quick Demo Login (Dev Only) */}
+                        <div className="pt-4 border-t border-emerald-900/30 grid grid-cols-3 gap-2">
+                            <button
+                                onClick={() => { setEmail('customer@demo.com'); setPassword('123456'); }}
+                                className="text-[9px] font-mono text-emerald-700 hover:text-emerald-500 hover:bg-emerald-900/20 py-1 rounded border border-transparent hover:border-emerald-500/20 transition-all uppercase"
+                            >
+                                {t("auth.demo.customer")}
+                            </button>
+                            <button
+                                onClick={() => { setEmail('farmer@demo.com'); setPassword('123456'); }}
+                                className="text-[9px] font-mono text-emerald-700 hover:text-emerald-500 hover:bg-emerald-900/20 py-1 rounded border border-transparent hover:border-emerald-500/20 transition-all uppercase"
+                            >
+                                {t("auth.demo.farmer")}
+                            </button>
+                            <button
+                                onClick={() => { setEmail('admin@demo.com'); setPassword('123456'); }}
+                                className="text-[9px] font-mono text-emerald-700 hover:text-emerald-500 hover:bg-emerald-900/20 py-1 rounded border border-transparent hover:border-emerald-500/20 transition-all uppercase"
+                            >
+                                {t("auth.demo.admin")}
+                            </button>
+                        </div>
+
+                        <div className="text-center mt-4">
+                            <p className="text-[10px] text-emerald-600/60 font-mono">
+                                {mode === 'login' ? t("auth.switch.signup") : t("auth.switch.login")}
+                            </p>
+                        </div>
+
+                    </form>
+                </CardContent>
+            </Card>
         </div>
-                    </form >
-                </CardContent >
-            </Card >
-        </div >
     );
 }
