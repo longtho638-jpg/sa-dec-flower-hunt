@@ -14,7 +14,13 @@ VALUES
     ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', '00000000-0000-0000-0000-000000000000', 'farmer3@sadec.local', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Cô Nguyễn Thị Lan"}', NOW(), NOW(), 'authenticated', false, 'authenticated'),
     ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', '00000000-0000-0000-0000-000000000000', 'farmer4@sadec.local', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Chị Trần Thị Nga"}', NOW(), NOW(), 'authenticated', false, 'authenticated'),
     ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', '00000000-0000-0000-0000-000000000000', 'farmer5@sadec.local', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Anh Lê Văn Tuấn"}', NOW(), NOW(), 'authenticated', false, 'authenticated'),
-    ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', '00000000-0000-0000-0000-000000000000', 'farmer6@sadec.local', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Bác Ba Đời"}', NOW(), NOW(), 'authenticated', false, 'authenticated')
+    ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', '00000000-0000-0000-0000-000000000000', 'farmer5@sadec.local', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Anh Lê Văn Tuấn"}', NOW(), NOW(), 'authenticated', false, 'authenticated'),
+    ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', '00000000-0000-0000-0000-000000000000', 'farmer6@sadec.local', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Bác Ba Đời"}', NOW(), NOW(), 'authenticated', false, 'authenticated'),
+
+    -- Demo Accounts (Official) - Password '123456'
+    ('d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', '00000000-0000-0000-0000-000000000000', 'admin@demo.com', crypt('123456', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Executive Admin"}', NOW(), NOW(), 'authenticated', false, 'authenticated'),
+    ('d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', '00000000-0000-0000-0000-000000000000', 'farmer@demo.com', crypt('123456', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Nông Dân Demo"}', NOW(), NOW(), 'authenticated', false, 'authenticated'),
+    ('d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', '00000000-0000-0000-0000-000000000000', 'customer@demo.com', crypt('123456', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Khách Hàng Demo"}', NOW(), NOW(), 'authenticated', false, 'authenticated')
 ON CONFLICT (id) DO UPDATE SET 
     aud = EXCLUDED.aud,
     encrypted_password = EXCLUDED.encrypted_password,
@@ -28,7 +34,12 @@ VALUES
     ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 'farmer', 'Cô Nguyễn Thị Lan', 'Xã Tân Khánh Đông', 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200'),
     ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', 'farmer', 'Chị Trần Thị Nga', 'Làng hoa Sa Đéc', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200'),
     ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 'farmer', 'Anh Lê Văn Tuấn', 'Xã An Hòa', 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?q=80&w=200'),
-    ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', 'farmer', 'Bác Ba Đời', 'Vùng lõi Làng hoa', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200')
+    ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', 'farmer', 'Bác Ba Đời', 'Vùng lõi Làng hoa', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200'),
+    
+    -- Demo Accounts (Official)
+    ('d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01', 'admin', 'Executive Admin', 'HQ Agri-OS, Sa Đéc', 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin'),
+    ('d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a02', 'farmer', 'Nông Dân Demo', 'Vườn Mẫu, Sa Đéc', 'https://api.dicebear.com/7.x/avataaars/svg?seed=farmer'),
+    ('d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a03', 'customer', 'Khách Hàng Demo', 'TP. Hồ Chí Minh', 'https://api.dicebear.com/7.x/avataaars/svg?seed=customer')
 ON CONFLICT (id) DO UPDATE SET full_name = EXCLUDED.full_name;
 
 -- 4. Insert Products (Linked to Farmers)
