@@ -22,6 +22,9 @@ import { StakeholderCTABlocks } from "@/components/marketing/StakeholderCTABlock
 import { FAQSection } from "@/components/marketing/FAQSection";
 import { FloatingAgentButton } from "@/components/marketing/FloatingAgentButton";
 import { FestivalBanner } from "@/components/marketing/FestivalBanner";
+import { ROICalculator } from "@/components/marketing/ROICalculator";
+import { PricingSection } from "@/components/marketing/PricingSection";
+import { InvestorSection } from "@/components/marketing/InvestorSection";
 
 import { useLanguage } from "@/lib/i18n";
 
@@ -276,6 +279,11 @@ export function LandingPageClient({ config }: LandingPageProps) {
 
                     {/* Testimonials Section */}
                     <TestimonialsSection />
+
+                    {/* FinOps Sections */}
+                    <ROICalculator />
+                    <PricingSection />
+                    <InvestorSection />
 
                     {/* Stakeholder CTA Blocks */}
                     <StakeholderCTABlocks onOpenWizard={handleOpenWizard} />
