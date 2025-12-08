@@ -62,8 +62,8 @@ export function DesktopLayout({ children, onLoginClick }: DesktopLayoutProps) {
                                     <Button
                                         variant="ghost"
                                         className={`w-full justify-start gap-3 h-12 font-mono text-sm tracking-wide transition-all duration-300 group relative overflow-hidden ${isActive
-                                                ? 'bg-emerald-900/10 text-emerald-400 border-r-2 border-emerald-500'
-                                                : 'text-stone-400 hover:text-emerald-300 hover:bg-emerald-950/30'
+                                            ? 'bg-emerald-900/10 text-emerald-400 border-r-2 border-emerald-500'
+                                            : 'text-stone-400 hover:text-emerald-300 hover:bg-emerald-950/30'
                                             }`}
                                     >
                                         <div className={`absolute inset-0 bg-emerald-500/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ${isActive ? 'translate-x-0' : ''}`} />
@@ -89,15 +89,15 @@ export function DesktopLayout({ children, onLoginClick }: DesktopLayoutProps) {
 
                         <div className="space-y-2 font-mono text-[10px] text-emerald-500/70">
                             <div className="flex justify-between items-center">
-                                <span>> NETWORK</span>
+                                <span>&gt; NETWORK</span>
                                 <span className="text-emerald-400">ONLINE</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span>> DATA_NODES</span>
+                                <span>&gt; DATA_NODES</span>
                                 <span className="text-emerald-400">1,402</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span>> SECURE_KEY</span>
+                                <span>&gt; SECURE_KEY</span>
                                 <span className="text-emerald-400">*****</span>
                             </div>
                         </div>
