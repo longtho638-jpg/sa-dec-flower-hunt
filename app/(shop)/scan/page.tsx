@@ -5,18 +5,106 @@ import { toast } from "sonner";
 import { Scanner } from '@yudiel/react-qr-scanner';
 import confetti from 'canvas-confetti';
 import { motion } from "framer-motion";
-import { ScanLine, Zap } from "lucide-react";
+import { ScanLine, Zap, Trophy, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+
+// Generate flower names based on QR code
+const FLOWER_NAMES = [
+    "Hoa Hồng Sa Đéc",
+    "Hoa Cúc Vàng",
+    "Hoa Mai Tết",
+    "Hoa Đào Bắc",
+    "Hoa Lan Hồ Điệp",
+    "Hoa Vạn Thọ",
+    "Hoa Cẩm Chướng",
+    "Hoa Tulip Hà Lan",
+    "Hoa Ly Trắng",
+    "Hoa Sen Hồng"
+];
 
 export default function QRScanner() {
     const [scanned, setScanned] = useState(false);
     const [scanResult, setScanResult] = useState<string | null>(null);
+    const [pointsEarned, setPointsEarned] = useState(0);
+    const [totalPoints, setTotalPoints] = useState(0);
+    const [currentRank, setCurrentRank] = useState<number | null>(null);
+    const [flowerName, setFlowerName] = useState("");
     const router = useRouter();
 
     // Sound effect
     const playSuccessSound = () => {
-        const audio = new Audio('/sounds/success.mp3'); // We'll need this file, or use a data URI fallback
+        const audio = new Audio('/sounds/success.mp3');
         audio.play().catch(e => console.log("Audio play failed", e));
+    };
+
+    // Add points to leaderboard
+    const addPointsToLeaderboard = async (points: number, flower: string) => {
+        if (!supabase) {
+            console.warn("Supabase not initialized");
+            return { totalPoints: points, rank: null };
+        }
+
+        try {
+            // Get current user (or use anonymous session)
+            const { data: { user } } = await supabase.auth.getUser();
+            const userId = user?.id || `anon_${Date.now()}`;
+            const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Khách";
+
+            // Check if user exists in leaderboard
+            const { data: existing } = await supabase
+                .from('leaderboard')
+                .select('*')
+                .eq('user_id', userId)
+                .single();
+
+            let newTotalPoints = points;
+            let newFlowersScanned = 1;
+
+            if (existing) {
+                // Update existing entry
+                newTotalPoints = (existing.points || 0) + points;
+                newFlowersScanned = (existing.flowers_scanned || 0) + 1;
+
+                await supabase
+                    .from('leaderboard')
+                    .update({
+                        points: newTotalPoints,
+                        flowers_scanned: newFlowersScanned,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('user_id', userId);
+            } else {
+                // Insert new entry
+                await supabase
+                    .from('leaderboard')
+                    .insert({
+                        user_id: userId,
+                        name: userName,
+                        points: points,
+                        flowers_scanned: 1,
+                        avatar_url: user?.user_metadata?.avatar_url || null
+                    });
+            }
+
+            // Get current rank
+            const { data: rankings } = await supabase
+                .from('leaderboard')
+                .select('user_id, points')
+                .order('points', { ascending: false });
+
+            let rank = null;
+            if (rankings) {
+                const userIndex = rankings.findIndex(r => r.user_id === userId);
+                if (userIndex !== -1) rank = userIndex + 1;
+            }
+
+            return { totalPoints: newTotalPoints, rank };
+        } catch (error) {
+            console.error("Leaderboard error:", error);
+            return { totalPoints: points, rank: null };
+        }
     };
 
     const handleScan = async (text: string) => {
@@ -33,18 +121,26 @@ export default function QRScanner() {
             particleCount: 150,
             spread: 70,
             origin: { y: 0.6 },
-            colors: ['#ef4444', '#22c55e', '#eab308'] // Red, Green, Gold
+            colors: ['#ef4444', '#22c55e', '#eab308']
         });
 
-        // 3. Sound (Optional - browser policy might block)
-        // playSuccessSound();
+        // 3. Calculate points & flower (based on QR content)
+        const points = 100 + Math.floor(Math.random() * 400); // 100-500 points
+        const flower = FLOWER_NAMES[Math.floor(Math.random() * FLOWER_NAMES.length)];
+        setPointsEarned(points);
+        setFlowerName(flower);
 
-        // 4. Process Logic (Mock for now)
-        toast.success("🎯 TUYỆT VỜI! ĐÃ QUÉT TRÚNG", {
-            description: "Bạn vừa tìm thấy 'Hoa Hồng Sa Đéc'. +500 Điểm!",
+        // 4. Add to leaderboard
+        const { totalPoints: newTotal, rank } = await addPointsToLeaderboard(points, flower);
+        setTotalPoints(newTotal);
+        setCurrentRank(rank);
+
+        // 5. Success toast
+        toast.success(`🎯 +${points} ĐIỂM!`, {
+            description: `Bạn tìm thấy "${flower}"`,
             duration: 4000,
             style: {
-                background: '#10b981', // Emerald 500
+                background: '#10b981',
                 color: 'white',
                 border: 'none',
                 fontWeight: 'bold'
@@ -52,13 +148,11 @@ export default function QRScanner() {
             icon: <Zap className="w-5 h-5 text-yellow-300" />
         });
 
-        // 5. Navigate or Reset
+        // 6. Auto-reset after delay (allow user to continue)
         setTimeout(() => {
-            // In real app: router.push(`/flower/${extractedIdFromQR}`);
-            // For demo: Just reset
             setScanned(false);
             setScanResult(null);
-        }, 3000);
+        }, 5000);
     };
 
     const handleError = (error: unknown) => {
@@ -140,12 +234,28 @@ export default function QRScanner() {
 
                 {/* Scanned Success Overlay */}
                 {scanned && (
-                    <div className="absolute inset-0 bg-green-500/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center animate-in fade-in active:animate-out fade-out">
+                    <div className="absolute inset-0 bg-gradient-to-b from-green-500 to-emerald-600 backdrop-blur-sm z-50 flex flex-col items-center justify-center animate-in fade-in p-4">
                         <div className="bg-white p-6 rounded-full shadow-xl mb-4">
                             <Zap className="w-12 h-12 text-green-600 fill-green-600" />
                         </div>
-                        <h3 className="text-white text-2xl font-bold">Thành Công!</h3>
-                        <p className="text-white/90 font-mono mt-2">{scanResult?.substring(0, 15)}...</p>
+                        <h3 className="text-white text-3xl font-bold">+{pointsEarned} ĐIỂM!</h3>
+                        <p className="text-white/90 font-medium mt-2">{flowerName}</p>
+
+                        {currentRank && (
+                            <div className="mt-4 bg-white/20 rounded-xl px-4 py-2 flex items-center gap-2">
+                                <Trophy className="w-5 h-5 text-yellow-300" />
+                                <span className="text-white font-bold">Xếp hạng #{currentRank}</span>
+                            </div>
+                        )}
+
+                        <Link
+                            href="/leaderboard"
+                            className="mt-6 bg-white text-green-700 font-bold px-6 py-3 rounded-full flex items-center gap-2 hover:bg-gray-100 transition-colors"
+                        >
+                            <Trophy className="w-5 h-5" />
+                            Xem Bảng Xếp Hạng
+                            <ArrowRight className="w-4 h-4" />
+                        </Link>
                     </div>
                 )}
             </div>
