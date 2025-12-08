@@ -8,14 +8,25 @@ export function LanguageToggle() {
     const { language, setLanguage } = useLanguage()
 
     return (
-        <Button
-            variant="ghost"
-            size="sm"
-            className="rounded-full w-9 h-9 p-0"
-            onClick={() => setLanguage(language === "vi" ? "en" : "vi")}
-        >
-            <span className="font-bold text-xs">{language === "vi" ? "EN" : "VI"}</span>
-            <span className="sr-only">Toggle Language</span>
-        </Button>
+        <div className="flex items-center bg-black/50 border border-emerald-500/30 rounded-full p-0.5 backdrop-blur-md">
+            <button
+                onClick={() => setLanguage("vi")}
+                className={`px-3 py-1 rounded-full text-[10px] font-mono transition-all duration-300 ${language === "vi"
+                        ? "bg-emerald-500 text-black font-bold shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                        : "text-stone-500 hover:text-emerald-400"
+                    }`}
+            >
+                VIE
+            </button>
+            <button
+                onClick={() => setLanguage("en")}
+                className={`px-3 py-1 rounded-full text-[10px] font-mono transition-all duration-300 ${language === "en"
+                        ? "bg-emerald-500 text-black font-bold shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                        : "text-stone-500 hover:text-emerald-400"
+                    }`}
+            >
+                ENG
+            </button>
+        </div>
     )
 }

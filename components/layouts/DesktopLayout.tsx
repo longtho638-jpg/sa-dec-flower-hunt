@@ -20,14 +20,15 @@ interface DesktopLayoutProps {
 export function DesktopLayout({ children, onLoginClick }: DesktopLayoutProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const pathname = usePathname();
+    const { t } = useLanguage();
 
     const menuItems = [
-        { href: "/", icon: Terminal, label: "MAIN_TERMINAL" },
-        { href: "/shop", icon: ShoppingCart, label: "MARKET_MODULE" },
-        { href: "/scan", icon: Scan, label: "SCAN_SEQUENCE" },
-        { href: "/campaign", icon: Zap, label: "LIVE_EVENT" },
-        { href: "/partner", icon: Shield, label: "ALLIANCE_NET" },
-        { href: "/blog", icon: Command, label: "DATA_ARCHIVE" },
+        { href: "/", icon: Terminal, label: t("sidebar.main") },
+        { href: "/shop", icon: ShoppingCart, label: t("sidebar.market") },
+        { href: "/scan", icon: Scan, label: t("sidebar.scan") },
+        { href: "/campaign", icon: Zap, label: t("sidebar.event") },
+        { href: "/partner", icon: Shield, label: t("sidebar.alliance") },
+        { href: "/blog", icon: Command, label: t("sidebar.data") },
     ];
 
     return (
@@ -44,14 +45,14 @@ export function DesktopLayout({ children, onLoginClick }: DesktopLayoutProps) {
                             SA_DEC_OS <span className="text-[10px] text-emerald-500/50 align-top">v3.0</span>
                         </h1>
                         <p className="text-emerald-500/40 text-[10px] font-mono mt-1 tracking-widest uppercase">
-                            FLOWER_ECONOMY_TERMINAL
+                            {t("system.subtitle")}
                         </p>
                     </div>
 
                     {/* Navigation Menu */}
                     <nav className="space-y-1 mb-10">
                         <div className="text-[10px] font-mono text-stone-500 mb-4 px-2 tracking-widest">
-                            // SYSTEM_MODULES
+                            {t("sidebar.modules")}
                         </div>
                         {menuItems.map((item) => {
                             const isActive = pathname === item.href;
@@ -82,22 +83,22 @@ export function DesktopLayout({ children, onLoginClick }: DesktopLayoutProps) {
                         <div className="flex items-center justify-between mb-3">
                             <p className="text-[10px] font-mono text-emerald-500 uppercase tracking-wider flex items-center gap-2">
                                 <span className="w-1 h-1 bg-emerald-500 rounded-full"></span>
-                                SYSTEM_STATUS
+                                {t("status.system")}
                             </p>
-                            <span className="text-[9px] font-mono text-emerald-900">NOMINAL</span>
+                            <span className="text-[9px] font-mono text-emerald-900">{t("status.nominal")}</span>
                         </div>
 
                         <div className="space-y-2 font-mono text-[10px] text-emerald-500/70">
                             <div className="flex justify-between items-center">
-                                <span>&gt; NETWORK</span>
-                                <span className="text-emerald-400">ONLINE</span>
+                                <span>&gt; {t("status.network")}</span>
+                                <span className="text-emerald-400">{t("status.online")}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span>&gt; DATA_NODES</span>
+                                <span>&gt; {t("status.nodes")}</span>
                                 <span className="text-emerald-400">1,402</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span>&gt; SECURE_KEY</span>
+                                <span>&gt; {t("status.secure_key")}</span>
                                 <span className="text-emerald-400">*****</span>
                             </div>
                         </div>
@@ -111,7 +112,7 @@ export function DesktopLayout({ children, onLoginClick }: DesktopLayoutProps) {
                         >
                             <span className="relative z-10 flex items-center justify-center gap-2">
                                 <User className="w-3 h-3" />
-                                ACCESS_TERMINAL
+                                {t("cmd.access")}
                             </span>
                             <div className="absolute inset-0 bg-emerald-400/10 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300" />
                         </Button>

@@ -18,6 +18,7 @@ interface MobileLayoutProps {
 export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const pathname = usePathname();
+    const { t } = useLanguage();
 
     const isActive = (path: string) => pathname === path;
 
@@ -56,7 +57,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                             className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 h-8 text-[10px] font-mono tracking-wider"
                         >
                             <User className="w-3 h-3 mr-1" />
-                            LOGIN
+                            {t("cmd.login")}
                         </Button>
                     </div>
                 </div>
@@ -79,17 +80,17 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                         </div>
 
                         <div className="mt-8 mb-8 pl-4 border-l border-emerald-500/30">
-                            <h2 className="text-lg font-mono font-bold text-white">MISSION_LOG</h2>
+                            <h2 className="text-lg font-mono font-bold text-white">{t("mobile.mission")}</h2>
                             <p className="text-[10px] text-emerald-500/60 font-mono">OPERATIONAL_MENU</p>
                         </div>
 
                         <nav className="space-y-4 flex-1">
                             {[
-                                { href: "/", icon: Home, label: "BASE_STATION" },
-                                { href: "/shop", icon: Zap, label: "MARKET_MODULE" },
-                                { href: "/scan", icon: Scan, label: "SCANNER_V3" },
-                                { href: "/blog", icon: FileText, label: "DATA_FILES" },
-                                { href: "/partner", icon: Handshake, label: "ALLIANCE" },
+                                { href: "/", icon: Home, label: t("sidebar.main") },
+                                { href: "/shop", icon: Zap, label: t("sidebar.market") },
+                                { href: "/scan", icon: Scan, label: t("sidebar.scan") },
+                                { href: "/blog", icon: FileText, label: t("sidebar.data") },
+                                { href: "/partner", icon: Handshake, label: t("sidebar.alliance") },
                             ].map((item) => (
                                 <Link key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)}>
                                     <Button variant="ghost" className="w-full justify-start gap-4 h-12 text-sm font-mono text-stone-400 hover:text-emerald-400 hover:bg-emerald-900/10 border border-transparent hover:border-emerald-500/20">
@@ -104,10 +105,10 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                         <div className="p-4 bg-emerald-900/5 border border-emerald-900/30 rounded mt-auto relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-[1px] bg-emerald-500/20 animate-scan-slow" />
                             <p className="text-[10px] font-bold font-mono text-emerald-500 mb-2 uppercase flex items-center gap-2">
-                                <Zap className="w-3 h-3" /> CURRENT_OBJECTIVE
+                                <Zap className="w-3 h-3" /> {t("mobile.obj")}
                             </p>
-                            <p className="text-[10px] text-stone-400 font-mono">&gt; SCAN FLOWERS AT GARDEN</p>
-                            <p className="text-[10px] text-stone-400 font-mono">&gt; EARN CREDITS</p>
+                            <p className="text-[10px] text-stone-400 font-mono">&gt; {t("mobile.scan_obj")}</p>
+                            <p className="text-[10px] text-stone-400 font-mono">&gt; {t("mobile.earn_obj")}</p>
                         </div>
                     </div>
                 </div>
@@ -126,7 +127,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                     <Link href="/">
                         <Button variant="ghost" size="sm" className={`flex-col h-auto gap-1 px-1 hover:bg-transparent ${isActive('/') ? 'text-emerald-400' : 'text-stone-600'}`}>
                             <Home className={`w-5 h-5 ${isActive('/') ? 'drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]' : ''}`} />
-                            <span className="text-[9px] font-mono tracking-wide">BASE</span>
+                            <span className="text-[9px] font-mono tracking-wide">{t("mobile.base")}</span>
                         </Button>
                     </Link>
 
@@ -134,7 +135,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                     <Link href="/shop" className="mr-8">
                         <Button variant="ghost" size="sm" className={`flex-col h-auto gap-1 px-1 hover:bg-transparent ${isActive('/shop') ? 'text-emerald-400' : 'text-stone-600'}`}>
                             <Zap className={`w-5 h-5 ${isActive('/shop') ? 'drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]' : ''}`} />
-                            <span className="text-[9px] font-mono tracking-wide">MART</span>
+                            <span className="text-[9px] font-mono tracking-wide">{t("mobile.mart")}</span>
                         </Button>
                     </Link>
 
@@ -157,7 +158,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                     <Link href="/blog" className="ml-8">
                         <Button variant="ghost" size="sm" className={`flex-col h-auto gap-1 px-1 hover:bg-transparent ${isActive('/blog') ? 'text-emerald-400' : 'text-stone-600'}`}>
                             <FileText className={`w-5 h-5 ${isActive('/blog') ? 'drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]' : ''}`} />
-                            <span className="text-[9px] font-mono tracking-wide">DATA</span>
+                            <span className="text-[9px] font-mono tracking-wide">{t("sidebar.data")}</span>
                         </Button>
                     </Link>
 
@@ -165,7 +166,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                     <button onClick={onLoginClick}>
                         <Button variant="ghost" size="sm" className="flex-col h-auto gap-1 px-1 hover:bg-transparent text-stone-600">
                             <User className="w-5 h-5" />
-                            <span className="text-[9px] font-mono tracking-wide">USER</span>
+                            <span className="text-[9px] font-mono tracking-wide">{t("mobile.user")}</span>
                         </Button>
                     </button>
                 </div>
