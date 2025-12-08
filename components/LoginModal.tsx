@@ -51,11 +51,14 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 if (profileError) {
                     console.error("Profile Fetch Error:", profileError);
-                    // DEBUG: Show full error in UI
                     setErrorMsg(JSON.stringify(profileError, null, 2));
-                    toast.error(`${t("common.error")}: ${profileError.message}`);
-                    // Do not reload, let user see the error
-                    // window.location.reload(); 
+                    // SOFT FAIL: Bypass profile check and assume Customer role
+                    toast.warning(`Profile Error: ${profileError.message}. Redirecting as Customer...`);
+
+                    setIsRedirecting(true);
+                    setTimeout(() => {
+                        window.location.href = '/shop';
+                    }, 1500);
                     return;
                 }
 
@@ -78,6 +81,8 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 }
             }
         } catch (error: any) {
+            console.error("Login Critical Error:", error);
+            setErrorMsg(error.message || JSON.stringify(error)); // Capture for UI Debugger
             toast.error(error.message || t("auth.error.generic"));
             setLoading(false);
         } finally {
