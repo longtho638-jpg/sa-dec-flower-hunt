@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, QrCode, Layers, Code, Leaf, Dna, Database, Globe, TrendingUp, Activity } from "lucide-react";
+import { ArrowRight, QrCode, Layers, Code, Leaf, Dna, Database, Globe, TrendingUp, Activity, ShoppingBag } from "lucide-react";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { MarketingConfig } from "@/lib/marketing";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { KineticText, TypewriterEffect } from "@/components/ui/kinetic-text";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { GlitchButton } from "@/components/ui/glitch-button";
-import { ThreeDCard } from "@/components/ui/ThreeDCard";
 import { LiveTicker } from "@/components/ui/live-ticker";
 import { NeuralNetwork } from "@/components/ui/neural-network";
-import { StreamingChart, DnaSpinner, GlobeNetwork } from "@/components/ui/animated-charts";
+import { StreamingChart, DnaSpinner } from "@/components/ui/animated-charts";
 import { CreditScoreVisual, InventoryVisual, LogisticsMapVisual } from "@/components/ui/node-visuals";
+import { LeadWizard } from "@/components/marketing/LeadWizard";
+import { StakeholderSelector } from "@/components/marketing/StakeholderSelector";
 
 import { useLanguage } from "@/lib/i18n";
 
@@ -25,12 +25,24 @@ interface LandingPageProps {
 
 export function LandingPageClient({ config }: LandingPageProps) {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isLeadWizardOpen, setIsLeadWizardOpen] = useState(false);
+    const [initialRole, setInitialRole] = useState<"farmer" | "buyer" | "bank" | "supplier" | "logistics" | undefined>();
     const { t } = useLanguage();
+
+    const handleOpenWizard = (role?: "farmer" | "buyer" | "bank" | "supplier" | "logistics") => {
+        setInitialRole(role);
+        setIsLeadWizardOpen(true);
+    };
 
     return (
         <AuroraBackground className="overflow-x-hidden selection:bg-emerald-500/30">
             <LiveTicker />
             <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
+            <LeadWizard
+                isOpen={isLeadWizardOpen}
+                onClose={() => setIsLeadWizardOpen(false)}
+                initialRole={initialRole}
+            />
 
             <div className="relative z-10 w-full min-h-screen flex flex-col font-sans mb-10">
                 {/* Enterprise Header */}
@@ -71,7 +83,7 @@ export function LandingPageClient({ config }: LandingPageProps) {
                         <NeuralNetwork />
                     </div>
 
-                    {/* Hero Section */}
+                    {/* FARMER-FIRST Hero Section */}
                     <div className="grid lg:grid-cols-2 gap-12 items-center mb-32">
                         <div className="flex flex-col text-left relative z-20">
                             <motion.div
@@ -82,32 +94,63 @@ export function LandingPageClient({ config }: LandingPageProps) {
                             >
                                 <div className="h-[1px] w-8 bg-emerald-500/50"></div>
                                 <span className="text-[10px] font-mono text-emerald-400 tracking-[0.3em] uppercase">
-                                    {t("landing.hero.badge")}
+                                    🌱 Dành cho Nhà Vườn Sa Đéc
                                 </span>
                             </motion.div>
 
                             <div className="mb-6">
-                                <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-2 font-mono">
-                                    {t("landing.hero.title_prefix")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">{t("landing.hero.title_highlight")}</span>
+                                <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4 leading-tight">
+                                    Bán Hoa <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Không Cần Lo</span>
                                 </h1>
-                                <p className="text-stone-500 font-mono text-sm tracking-widest uppercase">
-                                    {t("landing.hero.subtitle")}
+                                <p className="text-stone-400 text-lg mb-2">
+                                    Chúng tôi lo <strong className="text-white">marketing</strong>, <strong className="text-white">vận chuyển</strong>, <strong className="text-white">thu tiền</strong>.
+                                </p>
+                                <p className="text-stone-500 text-sm">
+                                    Bạn chỉ cần chăm sóc vườn hoa.
                                 </p>
                             </div>
 
-                            <h2 className="text-xl text-stone-300 font-light mb-8 max-w-xl leading-relaxed border-l-2 border-emerald-500/20 pl-4"
-                                dangerouslySetInnerHTML={{ __html: t("landing.mission") }}
-                            />
-
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                <GlitchButton text={t("landing.cta.capital")} onClick={() => setIsLoginModalOpen(true)} className="w-52 bg-emerald-600 hover:bg-emerald-500 font-mono text-xs tracking-widest" />
-                                <Button size="lg" variant="ghost" className="text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 px-6 rounded-none font-mono text-xs tracking-widest">
-                                    <Activity className="mr-2 w-4 h-4" /> VIEW_DECK.PDF
+                            {/* PRIMARY CTA: Farmer */}
+                            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                <GlitchButton
+                                    text="ĐĂNG KÝ BÁN HOA"
+                                    onClick={() => handleOpenWizard("farmer")}
+                                    className="w-56 bg-emerald-600 hover:bg-emerald-500 font-mono text-xs tracking-widest"
+                                />
+                                {/* Secondary: Buyer */}
+                                <Button
+                                    size="lg"
+                                    variant="ghost"
+                                    onClick={() => handleOpenWizard("buyer")}
+                                    className="text-stone-400 hover:text-white hover:bg-white/5 border border-stone-800 px-6 rounded-none font-mono text-xs tracking-widest"
+                                >
+                                    <ShoppingBag className="mr-2 w-4 h-4" />
+                                    Tôi muốn MUA HOA
                                 </Button>
                             </div>
+
+                            {/* Tertiary: Other Stakeholders */}
+                            <StakeholderSelector onSelect={(role) => handleOpenWizard(role as any)} />
+
+                            {/* Social Proof */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.8 }}
+                                className="mt-8 flex items-center gap-4 text-[10px] text-stone-600 font-mono"
+                            >
+                                <div className="flex -space-x-2">
+                                    {[...Array(4)].map((_, i) => (
+                                        <div key={i} className="w-6 h-6 rounded-full bg-emerald-900/50 border border-emerald-500/30 flex items-center justify-center text-[8px]">
+                                            🌸
+                                        </div>
+                                    ))}
+                                </div>
+                                <span>47+ nhà vườn đã đăng ký</span>
+                            </motion.div>
                         </div>
 
-                        {/* Data Visualization / Digital Twin Abstract */}
+                        {/* Data Visualization */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -130,7 +173,7 @@ export function LandingPageClient({ config }: LandingPageProps) {
                                     <div className="text-[9px] text-emerald-500 uppercase tracking-widest font-mono">Active Nodes</div>
                                 </div>
 
-                                {/* Floating Stats Cards - "Trading Style" */}
+                                {/* Floating Stats Cards */}
                                 <div className="absolute top-10 right-10 bg-black/80 border border-emerald-500/30 p-3 w-40">
                                     <div className="flex justify-between items-center mb-2">
                                         <div className="text-[9px] text-stone-500 uppercase">YIELD</div>
@@ -148,12 +191,12 @@ export function LandingPageClient({ config }: LandingPageProps) {
                     <div className="mt-20">
                         <div className="flex items-end justify-between mb-10 border-b border-white/10 pb-4">
                             <div>
-                                <h2 className="text-[10px] font-mono text-emerald-500 tracking-[0.2em] uppercase mb-2">FULL STACK ECOSYSTEM</h2>
-                                <h3 className="text-2xl font-light text-white tracking-wide">THE <span className="font-mono text-emerald-400 font-bold">UNIFIED</span> NODE ARCHITECTURE</h3>
+                                <h2 className="text-[10px] font-mono text-emerald-500 tracking-[0.2em] uppercase mb-2">HỆ SINH THÁI 5-NODE</h2>
+                                <h3 className="text-2xl font-light text-white tracking-wide">Chuỗi Giá Trị <span className="font-mono text-emerald-400 font-bold">HOÀN CHỈNH</span></h3>
                             </div>
                             <div className="text-right hidden md:block">
-                                <div className="text-[10px] text-stone-500 font-mono">SYSTEM COVERAGE</div>
-                                <div className="text-xl text-white font-mono">5 KEY NODES</div>
+                                <div className="text-[10px] text-stone-500 font-mono">ĐỘ BAO PHỦ</div>
+                                <div className="text-xl text-white font-mono">5 NODES</div>
                             </div>
                         </div>
 
@@ -161,10 +204,11 @@ export function LandingPageClient({ config }: LandingPageProps) {
                             {/* Node 1: Banks (Fintech) */}
                             <BentoGridItem
                                 title="NGÂN HÀNG (FINTECH)"
-                                description={<span className="text-[11px]">Feature: <b>Tín Dụng Xanh (Green Credit)</b><br /><span className="text-stone-500">Data: Risk assessment based on IoT sensor data (Smart Contract).</span></span>}
+                                description={<span className="text-[11px]">Feature: <b>Tín Dụng Xanh</b><br /><span className="text-stone-500">Data: Risk assessment based on IoT sensor data.</span></span>}
                                 header={<div className="h-full min-h-[9rem] w-full border border-emerald-500/10 bg-black/40"><CreditScoreVisual /></div>}
                                 icon={<TrendingUp className="h-4 w-4 text-emerald-400" />}
-                                className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm"
+                                className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm cursor-pointer hover:border-emerald-500/50 transition-colors"
+                                onClick={() => handleOpenWizard("bank")}
                             />
 
                             {/* Node 2: Suppliers */}
@@ -173,40 +217,44 @@ export function LandingPageClient({ config }: LandingPageProps) {
                                 description={<span className="text-[11px]">Feature: <b>Marketplace Vật Tư</b><br /><span className="text-stone-500">Data: Real-time inventory & price matching.</span></span>}
                                 header={<div className="h-full min-h-[9rem] w-full border border-emerald-500/10 bg-black/40"><InventoryVisual /></div>}
                                 icon={<Layers className="h-4 w-4 text-emerald-400" />}
-                                className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm"
+                                className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm cursor-pointer hover:border-emerald-500/50 transition-colors"
+                                onClick={() => handleOpenWizard("supplier")}
                             />
 
                             {/* Node 3: Farmers (Production) - Centerpiece */}
                             <BentoGridItem
-                                title="NHÀ VƯỜN (FARMERS)"
-                                description={<span className="text-[11px]">Feature: <b>Canh Tác Chính Xác (Precision Farming)</b><br /><span className="text-stone-500">Data: Real-time Growth Monitoring & Automated Care.</span></span>}
+                                title="🌱 NHÀ VƯỜN (FARMERS) ★"
+                                description={<span className="text-[11px]">Feature: <b>Bán Hoa Trực Tiếp</b><br /><span className="text-stone-500">Không cần lo marketing, vận chuyển, thu tiền.</span></span>}
                                 header={<div className="h-full min-h-[9rem] w-full border border-emerald-500/10 bg-black/40"><StreamingChart /></div>}
                                 icon={<Leaf className="h-4 w-4 text-emerald-400" />}
-                                className="md:col-span-2 bg-black/60 border-emerald-500/20 rounded-sm"
+                                className="md:col-span-2 bg-emerald-950/30 border-emerald-500/40 rounded-sm cursor-pointer hover:border-emerald-500 transition-colors"
+                                onClick={() => handleOpenWizard("farmer")}
                             />
 
                             {/* Node 4: Logistics */}
                             <BentoGridItem
                                 title="VẬN CHUYỂN (LOGISTICS)"
-                                description={<span className="text-[11px]">Feature: <b>Chuỗi Cung Ứng Lạnh</b><br /><span className="text-stone-500">Data: Temperature/Humidity tracking during transport.</span></span>}
+                                description={<span className="text-[11px]">Feature: <b>Chuỗi Cung Ứng Lạnh</b><br /><span className="text-stone-500">Data: Temperature/Humidity tracking.</span></span>}
                                 header={<div className="h-full min-h-[9rem] w-full border border-emerald-500/10 bg-black/40"><LogisticsMapVisual /></div>}
                                 icon={<Activity className="h-4 w-4 text-emerald-400" />}
-                                className="md:col-span-2 bg-black/60 border-emerald-500/20 rounded-sm"
+                                className="md:col-span-2 bg-black/60 border-emerald-500/20 rounded-sm cursor-pointer hover:border-emerald-500/50 transition-colors"
+                                onClick={() => handleOpenWizard("logistics")}
                             />
 
                             {/* Node 5: Buyers/Users */}
                             <BentoGridItem
                                 title="NGƯỜI DÙNG (BUYERS)"
-                                description={<span className="text-[11px]">Feature: <b>Trải Nghiệm Thực Tế Ảo (Metaverse)</b><br /><span className="text-stone-500">Data: Immersive AR Shopping & Traceability.</span></span>}
+                                description={<span className="text-[11px]">Feature: <b>Mua Hoa Tận Gốc</b><br /><span className="text-stone-500">Giá tốt nhất, ship tận nhà.</span></span>}
                                 header={<div className="h-full min-h-[9rem] w-full border border-emerald-500/10 bg-black/40 flex items-center justify-center"><Globe className="w-10 h-10 text-emerald-500/50" /></div>}
                                 icon={<QrCode className="h-4 w-4 text-emerald-400" />}
-                                className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm"
+                                className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm cursor-pointer hover:border-emerald-500/50 transition-colors"
+                                onClick={() => handleOpenWizard("buyer")}
                             />
 
                             {/* R&D Foundation (Bonus) */}
                             <BentoGridItem
                                 title="R&D / GENETICS"
-                                description={<span className="text-[11px]">Core: <b>Công Nghệ Giống</b><br /><span className="text-stone-500">Data: DNA Sequencing & IP Protection.</span></span>}
+                                description={<span className="text-[11px]">Core: <b>Công Nghệ Giống</b><br /><span className="text-stone-500">DNA Sequencing & IP Protection.</span></span>}
                                 header={<div className="h-full min-h-[9rem] w-full border border-emerald-500/10 bg-black/40"><DnaSpinner /></div>}
                                 icon={<Dna className="h-4 w-4 text-emerald-400" />}
                                 className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm"
