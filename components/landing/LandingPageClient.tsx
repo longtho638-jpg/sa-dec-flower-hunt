@@ -16,6 +16,12 @@ import { StreamingChart, DnaSpinner } from "@/components/ui/animated-charts";
 import { CreditScoreVisual, InventoryVisual, LogisticsMapVisual } from "@/components/ui/node-visuals";
 import { LeadWizard } from "@/components/marketing/LeadWizard";
 import { StakeholderSelector } from "@/components/marketing/StakeholderSelector";
+import { TrustBadgesSection } from "@/components/marketing/TrustBadgesSection";
+import { TestimonialsSection } from "@/components/marketing/TestimonialsSection";
+import { StakeholderCTABlocks } from "@/components/marketing/StakeholderCTABlocks";
+import { FAQSection } from "@/components/marketing/FAQSection";
+import { FloatingAgentButton } from "@/components/marketing/FloatingAgentButton";
+import { FestivalBanner } from "@/components/marketing/FestivalBanner";
 
 import { useLanguage } from "@/lib/i18n";
 
@@ -45,6 +51,9 @@ export function LandingPageClient({ config }: LandingPageProps) {
             />
 
             <div className="relative z-10 w-full min-h-screen flex flex-col font-sans mb-10">
+                {/* Festival Promo Banner */}
+                <FestivalBanner />
+
                 {/* Enterprise Header */}
                 <header className="border-b border-white/5 bg-black/40 backdrop-blur-md sticky top-0 z-40">
                     <nav className="container mx-auto px-6 py-3 flex items-center justify-between">
@@ -187,6 +196,9 @@ export function LandingPageClient({ config }: LandingPageProps) {
                         </motion.div>
                     </div>
 
+                    {/* Trust Badges Section */}
+                    <TrustBadgesSection />
+
                     {/* Value Chain Pillars - Bento Grid */}
                     <div className="mt-20">
                         <div className="flex items-end justify-between mb-10 border-b border-white/10 pb-4">
@@ -261,7 +273,19 @@ export function LandingPageClient({ config }: LandingPageProps) {
                             />
                         </BentoGrid>
                     </div>
+
+                    {/* Testimonials Section */}
+                    <TestimonialsSection />
+
+                    {/* Stakeholder CTA Blocks */}
+                    <StakeholderCTABlocks onOpenWizard={handleOpenWizard} />
+
+                    {/* FAQ Section */}
+                    <FAQSection />
                 </main>
+
+                {/* Floating Agent Button */}
+                <FloatingAgentButton />
 
                 <footer className="border-t border-emerald-900/30 py-6 text-center text-[9px] text-emerald-900/60 font-mono bg-black/90 backdrop-blur-xl mb-10">
                     SADEC.OS ENTERPRISE TERMINAL // COPYRIGHT 2026 // ALL TRADES FINAL
