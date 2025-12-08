@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useFarmer } from "@/components/auth/FarmerAuthProvider";
+import { useLanguage } from "@/lib/i18n";
 import { TerminalCard } from "@/components/terminal/TerminalCard";
 import { TerminalHeader } from "@/components/terminal/TerminalHeader";
 import { DataStream } from "@/components/terminal/DataStream";
@@ -13,6 +14,7 @@ import { motion } from "framer-motion";
 
 export default function FarmerTerminal() {
     const { profile, totalRevenue, pendingOrders, dailyRevenue } = useFarmer();
+    const { t } = useLanguage();
     const [currentTime, setCurrentTime] = useState("");
     const [systemLogs, setSystemLogs] = useState<any[]>([]);
 
@@ -21,13 +23,13 @@ export default function FarmerTerminal() {
             setCurrentTime(new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
         }, 1000);
 
-        // Initialize system logs
+        // Initialize system logs (Vietnamese)
         const initialLogs = [
-            { timestamp: getCurrentTime(), message: `OPERATOR_${profile.farmerName || 'UNKNOWN'} authenticated`, type: "success" as const },
-            { timestamp: getCurrentTime(1), message: `Farm location: Sa Đéc, Đồng Tháp`, type: "info" as const },
-            { timestamp: getCurrentTime(2), message: `IoT sensors: 14 active`, type: "success" as const },
-            { timestamp: getCurrentTime(3), message: `Credit score updated: AA-`, type: "success" as const },
-            { timestamp: getCurrentTime(4), message: `System nominal`, type: "info" as const },
+            { timestamp: getCurrentTime(), message: `OPERATOR_${profile.farmerName || 'UNKNOWN'} ${t("farmer.authenticated")}`, type: "success" as const },
+            { timestamp: getCurrentTime(1), message: `${t("farmer.farm_location")}: Sa Đéc, Đồng Tháp`, type: "info" as const },
+            { timestamp: getCurrentTime(2), message: `IoT ${t("farmer.sensors_active")}: 14 ${t("farmer.active")}`, type: "success" as const },
+            { timestamp: getCurrentTime(3), message: `${t("farmer.credit_updated")}: AA-`, type: "success" as const },
+            { timestamp: getCurrentTime(4), message: t("farmer.system_nominal"), type: "info" as const },
         ];
         setSystemLogs(initialLogs);
 
@@ -102,14 +104,14 @@ export default function FarmerTerminal() {
                         </div>
                         <div>
                             <h1 className="text-xl md:text-2xl font-bold tracking-[0.2em] text-white">
-                                FARM_TERMINAL<span className="text-emerald-500">_v4.0</span>
+                                {t("farmer.title")}<span className="text-emerald-500">_{t("farmer.version")}</span>
                             </h1>
                             <div className="flex gap-4 text-[10px] text-stone-500 mt-1">
-                                <span>OPERATOR: <span className="text-emerald-400">{profile.farmerName || "FARMER"}</span></span>
-                                <span>TIME: <span className="text-white">{currentTime}</span></span>
+                                <span>{t("farmer.operator")}: <span className="text-emerald-400">{profile.farmerName || "NÔNG DÂN"}</span></span>
+                                <span>{t("farmer.time")}: <span className="text-white">{currentTime}</span></span>
                                 <span className="flex items-center gap-1">
                                     <NodePulse size="sm" color="emerald" />
-                                    ONLINE
+                                    {t("farmer.online")}
                                 </span>
                             </div>
                         </div>
@@ -123,40 +125,40 @@ export default function FarmerTerminal() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Revenue */}
                     <TerminalCard glowOnHover>
-                        <TerminalHeader status="online">REVENUE_STREAM</TerminalHeader>
+                        <TerminalHeader status="online">{t("farmer.revenue_stream")}</TerminalHeader>
                         <div className="space-y-3">
                             <div className="text-3xl font-bold text-white">{formatVND(totalRevenue)}</div>
                             <div className="grid grid-cols-2 gap-2">
-                                <DataStream label="WEEK" value={formatVND(totalRevenue * 0.15)} trend="up" />
-                                <DataStream label="MONTH" value={formatVND(totalRevenue * 0.45)} trend="up" />
+                                <DataStream label={t("farmer.week")} value={formatVND(totalRevenue * 0.15)} trend="up" />
+                                <DataStream label={t("farmer.month")} value={formatVND(totalRevenue * 0.45)} trend="up" />
                             </div>
                         </div>
                     </TerminalCard>
 
                     {/* Orders */}
                     <TerminalCard glowOnHover>
-                        <TerminalHeader status="warning" statusLabel="PENDING">ORDERS_QUEUE</TerminalHeader>
+                        <TerminalHeader status="warning" statusLabel={t("farmer.pending")}>{t("farmer.orders_queue")}</TerminalHeader>
                         <div className="space-y-3">
-                            <div className="text-3xl font-bold text-white">{pendingOrders} <span className="text-sm text-stone-500">UNITS</span></div>
+                            <div className="text-3xl font-bold text-white">{pendingOrders} <span className="text-sm text-stone-500">{t("farmer.units")}</span></div>
                             <div className="grid grid-cols-2 gap-2">
-                                <DataStream label="TODAY" value={Math.floor(pendingOrders * 0.4)} />
-                                <DataStream label="URGENT" value={Math.floor(pendingOrders * 0.1)} trend="down" />
+                                <DataStream label={t("farmer.today")} value={Math.floor(pendingOrders * 0.4)} />
+                                <DataStream label={t("farmer.urgent")} value={Math.floor(pendingOrders * 0.1)} trend="down" />
                             </div>
                         </div>
                     </TerminalCard>
 
                     {/* Bank Node - Credit Score */}
                     <TerminalCard glowOnHover className="border-emerald-500/40 bg-emerald-950/10">
-                        <TerminalHeader status="online">BANK_NODE_LINK</TerminalHeader>
+                        <TerminalHeader status="online">{t("farmer.bank_node")}</TerminalHeader>
                         <div className="space-y-3">
                             <div className="flex items-baseline gap-2">
                                 <div className="text-3xl font-bold text-emerald-400">{creditScore.grade}</div>
-                                <div className="text-sm text-stone-500">Credit Score</div>
+                                <div className="text-sm text-stone-500">{t("farmer.credit_score")}</div>
                             </div>
                             <div className="grid grid-cols-2 gap-2">
-                                <DataStream label="SCORE" value={creditScore.score} trend={creditScore.trend} />
+                                <DataStream label={t("farmer.score")} value={creditScore.score} trend={creditScore.trend} />
                                 <div className="bg-emerald-900/20 p-2 rounded border border-emerald-500/10">
-                                    <div className="text-[10px] text-stone-500">UPDATED</div>
+                                    <div className="text-[10px] text-stone-500">{t("farmer.updated")}</div>
                                     <div className="text-xs text-white">{creditScore.lastUpdate}</div>
                                 </div>
                             </div>
@@ -168,23 +170,23 @@ export default function FarmerTerminal() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     {/* IOT Sensors (Large) */}
                     <TerminalCard className="lg:col-span-2">
-                        <TerminalHeader status="online">IOT_SENSOR_NETWORK (14 ACTIVE)</TerminalHeader>
+                        <TerminalHeader status="online">{t("farmer.iot_network")} (14 {t("farmer.active")})</TerminalHeader>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
-                            <DataStream label="TEMP" value={sensorData.temperature} unit="°C" trend="neutral" />
-                            <DataStream label="HUMIDITY" value={sensorData.humidity} unit="%" />
-                            <DataStream label="SOIL_PH" value={sensorData.soilPH} trend="neutral" />
-                            <DataStream label="MOISTURE" value={sensorData.soilMoisture} unit="%" trend="up" />
-                            <DataStream label="LIGHT" value={sensorData.lightLevel} unit="%" />
-                            <DataStream label="WIND" value={sensorData.windSpeed} unit="km/h" />
+                            <DataStream label={t("farmer.temp")} value={sensorData.temperature} unit="°C" trend="neutral" />
+                            <DataStream label={t("farmer.humidity")} value={sensorData.humidity} unit="%" />
+                            <DataStream label={t("farmer.soil_ph")} value={sensorData.soilPH} trend="neutral" />
+                            <DataStream label={t("farmer.moisture")} value={sensorData.soilMoisture} unit="%" trend="up" />
+                            <DataStream label={t("farmer.light")} value={sensorData.lightLevel} unit="%" />
+                            <DataStream label={t("farmer.wind")} value={sensorData.windSpeed} unit="km/h" />
                         </div>
                         <div className="mt-4 p-3 bg-emerald-900/10 border border-emerald-500/20 rounded text-xs text-emerald-300">
-                            <span className="text-emerald-500">⚡ AI RECOMMENDATION:</span> All parameters optimal. Suggest maintain current irrigation schedule.
+                            <span className="text-emerald-500">{t("farmer.ai_rec")}</span> {t("farmer.ai_msg")}
                         </div>
                     </TerminalCard>
 
                     {/* System Log */}
                     <TerminalCard>
-                        <TerminalHeader status="online">SYSTEM_LOG</TerminalHeader>
+                        <TerminalHeader status="online">{t("farmer.system_log")}</TerminalHeader>
                         <div className="mt-4">
                             <SystemLog entries={systemLogs} maxEntries={8} />
                         </div>
@@ -193,7 +195,7 @@ export default function FarmerTerminal() {
 
                 {/* Revenue Data Streams (replacing chart) */}
                 <TerminalCard>
-                    <TerminalHeader status="online">REVENUE_BREAKDOWN (LIVE)</TerminalHeader>
+                    <TerminalHeader status="online">{t("farmer.revenue_breakdown")} ({t("farmer.live")})</TerminalHeader>
                     <div className="mt-4">
                         {dailyRevenue.length > 0 ? (
                             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
@@ -208,7 +210,7 @@ export default function FarmerTerminal() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center text-stone-500 py-8 text-xs uppercase">NO_DATA_STREAM</div>
+                            <div className="text-center text-stone-500 py-8 text-xs uppercase">{t("farmer.no_data")}</div>
                         )}
                     </div>
                 </TerminalCard>
@@ -217,19 +219,19 @@ export default function FarmerTerminal() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <Button className="h-auto py-4 px-6 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-500/30 rounded-sm text-emerald-400 flex flex-col items-center gap-2 font-mono">
                         <Package className="w-5 h-5" />
-                        <span className="text-[10px] uppercase tracking-wider">New Product</span>
+                        <span className="text-[10px] uppercase tracking-wider">{t("farmer.new_product")}</span>
                     </Button>
                     <Button className="h-auto py-4 px-6 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-500/30 rounded-sm text-emerald-400 flex flex-col items-center gap-2 font-mono">
                         <Boxes className="w-5 h-5" />
-                        <span className="text-[10px] uppercase tracking-wider">View Orders</span>
+                        <span className="text-[10px] uppercase tracking-wider">{t("farmer.view_orders")}</span>
                     </Button>
                     <Button className="h-auto py-4 px-6 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-500/30 rounded-sm text-emerald-400 flex flex-col items-center gap-2 font-mono">
                         <CreditCard className="w-5 h-5" />
-                        <span className="text-[10px] uppercase tracking-wider">Finance</span>
+                        <span className="text-[10px] uppercase tracking-wider">{t("farmer.finance")}</span>
                     </Button>
                     <Button className="h-auto py-4 px-6 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-500/30 rounded-sm text-emerald-400 flex flex-col items-center gap-2 font-mono">
                         <TrendingUp className="w-5 h-5" />
-                        <span className="text-[10px] uppercase tracking-wider">Analytics</span>
+                        <span className="text-[10px] uppercase tracking-wider">{t("farmer.analytics")}</span>
                     </Button>
                 </div>
             </div>

@@ -118,6 +118,48 @@ const translations: Translations = {
         "shop.net_id": "MÃ MẠNG: 8492-AX",
         "shop.secure_link": "LIÊN KẾT BẢO MẬT",
         "shop.access_cam": "MỞ CAMERA",
+
+        // --- FARMER TERMINAL ---
+        "farmer.title": "TERMINAL_NÔNG_TRẠI",
+        "farmer.version": "v4.0",
+        "farmer.operator": "NGƯỜI VẬN HÀNH",
+        "farmer.time": "THỜI GIAN",
+        "farmer.online": "TRỰC TUYẾN",
+        "farmer.revenue_stream": "DÒNG_DOANH_THU",
+        "farmer.orders_queue": "HÀNG_ĐỢI_ĐƠN_HÀNG",
+        "farmer.bank_node": "LIÊN_KẾT_NGÂN_HÀNG",
+        "farmer.credit_score": "Điểm Tín Dụng",
+        "farmer.iot_network": "MẠNG_CẢM_BIẾN_IOT",
+        "farmer.active": "HOẠT ĐỘNG",
+        "farmer.system_log": "NHẬT_KÝ_HỆ_THỐNG",
+        "farmer.revenue_breakdown": "PHÂN_TÍCH_DOANH_THU",
+        "farmer.live": "TRỰC TIẾP",
+        "farmer.week": "TUẦN",
+        "farmer.month": "THÁNG",
+        "farmer.today": "HÔM NAY",
+        "farmer.urgent": "KHẨN CẤP",
+        "farmer.pending": "ĐANG CHỜ",
+        "farmer.units": "ĐƠN VỊ",
+        "farmer.updated": "CẬP NHẬT",
+        "farmer.score": "ĐIỂM",
+        "farmer.temp": "NHIỆT ĐỘ",
+        "farmer.humidity": "ĐỘ ẨM",
+        "farmer.soil_ph": "ĐỘ_PH_ĐẤT",
+        "farmer.moisture": "ĐỘ ẨM ĐẤT",
+        "farmer.light": "ÁNH SÁNG",
+        "farmer.wind": "GIÓ",
+        "farmer.ai_rec": "⚡ KHUYẾN NGHỊ AI:",
+        "farmer.ai_msg": "Tất cả thông số ổn định. Đề xuất duy trì lịch tưới hiện tại.",
+        "farmer.no_data": "CHƯA_CÓ_DỮ_LIỆU",
+        "farmer.new_product": "Sản Phẩm Mới",
+        "farmer.view_orders": "Xem Đơn Hàng",
+        "farmer.finance": "Tài Chính",
+        "farmer.analytics": "Phân Tích",
+        "farmer.authenticated": "đã xác thực",
+        "farmer.farm_location": "Vị trí Nông trại",
+        "farmer.sensors_active": "cảm biến hoạt động",
+        "farmer.credit_updated": "Điểm tín dụng đã cập nhật",
+        "farmer.system_nominal": "Hệ thống ổn định",
     },
     en: {
         // --- COMMON ---
@@ -226,6 +268,48 @@ const translations: Translations = {
         "shop.net_id": "NET_ID: 8492-AX",
         "shop.secure_link": "SECURE_LINK",
         "shop.access_cam": "ACCESS_CAMERA",
+
+        // --- FARMER TERMINAL ---
+        "farmer.title": "FARM_TERMINAL",
+        "farmer.version": "v4.0",
+        "farmer.operator": "OPERATOR",
+        "farmer.time": "TIME",
+        "farmer.online": "ONLINE",
+        "farmer.revenue_stream": "REVENUE_STREAM",
+        "farmer.orders_queue": "ORDERS_QUEUE",
+        "farmer.bank_node": "BANK_NODE_LINK",
+        "farmer.credit_score": "Credit Score",
+        "farmer.iot_network": "IOT_SENSOR_NETWORK",
+        "farmer.active": "ACTIVE",
+        "farmer.system_log": "SYSTEM_LOG",
+        "farmer.revenue_breakdown": "REVENUE_BREAKDOWN",
+        "farmer.live": "LIVE",
+        "farmer.week": "WEEK",
+        "farmer.month": "MONTH",
+        "farmer.today": "TODAY",
+        "farmer.urgent": "URGENT",
+        "farmer.pending": "PENDING",
+        "farmer.units": "UNITS",
+        "farmer.updated": "UPDATED",
+        "farmer.score": "SCORE",
+        "farmer.temp": "TEMP",
+        "farmer.humidity": "HUMIDITY",
+        "farmer.soil_ph": "SOIL_PH",
+        "farmer.moisture": "MOISTURE",
+        "farmer.light": "LIGHT",
+        "farmer.wind": "WIND",
+        "farmer.ai_rec": "⚡ AI RECOMMENDATION:",
+        "farmer.ai_msg": "All parameters optimal. Suggest maintain current irrigation schedule.",
+        "farmer.no_data": "NO_DATA_STREAM",
+        "farmer.new_product": "New Product",
+        "farmer.view_orders": "View Orders",
+        "farmer.finance": "Finance",
+        "farmer.analytics": "Analytics",
+        "farmer.authenticated": "authenticated",
+        "farmer.farm_location": "Farm location",
+        "farmer.sensors_active": "sensors active",
+        "farmer.credit_updated": "Credit score updated",
+        "farmer.system_nominal": "System nominal",
     }
 }
 
@@ -241,9 +325,33 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const [language, setLanguage] = useState<Language>("vi")
 
     useEffect(() => {
+        // 1. Check saved preference first
         const saved = localStorage.getItem("language") as Language
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        if (saved) setLanguage(saved)
+        if (saved && (saved === "vi" || saved === "en")) {
+            setLanguage(saved)
+            return
+        }
+
+        // 2. Geo-based detection: Default to VI for Vietnam timezone
+        const detectLanguage = () => {
+            try {
+                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+                // Vietnam timezone or neighboring Southeast Asian countries
+                if (timeZone?.includes("Ho_Chi_Minh") ||
+                    timeZone?.includes("Bangkok") ||
+                    timeZone?.includes("Saigon")) {
+                    setLanguage("vi")
+                } else {
+                    // Check browser language preference
+                    const browserLang = navigator.language || (navigator as any).userLanguage
+                    setLanguage(browserLang?.startsWith("vi") ? "vi" : "en")
+                }
+            } catch {
+                // Default to Vietnamese for Vietnam deployment
+                setLanguage("vi")
+            }
+        }
+        detectLanguage()
     }, [])
 
     const handleSetLanguage = (lang: Language) => {
