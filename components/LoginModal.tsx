@@ -42,39 +42,39 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
             if (error) throw error;
 
             if (user) {
-                // Fetch profile to get role
-                const { data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', user.id)
-                    .single();
+                // BYPASS FIX: Get role from user_metadata first (no DB query needed!)
+                let role = user.user_metadata?.role || 'customer';
 
-                if (profileError) {
-                    console.error("Profile Fetch Error:", profileError);
-                    setErrorMsg(JSON.stringify(profileError, null, 2));
-                    // SOFT FAIL: Bypass profile check and assume Customer role
-                    toast.warning(`Profile Error: ${profileError.message}. Redirecting as Customer...`);
-
-                    setIsRedirecting(true);
-                    setTimeout(() => {
-                        window.location.href = '/shop';
-                    }, 1500);
-                    return;
+                // Fallback: Try profiles table if metadata doesn't have role
+                if (!user.user_metadata?.role) {
+                    try {
+                        const { data: profile } = await supabase
+                            .from('profiles')
+                            .select('role')
+                            .eq('id', user.id)
+                            .single();
+                        if (profile?.role) {
+                            role = profile.role;
+                        }
+                    } catch (profileErr) {
+                        console.warn("Profile fetch failed, using default role:", profileErr);
+                        // Continue with default role
+                    }
                 }
 
                 toast.success(t("auth.toast.success_login"));
 
                 // Redirect logic based on role
-                if (profile?.role === 'farmer') {
+                if (role === 'farmer') {
                     setIsRedirecting(true);
                     toast.loading(t("auth.toast.redirect_farmer"));
                     window.location.href = '/farmer';
-                } else if (profile?.role === 'admin') {
+                } else if (role === 'admin') {
                     setIsRedirecting(true);
                     toast.loading(t("auth.toast.redirect_admin"));
                     window.location.href = '/admin';
                 } else {
-                    // Customer: Redirect to Shop Dashboard (Deep Fix)
+                    // Customer: Redirect to Shop Dashboard
                     setIsRedirecting(true);
                     toast.loading(t("auth.toast.redirect_shop"));
                     window.location.href = '/shop';
