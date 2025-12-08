@@ -54,18 +54,23 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 }
 
                 toast.success(`Đăng nhập thành công!`);
-                setIsRedirecting(true); // Disable inputs, show redirect state
 
-                // Redirect logic - DO NOT CLOSE MODAL
+                // Redirect logic based on role
                 if (profile?.role === 'farmer') {
+                    setIsRedirecting(true);
                     toast.loading("Đang chuyển hướng đến Dashboard...");
                     window.location.href = '/farmer';
                 } else if (profile?.role === 'admin') {
+                    setIsRedirecting(true);
                     toast.loading("Đang chuyển hướng đến Admin...");
                     window.location.href = '/admin';
                 } else {
-                    toast.loading("Đang tải lại...");
-                    window.location.reload();
+                    // Customer: close modal and stay on homepage
+                    toast.success("Chào mừng! Bạn đã đăng nhập.");
+                    setTimeout(() => {
+                        onClose();
+                        router.refresh(); // Refresh to update auth UI
+                    }, 500);
                 }
             }
         } catch (error: any) {
