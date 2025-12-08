@@ -106,7 +106,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-2xl font-bold mb-2 text-white tracking-tight font-mono">SA_DEC_FLOWER_HUNT_2026</h3>
                   <p className="text-stone-400 text-sm mb-4 font-mono max-w-xl">
-                    <span className="text-emerald-400">></span> INITIATE: #SaDecFlowerChallenge to unlock <span className="text-white border-b border-emerald-500/30">iPhone 15 Pro</span> & Climate Badge.
+                    <span className="text-emerald-400">&gt;</span> INITIATE: #SaDecFlowerChallenge to unlock <span className="text-white border-b border-emerald-500/30">iPhone 15 Pro</span> & Climate Badge.
                   </p>
                   <div className="flex items-center gap-4">
                     <span className="text-[10px] text-emerald-500/50 font-mono">CMD: ACCESS_MISSION</span>
