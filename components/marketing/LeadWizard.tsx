@@ -14,7 +14,10 @@ import {
     Loader2,
     X,
     Zap,
-    Phone
+    Phone,
+    FlaskConical,
+    Landmark,
+    Newspaper
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +32,9 @@ const ROLES = [
     { id: "bank", icon: Building2, label: "Ngân Hàng", desc: "Đối tác tín dụng", color: "amber" },
     { id: "supplier", icon: Package, label: "Nhà Cung Cấp", desc: "Bán vật tư", color: "purple" },
     { id: "logistics", icon: Truck, label: "Shipper", desc: "Đối tác vận chuyển", color: "rose" },
+    { id: "research", icon: FlaskConical, label: "R&D / Đại Học", desc: "Nghiên cứu & IP", color: "blue" },
+    { id: "government", icon: Landmark, label: "Chính Phủ / NGO", desc: "OCOP, Nông thôn mới", color: "indigo" },
+    { id: "media", icon: Newspaper, label: "Báo Chí", desc: "Phóng viên, Media", color: "pink" },
 ] as const;
 
 type Role = typeof ROLES[number]["id"];

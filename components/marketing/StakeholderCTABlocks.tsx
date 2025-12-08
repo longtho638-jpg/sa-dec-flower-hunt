@@ -5,7 +5,7 @@ import { Sprout, ShoppingBag, Building2, Package, Truck, CheckCircle, ArrowRight
 import { Button } from "@/components/ui/button";
 
 interface StakeholderCTABlocksProps {
-    onOpenWizard: (role: "farmer" | "buyer" | "bank" | "supplier" | "logistics") => void;
+    onOpenWizard: (role: "farmer" | "buyer" | "bank" | "supplier" | "logistics" | "research" | "government" | "media") => void;
 }
 
 const STAKEHOLDERS = [
@@ -106,8 +106,8 @@ export function StakeholderCTABlocks({ onOpenWizard }: StakeholderCTABlocksProps
 
                             <Button
                                 className={`w-full font-mono text-xs tracking-wider ${s.highlight
-                                        ? 'bg-emerald-500 hover:bg-emerald-400 text-black'
-                                        : 'bg-black border border-stone-700 text-stone-400 hover:border-emerald-500/50 hover:text-emerald-400'
+                                    ? 'bg-emerald-500 hover:bg-emerald-400 text-black'
+                                    : 'bg-black border border-stone-700 text-stone-400 hover:border-emerald-500/50 hover:text-emerald-400'
                                     }`}
                             >
                                 {s.cta}

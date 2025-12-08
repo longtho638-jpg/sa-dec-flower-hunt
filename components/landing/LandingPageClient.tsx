@@ -25,6 +25,13 @@ import { FestivalBanner } from "@/components/marketing/FestivalBanner";
 import { ROICalculator } from "@/components/marketing/ROICalculator";
 import { PricingSection } from "@/components/marketing/PricingSection";
 import { InvestorSection } from "@/components/marketing/InvestorSection";
+import { GovernmentSection } from "@/components/marketing/GovernmentSection";
+import { PressSection } from "@/components/marketing/PressSection";
+import { LiveCounters } from "@/components/marketing/LiveCounters";
+import { ComparisonTable } from "@/components/marketing/ComparisonTable";
+import { SuccessTimeline } from "@/components/marketing/SuccessTimeline";
+import { UrgencyBanner } from "@/components/marketing/UrgencyBanner";
+import { InlineAgentWidget } from "@/components/marketing/InlineAgentWidget";
 
 import { useLanguage } from "@/lib/i18n";
 
@@ -35,10 +42,10 @@ interface LandingPageProps {
 export function LandingPageClient({ config }: LandingPageProps) {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isLeadWizardOpen, setIsLeadWizardOpen] = useState(false);
-    const [initialRole, setInitialRole] = useState<"farmer" | "buyer" | "bank" | "supplier" | "logistics" | undefined>();
+    const [initialRole, setInitialRole] = useState<"farmer" | "buyer" | "bank" | "supplier" | "logistics" | "research" | "government" | "media" | undefined>();
     const { t } = useLanguage();
 
-    const handleOpenWizard = (role?: "farmer" | "buyer" | "bank" | "supplier" | "logistics") => {
+    const handleOpenWizard = (role?: "farmer" | "buyer" | "bank" | "supplier" | "logistics" | "research" | "government" | "media") => {
         setInitialRole(role);
         setIsLeadWizardOpen(true);
     };
@@ -202,6 +209,12 @@ export function LandingPageClient({ config }: LandingPageProps) {
                     {/* Trust Badges Section */}
                     <TrustBadgesSection />
 
+                    {/* Live Counters (SOPOps) */}
+                    <LiveCounters />
+
+                    {/* Urgency Banner (FOMO) */}
+                    <UrgencyBanner onOpenWizard={() => handleOpenWizard("farmer")} />
+
                     {/* Value Chain Pillars - Bento Grid */}
                     <div className="mt-20">
                         <div className="flex items-end justify-between mb-10 border-b border-white/10 pb-4">
@@ -266,13 +279,14 @@ export function LandingPageClient({ config }: LandingPageProps) {
                                 onClick={() => handleOpenWizard("buyer")}
                             />
 
-                            {/* R&D Foundation (Bonus) */}
+                            {/* R&D Foundation (Bonus) - NOW CLICKABLE */}
                             <BentoGridItem
                                 title="R&D / GENETICS"
                                 description={<span className="text-[11px]">Core: <b>Công Nghệ Giống</b><br /><span className="text-stone-500">DNA Sequencing & IP Protection.</span></span>}
                                 header={<div className="h-full min-h-[9rem] w-full border border-emerald-500/10 bg-black/40"><DnaSpinner /></div>}
                                 icon={<Dna className="h-4 w-4 text-emerald-400" />}
-                                className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm"
+                                className="md:col-span-1 bg-black/60 border-emerald-500/20 rounded-sm cursor-pointer hover:border-emerald-500/50 transition-colors"
+                                onClick={() => handleOpenWizard("research")}
                             />
                         </BentoGrid>
                     </div>
@@ -284,6 +298,13 @@ export function LandingPageClient({ config }: LandingPageProps) {
                     <ROICalculator />
                     <PricingSection />
                     <InvestorSection />
+
+                    {/* SOPOps Sections */}
+                    <GovernmentSection onOpenWizard={handleOpenWizard} />
+                    <PressSection onOpenWizard={handleOpenWizard} />
+                    <ComparisonTable />
+                    <SuccessTimeline />
+                    <InlineAgentWidget />
 
                     {/* Stakeholder CTA Blocks */}
                     <StakeholderCTABlocks onOpenWizard={handleOpenWizard} />
