@@ -26,6 +26,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const [loading, setLoading] = useState(false);
 
     const [isRedirecting, setIsRedirecting] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,8 +51,11 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 if (profileError) {
                     console.error("Profile Fetch Error:", profileError);
+                    // DEBUG: Show full error in UI
+                    setErrorMsg(JSON.stringify(profileError, null, 2));
                     toast.error(`${t("common.error")}: ${profileError.message}`);
-                    window.location.reload();
+                    // Do not reload, let user see the error
+                    // window.location.reload(); 
                     return;
                 }
 
@@ -241,6 +245,17 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 {mode === 'login' ? t("auth.switch.signup") : t("auth.switch.login")}
                             </p>
                         </div>
+
+                        {/* DEBUG: Error Details for "Deep Debugger" */}
+                        {errorMsg && (
+                            <div className="mt-4 p-2 bg-red-950/50 border border-red-500/30 rounded text-left overflow-hidden">
+                                <p className="text-[10px] text-red-400 font-bold mb-1">DEBUG INFO:</p>
+                                <pre className="text-[9px] text-red-300 font-mono whitespace-pre-wrap break-all">
+                                    {errorMsg}
+                                </pre>
+                                <p className="text-[9px] text-stone-500 mt-1 italic">Take a screenshot of this if error persists.</p>
+                            </div>
+                        )}
 
                     </form>
                 </CardContent>
