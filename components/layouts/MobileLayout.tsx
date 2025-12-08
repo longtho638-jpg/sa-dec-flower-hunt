@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { User, Scan, Menu, X, Home, FileText, Handshake, Zap, Terminal, Activity, Wifi, Battery } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/lib/i18n";
 
 interface MobileLayoutProps {
     children: React.ReactNode;

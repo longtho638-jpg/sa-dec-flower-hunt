@@ -7,6 +7,7 @@ import { Sparkles, User, Scan, ShoppingCart, Menu, Terminal, Activity, Zap, Comm
 import { LoginModal } from "@/components/LoginModal";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/lib/i18n";
 
 interface DesktopLayoutProps {
     children: React.ReactNode;
