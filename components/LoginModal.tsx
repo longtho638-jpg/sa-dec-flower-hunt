@@ -208,7 +208,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800 hover:border-zinc-600"
                                     onClick={() => {
                                         setEmail('farmer1@sadec.com');
-                                        setPassword('password123');
+                                        setPassword('Sadec@2025_Secure!');
                                         toast.info('Sử dụng tài khoản demo Farmer');
                                     }}
                                 >
@@ -221,7 +221,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800 hover:border-zinc-600"
                                     onClick={() => {
                                         setEmail('customer1@example.com');
-                                        setPassword('password123');
+                                        setPassword('Sadec@2025_Secure!');
                                         toast.info('Sử dụng tài khoản demo Customer');
                                     }}
                                 >
