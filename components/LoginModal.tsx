@@ -65,8 +65,9 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     toast.loading("Đang chuyển hướng đến Admin...");
                     window.location.href = '/admin';
                 } else {
-                    // Customer: just close modal and stay on current page
-                    onClose();
+                    // Customer: show success and keep modal open (let user close manually)
+                    toast.success("✅ Đăng nhập thành công! Bạn có thể đóng cửa sổ này.");
+                    setLoading(false);
                 }
             }
         } catch (error: any) {
