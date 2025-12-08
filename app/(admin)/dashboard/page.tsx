@@ -15,8 +15,10 @@ import { getAdminStats, getDailyRevenue, AdminStats, DailyRevenue } from "@/lib/
 import { format } from "date-fns";
 import { ParticleBackground } from "@/components/ui/ParticleBackground";
 import { ThreeDCard } from "@/components/ui/ThreeDCard";
+import { useLanguage } from "@/lib/i18n";
 
 export default function DashboardPage() {
+    const { t } = useLanguage();
     const [mounted, setMounted] = useState(false);
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [dailyRevenue, setDailyRevenue] = useState<DailyRevenue[]>([]);
@@ -94,17 +96,17 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between border-b border-blue-900/30 pb-6 backdrop-blur-sm">
                 <div>
                     <h2 className="text-3xl font-bold text-white tracking-widest uppercase flex items-center gap-3">
-                        Executive Dashboard
+                        {t("dashboard.title")}
                         <span className="text-xs bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30">Lvl.5</span>
                     </h2>
-                    <p className="text-blue-400/60 mt-1 text-sm">Real-time oversight of Autonomous Organization</p>
+                    <p className="text-blue-400/60 mt-1 text-sm">{t("dashboard.subtitle")}</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="px-3 py-1 rounded bg-green-950/30 text-green-500 border border-green-500/30 text-xs font-mono flex items-center gap-2 animate-pulse">
                         <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                        LIVE STREAM ACTIVE
+                        {t("dashboard.live_stream")}
                     </span>
-                    {loading && <span className="text-blue-500 text-xs animate-pulse">SYNCING DATA...</span>}
+                    {loading && <span className="text-blue-500 text-xs animate-pulse">{t("dashboard.syncing")}</span>}
                 </div>
             </div>
 
@@ -113,7 +115,7 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                     <h3 className="text-sm font-semibold text-blue-300 uppercase tracking-widest flex items-center gap-2 mb-4">
                         <Activity className="w-4 h-4 text-blue-500" />
-                        Live Command Center
+                        {t("dashboard.live_command")}
                         <span className="text-[10px] text-blue-600 font-normal">
                             (POLLING: 30s)
                         </span>
@@ -234,7 +236,7 @@ export default function DashboardPage() {
                 <div className="col-span-2 bg-slate-900/60 border border-blue-900/30 rounded-xl p-6 flex flex-col backdrop-blur-sm shadow-[0_0_20px_rgba(0,0,0,0.3)]">
                     <h3 className="text-sm font-bold text-blue-300 mb-6 flex items-center gap-2 uppercase tracking-widest">
                         <TrendingUp className="w-4 h-4 text-green-500" />
-                        Revenue Performance (T-7 Days)
+                        {t("dashboard.revenue_perf")}
                     </h3>
                     <div className="flex-1 w-full min-h-0 opacity-90">
                         <RevenueChart data={dailyRevenue} />
@@ -245,7 +247,7 @@ export default function DashboardPage() {
                 <div className="col-span-1 bg-slate-900/60 border border-yellow-900/30 rounded-xl p-6 flex flex-col overflow-hidden backdrop-blur-sm">
                     <h3 className="text-sm font-bold text-yellow-500 mb-6 flex items-center gap-2 uppercase tracking-widest">
                         <Zap className="w-4 h-4" />
-                        AI Agent Activity
+                        {t("dashboard.ai_activity")}
                     </h3>
                     <div className="flex-1 overflow-auto opacity-80">
                         <AgentFeed />
@@ -259,7 +261,7 @@ export default function DashboardPage() {
             </div>
 
             <footer className="text-center text-[10px] text-blue-900/50 font-mono mt-8 uppercase tracking-[0.3em]">
-                Secure Connection // Admin Authorization Level 5
+                {t("dashboard.secure_footer")}
             </footer>
         </div>
     );

@@ -68,6 +68,16 @@ const translations: Translations = {
         "auth.demo.farmer": "NÔNG DÂN (DEMO)",
         "auth.demo.admin": "QUẢN TRỊ (DEMO)",
 
+        // --- DASHBOARD (ADMIN) ---
+        "dashboard.title": "BẢNG ĐIỀU HÀNH EXECUTIVE",
+        "dashboard.subtitle": "Giám sát thời gian thực Tổ chức Tự trị",
+        "dashboard.live_stream": "LIVE STREAM HOẠT ĐỘNG",
+        "dashboard.syncing": "ĐANG ĐỒNG BỘ DỮ LIỆU...",
+        "dashboard.live_command": "TRUNG TÂM CHỈ HUY LIVE",
+        "dashboard.revenue_perf": "HIỆU SUẤT DOANH THU (T-7 NGÀY)",
+        "dashboard.ai_activity": "HOẠT ĐỘNG AI AGENT",
+        "dashboard.secure_footer": "KẾT NỐI BẢO MẬT // CẤP QUYỀN QUẢN TRỊ LEVEL 5",
+
         // --- SHOP & HOME ---
         "home.hot": "Hoa Hot Nhất 🔥",
         "home.scan_cta": "Quét QR Ngay",
@@ -165,6 +175,16 @@ const translations: Translations = {
         "auth.demo.customer": "CUSTOMER (DEMO)",
         "auth.demo.farmer": "FARMER (DEMO)",
         "auth.demo.admin": "ADMIN (DEMO)",
+
+        // --- DASHBOARD (ADMIN) ---
+        "dashboard.title": "EXECUTIVE DASHBOARD",
+        "dashboard.subtitle": "Real-time oversight of Autonomous Organization",
+        "dashboard.live_stream": "LIVE STREAM ACTIVE",
+        "dashboard.syncing": "SYNCING DATA...",
+        "dashboard.live_command": "LIVE COMMAND CENTER",
+        "dashboard.revenue_perf": "REVENUE PERFORMANCE (T-7 DAYS)",
+        "dashboard.ai_activity": "AI AGENT ACTIVITY",
+        "dashboard.secure_footer": "SECURE CONNECTION // ADMIN AUTHORIZATION LEVEL 5",
 
         // --- SHOP & HOME ---
         "home.hot": "Trending Flowers 🔥",

@@ -101,10 +101,10 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
             if (error) throw error;
 
-            toast.success("Đăng ký thành công! Kiểm tra email để xác nhận.");
-            onClose();
+            toast.success(t("auth.toast.success_signup"));
+            setMode('login');
         } catch (error: any) {
-            toast.error(error.message || "Đăng ký thất bại");
+            toast.error(error.message || t("auth.error.generic"));
         } finally {
             setLoading(false);
         }
@@ -113,130 +113,114 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <Card className="w-full max-w-md relative shadow-2xl bg-zinc-950 border-zinc-800 text-zinc-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <Card className="w-full max-w-md bg-black border-emerald-500/30 text-emerald-50 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-400" />
+
+                {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"
+                    className="absolute top-4 right-4 text-emerald-500/50 hover:text-emerald-400 transition-colors"
                 >
                     <X className="w-5 h-5" />
                 </button>
 
-                <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-white">
-                        {mode === 'login' ? 'Đăng nhập' : 'Đăng ký'}
+                <CardHeader className="space-y-1 text-center pb-2">
+                    <div className="mx-auto w-12 h-12 bg-emerald-900/30 rounded-full flex items-center justify-center mb-2 border border-emerald-500/20">
+                        <Lock className="w-6 h-6 text-emerald-500" />
+                    </div>
+                    <CardTitle className="text-xl font-mono tracking-widest uppercase text-emerald-400">
+                        {mode === 'login' ? t("auth.login.title") : t("auth.signup.title")}
                     </CardTitle>
-                    <CardDescription className="text-zinc-400">
-                        {mode === 'login'
-                            ? 'Đăng nhập để theo dõi đơn hàng và tích điểm'
-                            : 'Tạo tài khoản mới để bắt đầu săn hoa'}
+                    <CardDescription className="font-mono text-[10px] text-emerald-600/70 tracking-[0.2em] uppercase">
+                        Secure Connection // Encrypted
                     </CardDescription>
                 </CardHeader>
 
-                <CardContent>
+                <CardContent className="space-y-4">
+                    {/* Tabs */}
+                    <div className="grid grid-cols-2 gap-2 mb-6 p-1 bg-emerald-900/10 rounded-lg border border-emerald-500/10">
+                        <button
+                            onClick={() => setMode('login')}
+                            className={`py-2 text-xs font-mono font-bold uppercase transition-all rounded ${mode === 'login'
+                                    ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                                    : 'text-emerald-600 hover:text-emerald-400'
+                                }`}
+                        >
+                            {t("auth.tab.login")}
+                        </button>
+                        <button
+                            onClick={() => setMode('signup')}
+                            className={`py-2 text-xs font-mono font-bold uppercase transition-all rounded ${mode === 'signup'
+                                    ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                                    : 'text-emerald-600 hover:text-emerald-400'
+                                }`}
+                        >
+                            {t("auth.tab.signup")}
+                        </button>
+                    </div>
+
                     <form onSubmit={mode === 'login' ? handleLogin : handleSignup} className="space-y-4">
                         {mode === 'signup' && (
-                            <div>
-                                <label className="text-sm font-medium text-zinc-300">Họ tên</label>
-                                <div className="relative mt-1">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                                    <Input
-                                        type="text"
-                                        placeholder="Nguyễn Văn A"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        className="pl-10 bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-green-500 focus:ring-green-500/20"
-                                        required
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-mono uppercase tracking-wider text-emerald-500/70 flex items-center gap-2">
+                                    <User className="w-3 h-3" /> {t("auth.label.name")}
+                                </label>
+                                <Input
+                                    type="text"
+                                    placeholder={t("auth.placeholder.name")}
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="bg-emerald-900/10 border-emerald-500/30 text-emerald-100 placeholder:text-emerald-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 font-mono"
+                                    required
+                                />
                             </div>
                         )}
 
-                        <div>
-                            <label className="text-sm font-medium text-zinc-300">Email</label>
-                            <div className="relative mt-1">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                                <Input
-                                    type="email"
-                                    placeholder="email@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="pl-10 bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-green-500 focus:ring-green-500/20"
-                                    required
-                                />
-                            </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-mono uppercase tracking-wider text-emerald-500/70 flex items-center gap-2">
+                                <Mail className="w-3 h-3" /> {t("auth.label.email")}
+                            </label>
+                            <Input
+                                type="email"
+                                placeholder={t("auth.placeholder.email")}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="bg-emerald-900/10 border-emerald-500/30 text-emerald-100 placeholder:text-emerald-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 font-mono"
+                                required
+                            />
                         </div>
 
-                        <div>
-                            <label className="text-sm font-medium text-zinc-300">Mật khẩu</label>
-                            <div className="relative mt-1">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                                <Input
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="pl-10 bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-green-500 focus:ring-green-500/20"
-                                    required
-                                />
-                            </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-mono uppercase tracking-wider text-emerald-500/70 flex items-center gap-2">
+                                <Lock className="w-3 h-3" /> {t("auth.label.password")}
+                            </label>
+                            <Input
+                                type="password"
+                                placeholder={t("auth.placeholder.password")}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="bg-emerald-900/10 border-emerald-500/30 text-emerald-100 placeholder:text-emerald-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 font-mono"
+                                required
+                            />
                         </div>
 
                         <Button
                             type="submit"
-                            className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-2"
                             disabled={loading}
+                            className="w-full bg-emerald-600 hover:bg-emerald-500 text-black font-mono font-bold uppercase tracking-wider mt-6 border border-emerald-400 group relative overflow-hidden"
                         >
-                            {loading ? 'Đang xử lý...' : mode === 'login' ? 'Đăng nhập' : 'Đăng ký'}
+                            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                            {loading ? t("auth.btn.processing") : (mode === 'login' ? t("auth.btn.login") : t("auth.btn.signup"))}
                         </Button>
-
-                        <div className="text-center">
-                            <button
-                                type="button"
-                                onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                                className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors"
-                            >
-                                {mode === 'login'
-                                    ? 'Chưa có tài khoản? Đăng ký ngay'
-                                    : 'Đã có tài khoản? Đăng nhập'}
-                            </button>
-                        </div>
-
-                        {/* Quick Login (Demo) */}
-                        <div className="pt-4 border-t border-zinc-800 mt-6">
-                            <p className="text-xs text-center text-zinc-500 mb-3 uppercase tracking-wider font-semibold">Demo Accounts</p>
-                            <div className="grid grid-cols-2 gap-3">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800 hover:border-zinc-600"
-                                    onClick={() => {
-                                        setEmail('farmer1@sadec.com');
-                                        setPassword('Sadec@2025_Secure!');
-                                        toast.info('Sử dụng tài khoản demo Farmer');
-                                    }}
                                 >
-                                    👨‍🌾 Farmer
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800 hover:border-zinc-600"
-                                    onClick={() => {
-                                        setEmail('customer1@example.com');
-                                        setPassword('Sadec@2025_Secure!');
-                                        toast.info('Sử dụng tài khoản demo Customer');
-                                    }}
-                                >
-                                    🛒 Buyer
-                                </Button>
-                            </div>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                        🛒 Buyer
+                    </Button>
+                </div>
         </div>
+                    </form >
+                </CardContent >
+            </Card >
+        </div >
     );
 }
