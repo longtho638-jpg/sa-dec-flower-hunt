@@ -1,24 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Terminal, Activity, TrendingUp, Wifi, Shield } from "lucide-react";
+import { Terminal, Activity, TrendingUp, Wifi, Shield, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
-
-interface LiveStats {
-    nodesActive: number;
-    volumeToday: number;
-    systemStatus: "NOMINAL" | "WARNING" | "CRITICAL";
-    uptime: string;
-}
+import { useRealtimeMetrics } from "@/hooks/useRealtimeMetrics";
 
 export function AdminTerminalHUD() {
     const [currentTime, setCurrentTime] = useState("");
-    const [stats, setStats] = useState<LiveStats>({
-        nodesActive: 1402,
-        volumeToday: 2400000,
-        systemStatus: "NOMINAL",
-        uptime: "99.9%"
-    });
+    const {
+        activeFarmers,
+        activeCustomers,
+        totalRevenue,
+        totalOrders,
+        isLoading,
+        lastUpdate,
+        error,
+        refetch
+    } = useRealtimeMetrics();
+
+    // Calculate total nodes (farmers + customers + admin estimate)
+    const nodesActive = activeFarmers + activeCustomers + 12; // 12 = banks/suppliers/logistics
+
+    // Determine system status based on metrics
+    const getSystemStatus = () => {
+        if (error) return "CRITICAL" as const;
+        if (isLoading) return "WARNING" as const;
+        return "NOMINAL" as const;
+    };
+
+    const systemStatus = getSystemStatus();
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -29,19 +39,7 @@ export function AdminTerminalHUD() {
             }));
         }, 1000);
 
-        // Simulate live stats updates
-        const statsTimer = setInterval(() => {
-            setStats(prev => ({
-                ...prev,
-                nodesActive: prev.nodesActive + Math.floor(Math.random() * 3) - 1,
-                volumeToday: prev.volumeToday + Math.floor(Math.random() * 10000)
-            }));
-        }, 5000);
-
-        return () => {
-            clearInterval(timer);
-            clearInterval(statsTimer);
-        };
+        return () => clearInterval(timer);
     }, []);
 
     const formatCurrency = (n: number) =>
@@ -81,8 +79,13 @@ export function AdminTerminalHUD() {
                             <h1 className="text-lg font-bold tracking-[0.15em] text-white">
                                 SADEC<span className="text-emerald-400">.OS</span>
                             </h1>
-                            <div className="text-[10px] text-stone-500 tracking-wider">
+                            <div className="text-[10px] text-stone-500 tracking-wider flex items-center gap-2">
                                 ADMIN_TERMINAL v4.0
+                                {lastUpdate && (
+                                    <span className="text-emerald-500">
+                                        LIVE
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -94,22 +97,37 @@ export function AdminTerminalHUD() {
                     <div className="flex items-center gap-2 bg-stone-900/50 px-3 py-1.5 rounded border border-stone-800">
                         <Wifi className="w-3.5 h-3.5 text-emerald-400" />
                         <span className="text-stone-400">NODES:</span>
-                        <span className="text-white font-bold">{stats.nodesActive.toLocaleString()}</span>
+                        <span className="text-white font-bold">
+                            {isLoading ? "..." : nodesActive.toLocaleString()}
+                        </span>
                     </div>
 
                     {/* Volume */}
                     <div className="flex items-center gap-2 bg-stone-900/50 px-3 py-1.5 rounded border border-stone-800">
                         <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
                         <span className="text-stone-400">VOLUME:</span>
-                        <span className="text-emerald-400 font-bold">{formatCurrency(stats.volumeToday)}</span>
+                        <span className="text-emerald-400 font-bold">
+                            {isLoading ? "..." : formatCurrency(totalRevenue)}
+                        </span>
                     </div>
 
-                    {/* Uptime */}
+                    {/* Orders */}
                     <div className="flex items-center gap-2 bg-stone-900/50 px-3 py-1.5 rounded border border-stone-800">
                         <Activity className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-stone-400">UPTIME:</span>
-                        <span className="text-white font-bold">{stats.uptime}</span>
+                        <span className="text-stone-400">ORDERS:</span>
+                        <span className="text-white font-bold">
+                            {isLoading ? "..." : totalOrders}
+                        </span>
                     </div>
+
+                    {/* Refresh Button */}
+                    <button
+                        onClick={refetch}
+                        className="p-1.5 hover:bg-stone-800 rounded transition-colors"
+                        title="Refresh metrics"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 text-stone-400 hover:text-emerald-400 ${isLoading ? 'animate-spin' : ''}`} />
+                    </button>
                 </div>
 
                 {/* Right: System Status */}
@@ -122,10 +140,10 @@ export function AdminTerminalHUD() {
 
                     {/* Status Badge */}
                     <div className="flex items-center gap-2 bg-emerald-900/20 px-3 py-1.5 rounded border border-emerald-500/30">
-                        <div className={`w-2 h-2 rounded-full ${statusBg[stats.systemStatus]} animate-pulse`} />
-                        <Shield className={`w-3.5 h-3.5 ${statusColor[stats.systemStatus]}`} />
-                        <span className={`text-xs font-bold ${statusColor[stats.systemStatus]}`}>
-                            SYSTEM: {stats.systemStatus}
+                        <div className={`w-2 h-2 rounded-full ${statusBg[systemStatus]} animate-pulse`} />
+                        <Shield className={`w-3.5 h-3.5 ${statusColor[systemStatus]}`} />
+                        <span className={`text-xs font-bold ${statusColor[systemStatus]}`}>
+                            SYSTEM: {systemStatus}
                         </span>
                     </div>
                 </div>
