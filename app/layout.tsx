@@ -62,6 +62,9 @@ export const metadata: Metadata = {
     description: "Săn hoa, quét AR, nhận quà Tết!",
     images: ["https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1200&h=630&fit=crop"],
   },
+  other: {
+    "tiktok-developers-site-verification": "cpGgNPF685nEh8zgwRgGoXoFi3IGXriX",
+  },
 };
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
