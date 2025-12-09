@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-// Create admin client for writing sensor data
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+// Lazy init to avoid build-time errors
+let supabaseAdmin: SupabaseClient | null = null
+function getSupabaseAdmin() {
+    if (!supabaseAdmin) {
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+        if (!url || !key) {
+            throw new Error('Supabase env vars not configured')
+        }
+        supabaseAdmin = createClient(url, key)
+    }
+    return supabaseAdmin
+}
 
 interface SensorReading {
     device_id: string
@@ -109,7 +117,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Find or verify device
-        const { data: device, error: deviceError } = await supabaseAdmin
+        const { data: device, error: deviceError } = await getSupabaseAdmin()
             .from('iot_devices')
             .select('id, is_active')
             .eq('device_id', body.device_id)
@@ -117,7 +125,7 @@ export async function POST(request: NextRequest) {
 
         if (deviceError || !device) {
             // Auto-register new device
-            const { data: newDevice, error: createError } = await supabaseAdmin
+            const { data: newDevice, error: createError } = await getSupabaseAdmin()
                 .from('iot_devices')
                 .insert({
                     device_id: body.device_id,
@@ -141,7 +149,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Get device UUID
-        const { data: deviceData } = await supabaseAdmin
+        const { data: deviceData } = await getSupabaseAdmin()
             .from('iot_devices')
             .select('id')
             .eq('device_id', body.device_id)
@@ -156,7 +164,7 @@ export async function POST(request: NextRequest) {
         // Get shipment thresholds if shipment_id provided
         let shipmentUuid = null
         if (body.shipment_id) {
-            const { data: shipment } = await supabaseAdmin
+            const { data: shipment } = await getSupabaseAdmin()
                 .from('cold_chain_shipments')
                 .select('id, min_temp, max_temp, min_humidity, max_humidity')
                 .eq('shipment_code', body.shipment_id)
@@ -188,7 +196,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Insert reading
-        const { data: reading, error: insertError } = await supabaseAdmin
+        const { data: reading, error: insertError } = await getSupabaseAdmin()
             .from('cold_chain_readings')
             .insert({
                 device_id: deviceData?.id,
@@ -217,7 +225,7 @@ export async function POST(request: NextRequest) {
 
         // Create alert if threshold violated
         if (isAlert && shipmentUuid) {
-            await supabaseAdmin
+            await getSupabaseAdmin()
                 .from('cold_chain_alerts')
                 .insert({
                     shipment_id: shipmentUuid,
@@ -230,7 +238,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Update device last_seen
-        await supabaseAdmin
+        await getSupabaseAdmin()
             .from('iot_devices')
             .update({
                 last_seen_at: new Date().toISOString(),
