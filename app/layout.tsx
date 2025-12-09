@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     images: ["https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1200&h=630&fit=crop"],
   },
   other: {
-    "tiktok-developers-site-verification": "JNFVvHzl1u4xYfQv53lhbomU2GHT3at6",
+    "tiktok-developers-site-verification": "c0E0ijZDiRb4hadyVk27Fk7qFeUGdppt",
   },
 };
 
