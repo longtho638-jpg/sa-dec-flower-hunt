@@ -121,8 +121,52 @@ export function LiveCounters() {
     useEffect(() => {
         fetchMetrics();
 
-        // Refresh every 30 seconds
+        // Refresh every 30 seconds as fallback
         const interval = setInterval(fetchMetrics, 30000);
+
+        // Add real-time subscriptions for instant updates
+        if (supabase) {
+            const ordersChannel = supabase
+                .channel('landing-orders')
+                .on('postgres_changes',
+                    { event: '*', schema: 'public', table: 'orders' },
+                    () => {
+                        console.log('📦 Order change detected - refreshing');
+                        fetchMetrics();
+                    }
+                )
+                .subscribe();
+
+            const productsChannel = supabase
+                .channel('landing-products')
+                .on('postgres_changes',
+                    { event: '*', schema: 'public', table: 'products' },
+                    () => {
+                        console.log('🌸 Product change detected - refreshing');
+                        fetchMetrics();
+                    }
+                )
+                .subscribe();
+
+            const leadsChannel = supabase
+                .channel('landing-leads')
+                .on('postgres_changes',
+                    { event: 'INSERT', schema: 'public', table: 'leads' },
+                    () => {
+                        console.log('📝 New lead detected - refreshing');
+                        fetchMetrics();
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                clearInterval(interval);
+                supabase?.removeChannel(ordersChannel);
+                supabase?.removeChannel(productsChannel);
+                supabase?.removeChannel(leadsChannel);
+            };
+        }
+
         return () => clearInterval(interval);
     }, [fetchMetrics]);
 
