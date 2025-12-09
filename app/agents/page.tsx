@@ -68,18 +68,45 @@ export default function AgentsPage() {
         setRunningAgents(prev => new Set([...prev, agentId]));
         toast.info(`Đang chạy Agent ${agentId}...`);
 
-        // Simulate agent run
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            // Real API call to execute agent
+            const response = await fetch('/api/agents/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    agentId,
+                    input: { data: { context: {} } }
+                })
+            });
 
-        setRunningAgents(prev => {
-            const next = new Set(prev);
-            next.delete(agentId);
-            return next;
-        });
+            const result = await response.json();
 
-        toast.success(`Agent ${agentId} hoàn tất!`, {
-            description: "Output đã được lưu vào bizplan-cli-toolkit/outputs/"
-        });
+            setRunningAgents(prev => {
+                const next = new Set(prev);
+                next.delete(agentId);
+                return next;
+            });
+
+            if (result.success) {
+                toast.success(`Agent ${agentId} hoàn tất!`, {
+                    description: `Thời gian: ${result.executionTimeMs}ms`
+                });
+                console.log(`Agent ${agentId} output:`, result.output);
+            } else {
+                toast.error(`Agent ${agentId} thất bại`, {
+                    description: result.error || 'Unknown error'
+                });
+            }
+        } catch (error: any) {
+            setRunningAgents(prev => {
+                const next = new Set(prev);
+                next.delete(agentId);
+                return next;
+            });
+            toast.error(`Agent ${agentId} lỗi`, {
+                description: error.message
+            });
+        }
     };
 
     const filteredAgents = selectedCategory
@@ -126,8 +153,8 @@ export default function AgentsPage() {
                     <button
                         onClick={() => setSelectedCategory(null)}
                         className={`px-3 py-1 text-xs rounded border transition-all ${selectedCategory === null
-                                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                                : "bg-black border-stone-800 text-stone-500 hover:border-stone-600"
+                            ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                            : "bg-black border-stone-800 text-stone-500 hover:border-stone-600"
                             }`}
                     >
                         Tất cả ({AGENTS.length})
@@ -137,8 +164,8 @@ export default function AgentsPage() {
                             key={cat}
                             onClick={() => setSelectedCategory(cat)}
                             className={`px-3 py-1 text-xs rounded border transition-all ${selectedCategory === cat
-                                    ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                                    : "bg-black border-stone-800 text-stone-500 hover:border-stone-600"
+                                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                                : "bg-black border-stone-800 text-stone-500 hover:border-stone-600"
                                 }`}
                         >
                             {cat}

@@ -20,13 +20,26 @@ export function FloatingAgentButton() {
         setRunningAgent(agentId);
         toast.info(`Đang chạy ${agentId} agent...`);
 
-        // Simulate agent run
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            const response = await fetch('/api/agents/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ agentId, input: { data: {} } })
+            });
+            const result = await response.json();
 
-        setRunningAgent(null);
-        toast.success(`${agentId} agent hoàn tất!`, {
-            description: "Xem kết quả tại /agents"
-        });
+            setRunningAgent(null);
+            if (result.success) {
+                toast.success(`${agentId} agent hoàn tất!`, {
+                    description: `Thời gian: ${result.executionTimeMs}ms`
+                });
+            } else {
+                toast.error(`${agentId} agent thất bại`);
+            }
+        } catch (error) {
+            setRunningAgent(null);
+            toast.error(`${agentId} agent lỗi`);
+        }
     };
 
     return (

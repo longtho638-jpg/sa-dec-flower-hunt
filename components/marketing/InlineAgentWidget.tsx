@@ -41,13 +41,26 @@ export function InlineAgentWidget() {
         setRunningAgent(agentId);
         toast.info(`Đang chạy Agent ${agentName}...`);
 
-        // Simulate agent run
-        await new Promise(resolve => setTimeout(resolve, 2500));
+        try {
+            const response = await fetch('/api/agents/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ agentId, input: { data: {} } })
+            });
+            const result = await response.json();
 
-        setRunningAgent(null);
-        toast.success(`${agentName} hoàn tất!`, {
-            description: "Output đã được tạo thành công"
-        });
+            setRunningAgent(null);
+            if (result.success) {
+                toast.success(`${agentName} hoàn tất!`, {
+                    description: `Thời gian: ${result.executionTimeMs}ms`
+                });
+            } else {
+                toast.error(`${agentName} thất bại`);
+            }
+        } catch (error) {
+            setRunningAgent(null);
+            toast.error(`${agentName} lỗi`);
+        }
     };
 
     return (
