@@ -35,6 +35,12 @@ import { InlineAgentWidget } from "@/components/marketing/InlineAgentWidget";
 
 import { useLanguage } from "@/lib/i18n";
 
+// === NEW WOW COMPONENTS ===
+import { TetCountdown } from "@/components/widgets/TetCountdown";
+import { FlashSaleBanner } from "@/components/shop/FlashSaleBanner";
+import { QuickLinks } from "@/components/landing/QuickLinks";
+import { WeatherWidget } from "@/components/widgets/WeatherWidget";
+
 interface LandingPageProps {
     config: MarketingConfig;
 }
@@ -205,6 +211,21 @@ export function LandingPageClient({ config }: LandingPageProps) {
                             </div>
                         </motion.div>
                     </div>
+
+                    {/* === NEW WOW SECTIONS === */}
+
+                    {/* Tet Countdown Banner */}
+                    <div className="mb-12">
+                        <TetCountdown variant="compact" />
+                    </div>
+
+                    {/* Flash Sale Section */}
+                    <div className="mb-12">
+                        <FlashSaleBanner />
+                    </div>
+
+                    {/* Quick Links to New Features */}
+                    <QuickLinks />
 
                     {/* Trust Badges Section */}
                     <TrustBadgesSection />
