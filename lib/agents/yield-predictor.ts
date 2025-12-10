@@ -90,22 +90,22 @@ export class YieldPredictor {
 
         try {
             // Get order counts by flower type (last 7 days)
-            const { data: orders } = await client
+            const { data: orders } = await (client
                 .from('order_items')
                 .select('product_name, quantity')
-                .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+                .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()) as any);
 
             // Get inventory page views (if tracking exists)
-            const { data: inventory } = await client
+            const { data: inventory } = await (client
                 .from('inventory')
-                .select('flower_type, flower_name, quantity');
+                .select('flower_type, flower_name, quantity') as any);
 
             // Aggregate demand signals
             const demandMap = new Map<string, DemandSignal>();
 
             // Count orders
-            orders?.forEach(order => {
-                const key = order.product_name;
+            (orders as any)?.forEach((order: any) => {
+                const key = (order as any).product_name;
                 const existing = demandMap.get(key) || {
                     flowerType: key,
                     checkInCount: 0,
@@ -118,8 +118,8 @@ export class YieldPredictor {
             });
 
             // Add inventory items even if no orders
-            inventory?.forEach(item => {
-                const key = item.flower_type;
+            (inventory as any)?.forEach((item: any) => {
+                const key = (item as any).flower_type;
                 if (!demandMap.has(key)) {
                     demandMap.set(key, {
                         flowerType: item.flower_name || key,
@@ -166,8 +166,8 @@ export class YieldPredictor {
             // Aggregate by flower type
             const supplyMap = new Map<string, SupplyData>();
 
-            inventory.forEach(item => {
-                const key = item.flower_type;
+            (inventory as any).forEach((item: any) => {
+                const key = (item as any).flower_type;
                 const existing = supplyMap.get(key) || {
                     flowerType: item.flower_name || key,
                     totalQuantity: 0,
@@ -369,9 +369,9 @@ export class YieldPredictor {
             const forecasts = await this.forecastDemand();
             const flashSales: FlashSaleCandidate[] = [];
 
-            for (const item of inventory) {
+            for (const item of inventory as any[]) {
                 const forecast = forecasts.find(f =>
-                    f.flowerType === item.flower_type || f.flowerType === item.flower_name
+                    f.flowerType === (item as any).flower_type || f.flowerType === (item as any).flower_name
                 );
 
                 // Determine discount based on inventory level and days to Tet

@@ -220,17 +220,17 @@ export function useGardenRealtime() {
 
     // Claim loot box
     const claimLootBox = useCallback(async (lootBoxId: string, userId: string) => {
-        const client = getSupabase();
+        const client = getSupabase() as any;
         if (!client) return null;
 
         try {
-            const { data, error } = await (client
+            const { data, error } = await client
                 .from('loot_boxes')
                 .update({
                     is_claimed: true,
                     claimed_by: userId,
                     claimed_at: new Date().toISOString()
-                }) as any)
+                })
                 .eq('id', lootBoxId)
                 .eq('is_claimed', false) // Prevent double claim
                 .select()
