@@ -1,161 +1,180 @@
 -- ============================================================================
--- GARDEN OS: PARASITIC ARCHITECTURE - DATABASE MIGRATION
+-- GARDEN OS: PARASITIC ARCHITECTURE - DATABASE MIGRATION v2.0
 -- ============================================================================
 -- Date: 2025-12-10
 -- Purpose: Create Digital Twin tables for Sa Đéc Flower Village
 -- Architecture: Dual-App (Garden OS + Hunter Guide) sharing Supabase Brain
+-- Requires: PostGIS extension for GPS coordinates
 -- ============================================================================
 
--- Enable PostGIS for GPS coordinates (if not already enabled)
+BEGIN;
+
+-- ============================================================================
+-- EXTENSIONS
+-- ============================================================================
 CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;  -- For fuzzy text search
 
 -- ============================================================================
 -- 1. GARDENS TABLE - Nhà Vườn Digital Twin
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS gardens (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    -- Primary key
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     
-    -- Identity
-    zalo_id TEXT UNIQUE,             -- Zalo User ID (auto-login from Mini App)
-    profile_id UUID REFERENCES profiles(id), -- Link to existing profiles system
-    name TEXT NOT NULL,              -- "Vườn Hồng Tư Tôn"
-    owner_name TEXT,                 -- Tên chủ vườn
-    owner_phone TEXT,                -- Số điện thoại
+    -- External identifiers
+    zalo_id TEXT UNIQUE,
+    profile_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
     
-    -- Location (GPS for Game Map)
-    coordinates GEOGRAPHY(POINT),    -- GPS point
-    address TEXT,                    -- Địa chỉ đầy đủ
-    ward TEXT,                       -- Phường/Xã
-    district TEXT DEFAULT 'Sa Đéc', -- Quận/Huyện
+    -- Basic info
+    name TEXT NOT NULL,
+    owner_name TEXT,
+    owner_phone TEXT,
+    
+    -- Location (PostGIS)
+    coordinates GEOGRAPHY(POINT, 4326),
+    address TEXT,
+    ward TEXT,
+    district TEXT DEFAULT 'Sa Đéc',
     province TEXT DEFAULT 'Đồng Tháp',
     
     -- Status
     status TEXT DEFAULT 'OPEN' CHECK (status IN ('OPEN', 'FULL', 'CLOSED', 'VACATION')),
     is_verified BOOLEAN DEFAULT false,
-    verification_date TIMESTAMP,
+    verification_date TIMESTAMPTZ,
     
-    -- Profile
-    avatar_url TEXT,                 -- Ảnh đại diện vườn
-    cover_image_url TEXT,            -- Ảnh bìa
-    description TEXT,                -- Giới thiệu vườn
-    specialties TEXT[],              -- ["Cúc Mâm Xôi", "Hồng Sa Đéc"]
+    -- Profile & media
+    avatar_url TEXT,
+    cover_image_url TEXT,
+    description TEXT,
+    specialties TEXT[] DEFAULT '{}',
     
-    -- Stats (denormalized for performance)
-    rating DECIMAL(2,1) DEFAULT 5.0 CHECK (rating >= 0 AND rating <= 5),
-    total_reviews INT DEFAULT 0,
-    total_sales INT DEFAULT 0,
-    total_revenue DECIMAL(15,0) DEFAULT 0,
+    -- Aggregated stats (denormalized)
+    rating DECIMAL(2,1) DEFAULT 5.0 CHECK (rating BETWEEN 0 AND 5),
+    total_reviews INT DEFAULT 0 CHECK (total_reviews >= 0),
+    total_sales INT DEFAULT 0 CHECK (total_sales >= 0),
+    total_revenue DECIMAL(15,0) DEFAULT 0 CHECK (total_revenue >= 0),
     
     -- Timestamps
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Indexes for performance
-CREATE INDEX IF NOT EXISTS idx_gardens_zalo_id ON gardens(zalo_id);
+COMMENT ON TABLE gardens IS 'Core table for flower gardens in Sa Đéc - Digital Twin';
+COMMENT ON COLUMN gardens.coordinates IS 'GPS point in WGS84 (4326) for map display';
+COMMENT ON COLUMN gardens.specialties IS 'Array of flower types this garden specializes in';
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_gardens_zalo ON gardens(zalo_id) WHERE zalo_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_gardens_status ON gardens(status);
-CREATE INDEX IF NOT EXISTS idx_gardens_coordinates ON gardens USING GIST(coordinates);
+CREATE INDEX IF NOT EXISTS idx_gardens_geo ON gardens USING GIST(coordinates);
+CREATE INDEX IF NOT EXISTS idx_gardens_name ON gardens USING gin(name gin_trgm_ops);  -- Fuzzy search
 
 -- ============================================================================
 -- 2. INVENTORY TABLE - Kho Hoa Thời Gian Thực
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS inventory (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     garden_id UUID NOT NULL REFERENCES gardens(id) ON DELETE CASCADE,
     
-    -- Flower Info
-    flower_type TEXT NOT NULL,       -- "Cuc_Mam_Xoi", "Hong_Sa_Dec", "Mai_Vang"
-    flower_name TEXT,                -- "Cúc Mâm Xôi Vàng"
-    variety TEXT,                    -- "Loại A", "Loại B"
+    -- Flower info
+    flower_type TEXT NOT NULL,
+    flower_name TEXT,
+    variety TEXT,
     
     -- Stock
     quantity INT NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-    unit TEXT DEFAULT 'chậu',        -- chậu, cành, bó, kg
-    min_order INT DEFAULT 1,
+    unit TEXT DEFAULT 'chậu',
+    min_order INT DEFAULT 1 CHECK (min_order >= 1),
     
     -- Pricing
-    unit_price DECIMAL(12,0),        -- Giá bán lẻ
-    wholesale_price DECIMAL(12,0),   -- Giá sỉ (>10)
+    unit_price DECIMAL(12,0) CHECK (unit_price >= 0),
+    wholesale_price DECIMAL(12,0) CHECK (wholesale_price >= 0),
     
-    -- AI Vision Data
-    ai_confidence FLOAT DEFAULT 1.0 CHECK (ai_confidence >= 0 AND ai_confidence <= 1),
-    ai_scan_image TEXT,              -- Ảnh chụp từ AI scan
+    -- AI Vision
+    ai_confidence FLOAT DEFAULT 1.0 CHECK (ai_confidence BETWEEN 0 AND 1),
+    ai_scan_image TEXT,
     last_ai_scan TIMESTAMPTZ,
     
     -- Availability
     is_available BOOLEAN DEFAULT true,
     available_from DATE,
-    available_until DATE,            -- Deadline Tết
+    available_until DATE,
     
     -- Timestamps
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     
-    -- Unique constraint: one flower type per garden
+    -- Constraints
     UNIQUE(garden_id, flower_type)
 );
 
+COMMENT ON TABLE inventory IS 'Real-time flower inventory per garden with AI vision support';
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_inventory_garden ON inventory(garden_id);
-CREATE INDEX IF NOT EXISTS idx_inventory_flower_type ON inventory(flower_type);
-CREATE INDEX IF NOT EXISTS idx_inventory_available ON inventory(is_available, quantity);
+CREATE INDEX IF NOT EXISTS idx_inventory_flower ON inventory(flower_type);
+CREATE INDEX IF NOT EXISTS idx_inventory_avail ON inventory(garden_id, is_available) WHERE is_available = true;
+CREATE INDEX IF NOT EXISTS idx_inventory_qty ON inventory(quantity) WHERE quantity > 0;
 
 -- ============================================================================
--- 3. LOOT_BOXES TABLE - Hộp Quà Ảo (Gamification Layer)
+-- 3. LOOT_BOXES TABLE - Hộp Quà Ảo (Gamification)
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS loot_boxes (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     garden_id UUID REFERENCES gardens(id) ON DELETE CASCADE,
     
-    -- Loot Box Properties
+    -- Type
     rarity TEXT DEFAULT 'COMMON' CHECK (rarity IN ('COMMON', 'RARE', 'EPIC', 'LEGENDARY')),
     trigger_type TEXT DEFAULT 'INVENTORY' CHECK (trigger_type IN ('INVENTORY', 'TIME', 'PROXIMITY', 'MANUAL')),
-    trigger_quantity INT,            -- Spawn when inventory > this
+    trigger_quantity INT,
     
     -- Reward
     reward_type TEXT CHECK (reward_type IN ('VOUCHER', 'MISSION', 'BADGE', 'POINTS', 'FREE_FLOWER')),
-    reward_value TEXT,               -- "20% OFF", "Mission #5", "100 XP"
-    reward_amount DECIMAL(12,0),     -- Số tiền/điểm
+    reward_value TEXT,
+    reward_amount DECIMAL(12,0),
     
-    -- GPS (for proximity-based loot)
-    coordinates GEOGRAPHY(POINT),
-    radius_meters INT DEFAULT 50,
+    -- GPS (for proximity loot)
+    coordinates GEOGRAPHY(POINT, 4326),
+    radius_meters INT DEFAULT 50 CHECK (radius_meters > 0),
     
     -- State
     is_active BOOLEAN DEFAULT true,
     is_claimed BOOLEAN DEFAULT false,
-    claimed_by UUID REFERENCES profiles(id),
+    claimed_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
     claimed_at TIMESTAMPTZ,
     
-    -- Timing
+    -- Lifecycle
     spawned_at TIMESTAMPTZ DEFAULT NOW(),
     expires_at TIMESTAMPTZ,
     
-    -- Metadata
+    -- Extensible
     metadata JSONB DEFAULT '{}'
 );
 
+COMMENT ON TABLE loot_boxes IS 'Gamification layer - virtual loot boxes for user engagement';
+
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_loot_boxes_garden ON loot_boxes(garden_id);
-CREATE INDEX IF NOT EXISTS idx_loot_boxes_active ON loot_boxes(is_active, is_claimed);
-CREATE INDEX IF NOT EXISTS idx_loot_boxes_coordinates ON loot_boxes USING GIST(coordinates);
-CREATE INDEX IF NOT EXISTS idx_loot_boxes_expires ON loot_boxes(expires_at) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_loot_garden ON loot_boxes(garden_id);
+CREATE INDEX IF NOT EXISTS idx_loot_active ON loot_boxes(is_active, is_claimed) WHERE is_active AND NOT is_claimed;
+CREATE INDEX IF NOT EXISTS idx_loot_geo ON loot_boxes USING GIST(coordinates);
+CREATE INDEX IF NOT EXISTS idx_loot_expiry ON loot_boxes(expires_at) WHERE is_active AND expires_at IS NOT NULL;
 
 -- ============================================================================
--- 4. INVENTORY_HISTORY - Lịch sử thay đổi kho (Analytics)
+-- 4. INVENTORY_HISTORY - Audit Trail
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS inventory_history (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     inventory_id UUID REFERENCES inventory(id) ON DELETE CASCADE,
     garden_id UUID REFERENCES gardens(id) ON DELETE CASCADE,
     
-    -- Change Data
+    -- Change data
     old_quantity INT,
     new_quantity INT,
-    change_type TEXT CHECK (change_type IN ('AI_SCAN', 'MANUAL', 'SALE', 'RESTOCK', 'DAMAGE')),
+    change_type TEXT CHECK (change_type IN ('AI_SCAN', 'MANUAL', 'SALE', 'RESTOCK', 'DAMAGE', 'EXPIRED')),
     change_reason TEXT,
     
-    -- AI Data
+    -- AI data
     ai_confidence FLOAT,
     ai_scan_image TEXT,
     
@@ -163,61 +182,63 @@ CREATE TABLE IF NOT EXISTS inventory_history (
     recorded_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_inventory_history_garden ON inventory_history(garden_id);
-CREATE INDEX IF NOT EXISTS idx_inventory_history_time ON inventory_history(recorded_at DESC);
+COMMENT ON TABLE inventory_history IS 'Audit trail for inventory changes - analytics and debugging';
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_history_garden ON inventory_history(garden_id, recorded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_history_time ON inventory_history(recorded_at DESC);
 
 -- ============================================================================
--- 5. RLS POLICIES - Row Level Security
+-- 5. RLS POLICIES
 -- ============================================================================
-
--- Gardens
 ALTER TABLE gardens ENABLE ROW LEVEL SECURITY;
-
--- Anyone can read gardens (for Hunter Guide map)
-CREATE POLICY "Public read gardens" ON gardens 
-    FOR SELECT USING (true);
-
--- Service role can do everything
-CREATE POLICY "Service role full access gardens" ON gardens 
-    FOR ALL USING (auth.role() = 'service_role');
-
--- Inventory
 ALTER TABLE inventory ENABLE ROW LEVEL SECURITY;
-
--- Anyone can read inventory (for Hunter Guide)
-CREATE POLICY "Public read inventory" ON inventory 
-    FOR SELECT USING (true);
-
--- Service role can do everything
-CREATE POLICY "Service role full access inventory" ON inventory 
-    FOR ALL USING (auth.role() = 'service_role');
-
--- Loot Boxes
 ALTER TABLE loot_boxes ENABLE ROW LEVEL SECURITY;
-
--- Anyone can read active loot boxes
-CREATE POLICY "Public read active loot boxes" ON loot_boxes 
-    FOR SELECT USING (is_active = true);
-
--- Service role can do everything
-CREATE POLICY "Service role full access loot boxes" ON loot_boxes 
-    FOR ALL USING (auth.role() = 'service_role');
-
--- Inventory History (internal only)
 ALTER TABLE inventory_history ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Service role only inventory history" ON inventory_history 
-    FOR ALL USING (auth.role() = 'service_role');
+-- Drop existing policies (idempotent)
+DO $$ BEGIN
+    DROP POLICY IF EXISTS "Public read gardens" ON gardens;
+    DROP POLICY IF EXISTS "Service role full access gardens" ON gardens;
+    DROP POLICY IF EXISTS "Public read inventory" ON inventory;
+    DROP POLICY IF EXISTS "Service role full access inventory" ON inventory;
+    DROP POLICY IF EXISTS "Public read active loot boxes" ON loot_boxes;
+    DROP POLICY IF EXISTS "Service role full access loot boxes" ON loot_boxes;
+    DROP POLICY IF EXISTS "Service role only inventory history" ON inventory_history;
+END $$;
+
+-- Gardens: Public read, Service write
+CREATE POLICY "Public read gardens" ON gardens FOR SELECT USING (true);
+CREATE POLICY "Service role full access gardens" ON gardens FOR ALL USING (auth.role() = 'service_role');
+
+-- Inventory: Public read, Service write
+CREATE POLICY "Public read inventory" ON inventory FOR SELECT USING (true);
+CREATE POLICY "Service role full access inventory" ON inventory FOR ALL USING (auth.role() = 'service_role');
+
+-- Loot boxes: Public read active only, Service write
+CREATE POLICY "Public read active loot boxes" ON loot_boxes FOR SELECT USING (is_active = true);
+CREATE POLICY "Service role full access loot boxes" ON loot_boxes FOR ALL USING (auth.role() = 'service_role');
+
+-- History: Service role only
+CREATE POLICY "Service role only inventory history" ON inventory_history FOR ALL USING (auth.role() = 'service_role');
 
 -- ============================================================================
--- 6. ENABLE REALTIME
+-- 6. REALTIME SUBSCRIPTIONS
 -- ============================================================================
-ALTER PUBLICATION supabase_realtime ADD TABLE gardens;
-ALTER PUBLICATION supabase_realtime ADD TABLE inventory;
-ALTER PUBLICATION supabase_realtime ADD TABLE loot_boxes;
+DO $$ BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE gardens;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE inventory;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE loot_boxes;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ============================================================================
--- 7. TRIGGER: Auto-update updated_at
+-- 7. TRIGGERS: Auto-update timestamps
 -- ============================================================================
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$
@@ -227,10 +248,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS gardens_updated_at ON gardens;
 CREATE TRIGGER gardens_updated_at
     BEFORE UPDATE ON gardens
     FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS inventory_updated_at ON inventory;
 CREATE TRIGGER inventory_updated_at
     BEFORE UPDATE ON inventory
     FOR EACH ROW EXECUTE FUNCTION update_updated_at();
@@ -240,31 +263,27 @@ CREATE TRIGGER inventory_updated_at
 -- ============================================================================
 CREATE OR REPLACE FUNCTION spawn_loot_box_on_inventory()
 RETURNS TRIGGER AS $$
+DECLARE
+    v_rarity TEXT;
+    v_reward TEXT;
 BEGIN
-    -- If quantity crosses threshold, spawn loot box
+    -- Only spawn if quantity crosses threshold upward
     IF NEW.quantity >= 50 AND (OLD.quantity IS NULL OR OLD.quantity < 50) THEN
+        -- Determine rarity based on quantity
+        IF NEW.quantity >= 100 THEN
+            v_rarity := 'RARE';
+            v_reward := '30% OFF';
+        ELSE
+            v_rarity := 'COMMON';
+            v_reward := '15% OFF';
+        END IF;
+
         INSERT INTO loot_boxes (
-            garden_id,
-            rarity,
-            trigger_type,
-            trigger_quantity,
-            reward_type,
-            reward_value,
-            expires_at
+            garden_id, rarity, trigger_type, trigger_quantity,
+            reward_type, reward_value, expires_at
         ) VALUES (
-            NEW.garden_id,
-            CASE 
-                WHEN NEW.quantity >= 100 THEN 'RARE'
-                ELSE 'COMMON'
-            END,
-            'INVENTORY',
-            NEW.quantity,
-            'VOUCHER',
-            CASE 
-                WHEN NEW.quantity >= 100 THEN '30% OFF'
-                ELSE '15% OFF'
-            END,
-            NOW() + INTERVAL '24 hours'
+            NEW.garden_id, v_rarity, 'INVENTORY', NEW.quantity,
+            'VOUCHER', v_reward, NOW() + INTERVAL '24 hours'
         );
     END IF;
     
@@ -272,14 +291,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS auto_spawn_loot_box ON inventory;
 CREATE TRIGGER auto_spawn_loot_box
     AFTER INSERT OR UPDATE ON inventory
     FOR EACH ROW EXECUTE FUNCTION spawn_loot_box_on_inventory();
 
 -- ============================================================================
--- 9. SEED DATA: Demo Gardens
+-- 9. SEED DATA
 -- ============================================================================
-INSERT INTO gardens (name, owner_name, address, ward, status, specialties, description) VALUES
+INSERT INTO gardens (name, owner_name, address, ward, status, specialties, description)
+VALUES
     ('Vườn Hồng Tư Tôn', 'Nguyễn Văn Tôn', 'Ấp Tân Quy Đông', 'Tân Quy Đông', 'OPEN', 
      ARRAY['Hồng Sa Đéc', 'Cúc Mâm Xôi'], 'Vườn hồng truyền thống 30 năm'),
     ('Vườn Mai Út Hiền', 'Trần Thị Hiền', 'Ấp Tân Khánh Đông', 'Tân Khánh Đông', 'OPEN',
@@ -288,24 +309,31 @@ INSERT INTO gardens (name, owner_name, address, ward, status, specialties, descr
      ARRAY['Cúc Mâm Xôi', 'Vạn Thọ'], 'Cúc mâm xôi giống F1 cao cấp')
 ON CONFLICT DO NOTHING;
 
--- Seed inventory for demo gardens
+-- Seed inventory using CTE
+WITH garden_ids AS (SELECT id FROM gardens LIMIT 3)
 INSERT INTO inventory (garden_id, flower_type, flower_name, quantity, unit_price, is_available)
 SELECT 
     g.id,
-    unnest(ARRAY['Cuc_Mam_Xoi', 'Hong_Sa_Dec', 'Mai_Vang']),
-    unnest(ARRAY['Cúc Mâm Xôi', 'Hồng Sa Đéc', 'Mai Vàng']),
-    floor(random() * 100 + 20)::int,
-    unnest(ARRAY[150000, 80000, 500000]::decimal[]),
+    f.flower_type,
+    f.flower_name,
+    floor(random() * 80 + 20)::int,
+    f.price,
     true
-FROM gardens g
-LIMIT 9
-ON CONFLICT DO NOTHING;
+FROM garden_ids g
+CROSS JOIN (VALUES 
+    ('Cuc_Mam_Xoi', 'Cúc Mâm Xôi', 150000::decimal),
+    ('Hong_Sa_Dec', 'Hồng Sa Đéc', 80000::decimal),
+    ('Mai_Vang', 'Mai Vàng', 500000::decimal)
+) AS f(flower_type, flower_name, price)
+ON CONFLICT (garden_id, flower_type) DO NOTHING;
+
+COMMIT;
 
 -- ============================================================================
--- MIGRATION COMPLETE
+-- MIGRATION COMPLETE! ✅
 -- ============================================================================
--- Tables created: gardens, inventory, loot_boxes, inventory_history
--- RLS enabled: All tables
--- Realtime enabled: gardens, inventory, loot_boxes
--- Triggers: auto_updated_at, auto_spawn_loot_box
--- ============================================================================
+SELECT 
+    'Migration v2.0 complete!' AS status,
+    (SELECT COUNT(*) FROM gardens) AS gardens,
+    (SELECT COUNT(*) FROM inventory) AS inventory_items,
+    (SELECT COUNT(*) FROM loot_boxes) AS loot_boxes;
