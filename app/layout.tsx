@@ -68,6 +68,7 @@ export const metadata: Metadata = {
 };
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { AICopilot } from '@/components/ai/AICopilot';
 
 export default function RootLayout({
   children,
@@ -88,10 +89,9 @@ export default function RootLayout({
               <ServiceWorkerRegister />
               {children}
               <PWAInstallPrompt />
-              <PWAInstallPrompt />
               <StructuredData data={{
                 "@type": "SoftwareApplication",
-                "name": "Sa Đéc Flower Hunt 2026",
+                "name": "AGRIOS - Sa Đéc Flower Hunt 2026",
                 "applicationCategory": "TravelApplication",
                 "operatingSystem": "Web",
                 "offers": {
@@ -101,6 +101,7 @@ export default function RootLayout({
                 }
               }} />
               <Toaster />
+              <AICopilot />
             </LanguageProvider>
           </ThemeProvider>
         </ErrorBoundary>
