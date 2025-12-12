@@ -30,7 +30,7 @@ function FarmerSidebar() {
                 <div className="flex items-center gap-2 mb-6">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                     <h1 className="text-lg font-bold text-white tracking-widest">
-                        SADEC.<span className="text-emerald-500">OS</span>
+                        AGRIOS.<span className="text-emerald-500">tech</span>
                     </h1>
                 </div>
 
@@ -58,7 +58,7 @@ function FarmerSidebar() {
                                         : 'border-transparent hover:bg-white/5 hover:text-white hover:border-white/20'
                                     }`}
                             >
-                                <item.icon className="w-4 h-4" />
+                                <item.icon className="w-4 h-4" strokeWidth={1.5} />
                                 {item.label}
                             </Button>
                         </Link>
@@ -98,7 +98,10 @@ function FarmerLayoutContent({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <div className="flex min-h-screen bg-[#050505] text-zinc-300 font-mono selection:bg-emerald-500/30 selection:text-emerald-200">
+        <div className="flex min-h-screen bg-[#050505] text-zinc-300 font-mono selection:bg-emerald-500/30 selection:text-emerald-200 relative">
+            <div className="fixed inset-0 z-0 opacity-30 pointer-events-none">
+                <img src="/assets/digital-twins/agrios_farmer_hyperreal_1765367316910.png" className="w-full h-full object-cover" />
+            </div>
             {/* Desktop Sidebar */}
             <div className="hidden md:block w-64 shrink-0 fixed inset-y-0 z-50">
                 <FarmerSidebar />
@@ -106,7 +109,7 @@ function FarmerLayoutContent({ children }: { children: React.ReactNode }) {
 
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 w-full z-50 bg-[#030303]/90 backdrop-blur border-b border-white/10 px-4 h-14 flex items-center justify-between">
-                <span className="font-bold text-white tracking-widest text-sm">SADEC.OS</span>
+                <span className="font-bold text-white tracking-widest text-sm">AGRIOS.tech</span>
                 <Sheet>
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-emerald-500 hover:bg-emerald-500/10">
@@ -163,43 +166,59 @@ function FarmerProtection({ children }: { children: React.ReactNode }) {
 
     if (!profile.id) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 p-4">
-                <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md space-y-4">
-                    <h1 className="text-2xl font-bold text-center text-stone-900">🌾 Đăng Nhập Nhà Vườn</h1>
-                    <p className="text-center text-stone-500 text-sm">Hệ thống quản lý nông nghiệp số Sa Đéc</p>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505] p-4 relative overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <img src="/assets/digital-twins/agrios_farmer_hyperreal_1765367316910.png" className="w-full h-full object-cover opacity-80" />
+                </div>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/40 via-black/80 to-black z-0" />
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Email</label>
-                        <input
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            className="w-full p-2 border rounded-lg"
-                            type="email"
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Mật khẩu</label>
-                        <input
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            className="w-full p-2 border rounded-lg"
-                            type="password"
-                        />
+                <div className="bg-stone-900/50 backdrop-blur-xl border border-emerald-500/20 p-8 rounded-2xl shadow-[0_0_50px_rgba(16,185,129,0.1)] w-full max-w-md space-y-6 relative z-10">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold tracking-widest text-white mb-2">
+                            AGRIOS.<span className="text-emerald-500">tech</span>
+                        </h1>
+                        <p className="text-emerald-500/60 font-mono text-xs uppercase tracking-widest">Garden OS // Restricted Access</p>
                     </div>
 
-                    <Button onClick={handleLogin} disabled={isLoggingIn} className="w-full bg-green-600 hover:bg-green-700 text-white">
-                        {isLoggingIn ? "Đang xử lý..." : "Đăng Nhập"}
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-mono text-stone-500 uppercase">Node ID (Email)</label>
+                            <input
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                                className="w-full bg-black/50 border border-emerald-500/20 rounded-lg p-3 text-emerald-400 font-mono focus:border-emerald-500/50 focus:outline-none transition-colors"
+                                type="email"
+                                placeholder="node@agrios.tech"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-mono text-stone-500 uppercase">Access Key (Password)</label>
+                            <input
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                className="w-full bg-black/50 border border-emerald-500/20 rounded-lg p-3 text-emerald-400 font-mono focus:border-emerald-500/50 focus:outline-none transition-colors"
+                                type="password"
+                                placeholder="••••••••"
+                            />
+                        </div>
+                    </div>
+
+                    <Button
+                        onClick={handleLogin}
+                        disabled={isLoggingIn}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-black font-bold tracking-wider py-6"
+                    >
+                        {isLoggingIn ? "AUTHENTICATING..." : "INITIALIZE SESSION"}
                     </Button>
 
-                    <div className="text-xs text-center text-stone-400">
-                        Gợi ý: farmer1@sadec.local / password123
+                    <div className="text-[10px] text-center text-stone-600 font-mono">
+                        Dev Bypass: farmer1@sadec.local / password123
                     </div>
 
-                    <div className="pt-4 border-t border-stone-100">
-                        <p className="text-xs text-center text-red-400 mb-2">Gặp lỗi 500? Dùng cái này 👇</p>
+                    <div className="pt-4 border-t border-emerald-500/10">
                         <Button
-                            variant="outline"
-                            className="w-full border-red-200 text-red-500 hover:bg-red-50"
+                            variant="ghost"
+                            className="w-full text-red-900 hover:text-red-500 hover:bg-red-500/10 text-xs font-mono"
                             onClick={async () => {
                                 setIsLoggingIn(true);
                                 try {
@@ -214,26 +233,26 @@ function FarmerProtection({ children }: { children: React.ReactNode }) {
                                     if (res.ok) {
                                         const data = await res.json();
                                         if (data.redirectTo) {
-                                            toast.success("Đang chuyển hướng đăng nhập...");
+                                            toast.success("Redirecting...");
                                             window.location.href = data.redirectTo;
                                         } else {
-                                            toast.success("Đã tạo tài khoản! Đang thử đăng nhập...");
+                                            toast.success("Node Created. Auto-login...");
                                             setEmail("farmer_final@sadec.local");
                                             setPassword("password123");
                                             setTimeout(() => handleLogin(), 1000);
                                         }
                                     } else {
                                         const err = await res.json();
-                                        toast.error("Lỗi tạo user: " + err.error);
+                                        toast.error("Error: " + err.error);
                                         setIsLoggingIn(false);
                                     }
                                 } catch (e) {
-                                    toast.error("Lỗi kết nối API");
+                                    toast.error("API Connection Failed");
                                     setIsLoggingIn(false);
                                 }
                             }}
                         >
-                            🆘 Tạo Tài Khoản Cứu Hộ
+                            ⚠ EMERGENCY NODE CREATION
                         </Button>
                     </div>
                 </div>

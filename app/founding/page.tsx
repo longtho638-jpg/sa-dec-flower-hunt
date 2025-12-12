@@ -107,7 +107,11 @@ export default function Founding10Page() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-emerald-950">
+        <div className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-emerald-950 relative">
+            {/* Texture Background */}
+            <div className="fixed inset-0 z-0">
+                <img src="/assets/digital-twins/agrios_landing_hyperreal_1765367547331.png" className="w-full h-full object-cover opacity-10 mix-blend-overlay" />
+            </div>
             {/* Hero Section */}
             <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
                 {/* Animated background */}
@@ -351,7 +355,7 @@ export default function Founding10Page() {
                                 thức dậy từ 4 giờ sáng, làm việc cả ngày, nhưng lợi nhuận phần lớn rơi vào tay trung gian."
                             </p>
                             <p>
-                                "Tôi muốn thay đổi điều đó. SADEC.OS kết nối trực tiếp nông dân với khách hàng.
+                                "Tôi muốn thay đổi điều đó. AGRIOS.tech kết nối trực tiếp nông dân với khách hàng.
                                 Không trung gian. Hoa tươi hơn. Giá tốt hơn cho cả hai phía."
                             </p>
                             <p className="text-white font-medium">
@@ -364,7 +368,7 @@ export default function Founding10Page() {
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500" />
                             <div>
                                 <div className="text-white font-medium">Long Thọ</div>
-                                <div className="text-stone-500 text-sm">Founder, SADEC.OS</div>
+                                <div className="text-stone-500 text-sm">Founder, AGRIOS.tech</div>
                             </div>
                         </div>
                     </motion.div>
@@ -527,7 +531,7 @@ export default function Founding10Page() {
             <footer className="py-12 px-6 border-t border-stone-800">
                 <div className="max-w-4xl mx-auto text-center">
                     <div className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mb-4">
-                        SADEC.OS
+                        AGRIOS.tech
                     </div>
                     <p className="text-stone-500 text-sm mb-6">
                         Hoa tươi từ làng hoa Sa Đéc • Giao trong 6 giờ
@@ -536,12 +540,13 @@ export default function Founding10Page() {
                         <a href="tel:0901234567" className="hover:text-white transition-colors flex items-center gap-2">
                             <Phone className="w-4 h-4" /> 0901234567
                         </a>
-                        <a href="mailto:hello@sadec.os" className="hover:text-white transition-colors flex items-center gap-2">
-                            <Mail className="w-4 h-4" /> hello@sadec.os
+                        <a href="mailto:hello@agrios.tech" className="hover:text-white transition-colors flex items-center gap-2">
+                            <Mail className="w-4 h-4" /> hello@agrios.tech
                         </a>
                     </div>
                 </div>
             </footer>
         </div>
+
     )
 }

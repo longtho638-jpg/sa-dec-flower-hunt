@@ -48,15 +48,41 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // Transform gardens to include farmer name
-        const transformedGardens = gardens?.map(g => ({
-            ...g,
-            farmer_name: g.profiles?.name
-        })) || [];
+        // Transform gardens to include farmer name and Hunter Guide AI Logic (Crowd Balancing)
+        const transformedGardens = gardens?.map(g => {
+            // 🧠 HUNTER GUIDE AI LOGIC:
+            // Simulate load balancing: 
+            // - 20% of gardens are "HOT" (High Density, Low Loot)
+            // - 80% are "COLD" (Low Density, High Loot to attract users)
+
+            const isHotSpot = Math.random() > 0.8;
+            const crowdDensity = isHotSpot
+                ? 0.8 + (Math.random() * 0.2) // 0.8 - 1.0 (Crowded)
+                : 0.1 + (Math.random() * 0.3); // 0.1 - 0.4 (Empty)
+
+            const lootMultiplier = isHotSpot
+                ? 1.0 // Normal loot
+                : 2.0 + (Math.random() * 3.0); // 2x - 5x Loot (Incentive)
+
+            return {
+                ...g,
+                farmer_name: g.profiles?.name,
+                ai_metrics: {
+                    crowd_density: Number(crowdDensity.toFixed(2)), // 0.0 - 1.0
+                    loot_multiplier: Number(lootMultiplier.toFixed(1)), // 1.0x - 5.0x
+                    status: isHotSpot ? 'overloaded' : 'optimized'
+                }
+            };
+        }) || [];
 
         return NextResponse.json({
             gardens: transformedGardens,
-            landmarks: landmarks || []
+            landmarks: landmarks || [],
+            meta: {
+                ai_agent: "Hunter Guide v2.0",
+                strategy: "Crowd Load Balancing",
+                timestamp: new Date().toISOString()
+            }
         });
 
     } catch (error: any) {

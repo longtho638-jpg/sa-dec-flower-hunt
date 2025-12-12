@@ -77,7 +77,7 @@ export function AdminTerminalHUD() {
                         </div>
                         <div>
                             <h1 className="text-lg font-bold tracking-[0.15em] text-white">
-                                SADEC<span className="text-emerald-400">.OS</span>
+                                AGRIOS<span className="text-emerald-400">.tech</span>
                             </h1>
                             <div className="text-[10px] text-stone-500 tracking-wider flex items-center gap-2">
                                 ADMIN_TERMINAL v4.0

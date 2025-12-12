@@ -66,7 +66,7 @@ export default function IPOReadinessPage() {
 
     return (
         <div className="min-h-screen bg-stone-50 dark:bg-stone-950 transition-colors duration-300">
-             <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 sticky top-0 z-10">
+            <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 sticky top-0 z-10">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="bg-blue-600 p-1.5 rounded-lg">
@@ -77,8 +77,11 @@ export default function IPOReadinessPage() {
                         </h1>
                     </div>
                     <div className="flex items-center gap-4">
+                        <Link href="/">
+                            <Button variant="ghost" size="sm">Home</Button>
+                        </Link>
                         <Link href="/admin">
-                             <Button variant="ghost" size="sm">Back to Admin</Button>
+                            <Button variant="ghost" size="sm">Back to Admin</Button>
                         </Link>
                         <ThemeToggle />
                     </div>
@@ -96,25 +99,25 @@ export default function IPOReadinessPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="flex gap-8 pt-4">
-                             <div>
+                            <div>
                                 <div className="text-3xl font-bold">{overallScore}/5.0</div>
                                 <div className="text-sm text-stone-400">Overall Score</div>
-                             </div>
-                             <div>
+                            </div>
+                            <div>
                                 <div className="text-3xl font-bold">18 mo</div>
                                 <div className="text-sm text-stone-400">Est. Time to IPO</div>
-                             </div>
-                             <div>
+                            </div>
+                            <div>
                                 <div className="text-3xl font-bold text-yellow-400">5</div>
                                 <div className="text-sm text-stone-400">Critical Gaps</div>
-                             </div>
+                            </div>
                         </CardContent>
                     </Card>
 
                     <Card className="flex flex-col justify-center items-center p-6">
                         <div className="relative w-32 h-32 flex items-center justify-center">
                             {/* Simple circular progress visualization */}
-                             <svg className="w-full h-full" viewBox="0 0 100 100">
+                            <svg className="w-full h-full" viewBox="0 0 100 100">
                                 <circle
                                     className="text-stone-200 stroke-current"
                                     strokeWidth="10"
@@ -145,19 +148,19 @@ export default function IPOReadinessPage() {
                 </div>
 
                 {/* Main Tabs */}
-                <Tabs defaultValue="scorecard" className="space-y-6">
+                <Tabs defaultValue="roadmap" className="space-y-6">
                     <TabsList className="bg-white dark:bg-stone-900 p-1 border border-stone-200 dark:border-stone-800 w-full justify-start overflow-x-auto">
-                        <TabsTrigger value="scorecard" className="gap-2"><Target className="w-4 h-4"/> Scorecard</TabsTrigger>
-                        <TabsTrigger value="pathways" className="gap-2"><ListChecks className="w-4 h-4"/> Pathways</TabsTrigger>
-                        <TabsTrigger value="gaps" className="gap-2"><CheckSquare className="w-4 h-4"/> Governance Gaps</TabsTrigger>
-                        <TabsTrigger value="kpis" className="gap-2"><BarChart3 className="w-4 h-4"/> Financial KPIs</TabsTrigger>
-                        <TabsTrigger value="roadmap" className="gap-2"><FileText className="w-4 h-4"/> Roadmap</TabsTrigger>
+                        <TabsTrigger value="scorecard" className="gap-2"><Target className="w-4 h-4" /> Scorecard</TabsTrigger>
+                        <TabsTrigger value="pathways" className="gap-2"><ListChecks className="w-4 h-4" /> Pathways</TabsTrigger>
+                        <TabsTrigger value="gaps" className="gap-2"><CheckSquare className="w-4 h-4" /> Governance Gaps</TabsTrigger>
+                        <TabsTrigger value="kpis" className="gap-2"><BarChart3 className="w-4 h-4" /> Financial KPIs</TabsTrigger>
+                        <TabsTrigger value="roadmap" className="gap-2"><FileText className="w-4 h-4" /> Roadmap</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="scorecard" className="space-y-4">
                         <IPOScorecard />
                     </TabsContent>
-                    
+
                     <TabsContent value="pathways" className="space-y-4">
                         <ListingPathways />
                     </TabsContent>
@@ -171,15 +174,9 @@ export default function IPOReadinessPage() {
                     </TabsContent>
 
                     <TabsContent value="roadmap" className="space-y-4">
-                        <Card>
-                             <CardHeader>
-                                <CardTitle>IPO Execution Roadmap</CardTitle>
-                                <CardDescription>Strategic timeline from Foundation to Listing</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <IPORoadmap />
-                            </CardContent>
-                        </Card>
+                        <div className="-mx-4 -mt-4">
+                            <IPORoadmap />
+                        </div>
                     </TabsContent>
                 </Tabs>
             </main>

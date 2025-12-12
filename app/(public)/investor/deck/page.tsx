@@ -35,7 +35,7 @@ export default function InvestorCoverSlide() {
                     className="space-y-4"
                 >
                     <h1 className="text-6xl md:text-8xl font-bold tracking-wider text-white">
-                        SADEC<span className="text-emerald-500">.OS</span>
+                        AGRIOS<span className="text-emerald-500">.tech</span>
                     </h1>
                     <div className="h-1 w-32 bg-emerald-500 mx-auto" />
                 </motion.div>

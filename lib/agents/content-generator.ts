@@ -56,7 +56,7 @@ const FACEBOOK_TEMPLATES = [
         title: "👨‍🌾 Gặp gỡ nông dân trồng hoa của bạn",
         body: `Bạn có bao giờ tự hỏi ai đã trồng bông hoa trong nhà mình?
 
-Tại SADEC.OS, bạn có thể:
+Tại AGRIOS.tech, bạn có thể:
 📞 Gọi VIDEO trực tiếp với nông dân
 📍 Xem vườn hoa LIVE 24/7
 📦 Tracking cold-chain từ vườn đến nhà

@@ -272,7 +272,7 @@ Bạn đang tìm **${keyword}** chất lượng cho dịp Tết? Dưới đây l
 
 ## Mua ${keyword} ở đâu uy tín?
 
-### 1. SADEC.OS - Mua trực tiếp từ nông dân
+### 1. AGRIOS.tech - Mua trực tiếp từ nông dân
 - ✅ Giao trong 6 giờ
 - ✅ Cold-chain đảm bảo tươi
 - ✅ Video call với nông dân
@@ -290,7 +290,7 @@ Chọn ${keyword} không khó nếu biết cách. Ưu tiên mua từ nguồn uy 
         return `
 # ${this.capitalize(keyword)} - Đặt online, giao tận nơi trong 6 giờ
 
-## Tại sao chọn SADEC.OS?
+## Tại sao chọn AGRIOS.tech?
 
 ✅ **Hoa tươi từ vườn** - Cắt sáng sớm, giao trong ngày
 ✅ **Cold-chain logistics** - Nhiệt độ 2-8°C suốt hành trình
@@ -362,7 +362,7 @@ Chọn ${keyword} không khó nếu biết cách. Ưu tiên mua từ nguồn uy 
     }
 
     private generateStructuredData(title: string, description: string, slug: string): object {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sadec.os'
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://agrios.tech'
         return {
             '@context': 'https://schema.org',
             '@type': 'Article',
@@ -371,12 +371,12 @@ Chọn ${keyword} không khó nếu biết cách. Ưu tiên mua từ nguồn uy 
             url: `${baseUrl}/blog/${slug}`,
             author: {
                 '@type': 'Organization',
-                name: 'SADEC.OS',
+                name: 'AGRIOS.tech',
                 url: baseUrl
             },
             publisher: {
                 '@type': 'Organization',
-                name: 'SADEC.OS',
+                name: 'AGRIOS.tech',
                 logo: {
                     '@type': 'ImageObject',
                     url: `${baseUrl}/logo.png`

@@ -37,19 +37,19 @@ export async function POST(req: NextRequest) {
         // const resend = new Resend(resendApiKey);
         // 
         // await resend.emails.send({
-        //     from: 'SADEC.OS <noreply@sadec.os>',
+        //     from: 'AGRIOS.tech <noreply@agrios.tech>',
         //     to: email,
-        //     subject: 'SADEC.OS Pitch Deck - As Requested',
+        //     subject: 'AGRIOS.tech Pitch Deck - As Requested',
         //     html: `
         //         <h1>Hi ${name},</h1>
-        //         <p>Thank you for your interest in SADEC.OS!</p>
+        //         <p>Thank you for your interest in AGRIOS.tech!</p>
         //         <p>Please find our pitch deck attached.</p>
         //         <p>Company: ${company || 'Individual investor'}</p>
-        //         <p>Best regards,<br>SADEC.OS Team</p>
+        //         <p>Best regards,<br>AGRIOS.tech Team</p>
         //     `,
         //     attachments: [
         //         {
-        //             filename: 'SADEC_Pitch_Deck.pdf',
+        //             filename: 'AGRIOS_Pitch_Deck.pdf',
         //             path: `${process.cwd()}/public/assets/pitch-deck.pdf`
         //         }
         //     ]

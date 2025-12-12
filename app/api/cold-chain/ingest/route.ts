@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-// Ingest endpoint specifically for IoT devices
-// This is a simpler endpoint focused on reliability
+/**
+ * Cold Chain IoT Data Ingest Endpoint
+ * 🔒 SECURITY: Protected by IOT_API_KEY header
+ * Designed for reliability with IoT devices
+ */
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 export async function POST(request: NextRequest) {
-    // Log incoming request for debugging
+    // 🔒 SECURITY: Verify IoT API key
+    const apiKey = request.headers.get('x-api-key');
+    if (process.env.IOT_API_KEY && apiKey !== process.env.IOT_API_KEY) {
+        console.warn('[Cold Chain Ingest] Invalid API key attempt');
+        return NextResponse.json({ error: 'Invalid API key' }, { status: 401 });
+    }
+
     console.log('[Cold Chain Ingest] Received data at:', new Date().toISOString())
 
     try {

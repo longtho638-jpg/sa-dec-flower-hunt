@@ -71,8 +71,8 @@ export default function LiveTerminalPage() {
 
         if (navigator.share) {
             navigator.share({
-                title: 'SADEC.OS Live Terminal',
-                text: `Tôi là Node #${nodeId} trên hệ thống SADEC.OS - Hệ điều hành nông nghiệp quốc gia`,
+                title: 'AGRIOS.tech Live Terminal',
+                text: `Tôi là Node #${nodeId} trên hệ thống AGRIOS.tech - Hệ điều hành nông nghiệp quốc gia`,
                 url: window.location.href,
             });
         } else {
@@ -141,7 +141,7 @@ export default function LiveTerminalPage() {
                 >
                     {/* Welcome Message */}
                     <div className="max-w-lg mx-auto mb-6 p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-sm">
-                        <div className="text-xs mb-2 text-emerald-500 uppercase font-bold">CHÀO MỪNG ĐẾN VỚI SADEC.OS</div>
+                        <div className="text-xs mb-2 text-emerald-500 uppercase font-bold">CHÀO MỪNG ĐẾN VỚI AGRIOS.tech</div>
                         <p className="text-[11px] text-stone-300 leading-relaxed">
                             Bạn đang kết nối trực tiếp với <span className="text-white font-bold">Hệ Điều Hành Chuỗi Giá Trị Nông Nghiệp Quốc Gia</span>.
                             Dưới đây là trạng thái thời gian thực của <span className="text-emerald-400">5 Node quan trọng</span>.

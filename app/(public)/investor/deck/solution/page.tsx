@@ -24,7 +24,7 @@ export default function SolutionSlide() {
                     <div className="flex items-center justify-center gap-3 mb-4">
                         <Sparkles className="w-8 h-8 text-emerald-500" />
                         <h1 className="text-4xl md:text-6xl font-bold text-white uppercase tracking-wider">
-                            SADEC<span className="text-emerald-500">.OS</span>
+                            AGRIOS<span className="text-emerald-500">.tech</span>
                         </h1>
                     </div>
                     <p className="text-xl md:text-2xl text-emerald-400">
@@ -49,7 +49,7 @@ export default function SolutionSlide() {
                         <iframe
                             src="http://localhost:3000/live"
                             className="w-full h-[400px] md:h-[500px]"
-                            title="Live SADEC.OS Demo"
+                            title="Live AGRIOS.tech Demo"
                         />
                     </div>
                     <div className="absolute -top-3 -right-3 bg-emerald-500 text-black px-3 py-1 rounded-sm text-xs font-bold uppercase animate-pulse">

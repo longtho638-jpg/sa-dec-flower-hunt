@@ -77,8 +77,11 @@ export default function PartnerRegisterForm() {
 
     return (
         <div className="min-h-screen bg-black text-white font-mono flex items-center justify-center p-4">
-            {/* Grid Background */}
-            <div className="fixed inset-0 bg-[linear-gradient(rgba(16,185,129,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.03)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+            {/* Background Image */}
+            <div className="fixed inset-0 z-0">
+                <img src="/assets/digital-twins/agrios_farmer_hyperreal_1765367316910.png" className="w-full h-full object-cover opacity-20" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/90 to-black pointer-events-none" />
+            </div>
 
             {/* Ambient Glow */}
             <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.1),transparent_50%)] pointer-events-none" />

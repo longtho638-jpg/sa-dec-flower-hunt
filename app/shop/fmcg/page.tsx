@@ -262,8 +262,14 @@ function ProductCard({ product }: { product: typeof PRODUCTS[0] }) {
     );
 }
 
+import { withI18n, WithI18nProps } from "@/lib/withI18n";
+
+// ... (imports remain same)
+
+// ... (CATEGORIES and PRODUCTS arrays remain same for now, or minimal update if simple)
+
 // Main page
-export default function FMCGPage() {
+function FMCGPage({ texts }: WithI18nProps) {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('popular');
 
@@ -284,7 +290,7 @@ export default function FMCGPage() {
                         className="inline-flex items-center gap-2 bg-rose-500/20 text-rose-400 px-4 py-2 rounded-full text-sm font-medium mb-6"
                     >
                         <Sparkles className="w-4 h-4" />
-                        Made from Sa Đéc Flowers
+                        {texts.badge}
                     </motion.div>
 
                     <motion.h1
@@ -293,7 +299,7 @@ export default function FMCGPage() {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-5xl font-bold text-white mb-4"
                     >
-                        🌹 Sản Phẩm Từ <span className="text-rose-400">Hoa Sa Đéc</span>
+                        🌹 {texts.title} <span className="text-rose-400">Hoa Sa Đéc</span>
                     </motion.h1>
 
                     <motion.p
@@ -302,7 +308,7 @@ export default function FMCGPage() {
                         transition={{ delay: 0.2 }}
                         className="text-stone-400 text-lg max-w-2xl mx-auto"
                     >
-                        Skincare, Trà hoa, Quà tặng - Tất cả từ vườn hoa 100 năm tuổi
+                        {texts.subtitle}
                     </motion.p>
                 </div>
             </section>
@@ -325,7 +331,13 @@ export default function FMCGPage() {
                                         }
                   `}
                                 >
-                                    {cat.icon} {cat.name}
+                                    {cat.icon} {
+                                        cat.id === 'all' ? texts["filter.all"] :
+                                            cat.id === 'skincare' ? texts["filter.skincare"] :
+                                                cat.id === 'tea' ? texts["filter.tea"] :
+                                                    cat.id === 'decor' ? texts["filter.decor"] :
+                                                        cat.id === 'gift' ? texts["filter.gift"] : cat.name
+                                    }
                                 </button>
                             ))}
                         </div>
@@ -338,10 +350,10 @@ export default function FMCGPage() {
                                 onChange={e => setSortBy(e.target.value)}
                                 className="bg-stone-800 border border-stone-700 rounded-lg px-3 py-2 text-white text-sm"
                             >
-                                <option value="popular">Phổ biến nhất</option>
-                                <option value="price-low">Giá thấp → cao</option>
-                                <option value="price-high">Giá cao → thấp</option>
-                                <option value="rating">Đánh giá cao</option>
+                                <option value="popular">{texts["sort.popular"]}</option>
+                                <option value="price-low">{texts["sort.price_low"]}</option>
+                                <option value="price-high">{texts["sort.price_high"]}</option>
+                                <option value="rating">{texts["sort.rating"]}</option>
                             </select>
                         </div>
                     </div>
@@ -352,7 +364,7 @@ export default function FMCGPage() {
             <section className="px-4 pb-20">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-stone-400 text-sm mb-6">
-                        Hiển thị {filteredProducts.length} sản phẩm
+                        {texts["products.count"]} {filteredProducts.length}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -369,16 +381,16 @@ export default function FMCGPage() {
                     <div className="bg-gradient-to-r from-rose-600 to-pink-600 rounded-2xl p-8 text-center">
                         <Gift className="w-12 h-12 text-white/80 mx-auto mb-4" />
                         <h2 className="text-2xl font-bold text-white mb-2">
-                            Mua combo tiết kiệm đến 30%!
+                            {texts["banner.title"]}
                         </h2>
                         <p className="text-rose-100 mb-6">
-                            Gift Box Xuân Sa Đéc - Quà Tết hoàn hảo cho người thân yêu
+                            {texts["banner.subtitle"]}
                         </p>
                         <Link
                             href="/shop/fmcg/gift-box-tet"
                             className="inline-flex items-center gap-2 bg-white text-rose-600 px-8 py-3 rounded-xl font-bold hover:bg-rose-50 transition-colors"
                         >
-                            Xem Gift Box <ShoppingCart className="w-5 h-5" />
+                            {texts["banner.cta"]} <ShoppingCart className="w-5 h-5" />
                         </Link>
                     </div>
                 </div>
@@ -386,3 +398,5 @@ export default function FMCGPage() {
         </div>
     );
 }
+
+export default withI18n(FMCGPage, "shop_fmcg");

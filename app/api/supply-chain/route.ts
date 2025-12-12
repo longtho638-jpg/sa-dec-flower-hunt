@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
             total_events: journey.length,
             journey,
             verified: true,
-            certification: 'SADEC.OS Traceability v1.0'
+            certification: 'AGRIOS.tech Traceability v1.0'
         });
 
     } catch (error: any) {

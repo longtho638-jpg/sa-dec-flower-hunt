@@ -14,9 +14,17 @@ export default function ShopLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <ResponsiveLayout>
-            <NotificationsDemo />
-            {children}
-        </ResponsiveLayout>
+        <div className="relative min-h-screen bg-black">
+            <div className="fixed inset-0 z-0">
+                <img src="/assets/digital-twins/agrios_market_hyperreal_1765367298057.png" className="w-full h-full object-cover opacity-15" />
+                <div className="absolute inset-0 bg-stone-950/90" />
+            </div>
+            <div className="relative z-10">
+                <ResponsiveLayout>
+                    <NotificationsDemo />
+                    {children}
+                </ResponsiveLayout>
+            </div>
+        </div>
     );
 }

@@ -131,10 +131,18 @@ function SuccessContent() {
 
 export default function OrderSuccessPage() {
     return (
-        <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex items-center justify-center p-4">
-            <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-stone-400" />}>
-                <SuccessContent />
-            </Suspense>
+        <div className="min-h-screen bg-stone-950 text-white relative flex items-center justify-center p-4">
+            {/* Background */}
+            <div className="fixed inset-0 z-0">
+                <img src="/assets/digital-twins/agrios_market_hyperreal_1765367468134.png" className="w-full h-full object-cover opacity-20" />
+                <div className="absolute inset-0 bg-stone-950/80" />
+            </div>
+
+            <div className="relative z-10 w-full flex justify-center">
+                <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-stone-400" />}>
+                    <SuccessContent />
+                </Suspense>
+            </div>
         </div>
     )
 }

@@ -1,5 +1,7 @@
 import { execSync } from 'child_process';
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
 
 // Whitelist allowed commands only
 const ALLOWED_COMMANDS = {
@@ -10,6 +12,13 @@ const ALLOWED_COMMANDS = {
 
 export async function POST(req: Request) {
     try {
+        // 🔒 SECURITY: Require admin authentication
+        const cookieStore = await cookies();
+        const adminAuth = cookieStore.get('admin_auth');
+        if (!adminAuth || adminAuth.value !== 'true') {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const { scriptCommand } = await req.json();
 
         // Validate command is whitelisted

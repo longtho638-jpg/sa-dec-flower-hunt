@@ -203,7 +203,7 @@ export default function BlogPostPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             <BookOpen className="w-4 h-4" />
-                            SADEC.OS
+                            AGRIOS.tech
                         </div>
                     </motion.div>
 
@@ -312,16 +312,39 @@ export default function BlogPostPage() {
     )
 }
 
-// Simple markdown to HTML converter
+// 🔒 SECURITY: Escape HTML to prevent XSS
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// 🔒 SECURITY: Validate URL is safe (internal only or trusted domains)
+function isSafeUrl(url: string): boolean {
+    // Allow internal links
+    if (url.startsWith('/') && !url.startsWith('//')) return true;
+    // Allow specific trusted domains
+    if (url.startsWith('https://agrios.tech')) return true;
+    if (url.startsWith('https://sadec.vn')) return true;
+    return false;
+}
+
+// Simple markdown to HTML converter (🔒 XSS-Safe)
 function formatMarkdown(content: string): string {
     if (!content) return ''
 
-    return content
-        // Headers
+    // 🔒 SECURITY: First escape all HTML to prevent injection
+    let safe = escapeHtml(content);
+
+    return safe
+        // Headers (safe - $1 is already escaped)
         .replace(/^### (.+)$/gm, '<h3 class="text-xl font-semibold text-white mt-8 mb-4">$1</h3>')
         .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold text-white mt-10 mb-4">$1</h2>')
         .replace(/^# (.+)$/gm, '<h1 class="text-3xl font-bold text-white mt-10 mb-6">$1</h1>')
-        // Bold
+        // Bold (safe - content escaped)
         .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>')
         // Italic
         .replace(/\*(.+?)\*/g, '<em>$1</em>')
@@ -329,13 +352,18 @@ function formatMarkdown(content: string): string {
         .replace(/^- (.+)$/gm, '<li class="ml-4 text-stone-300">$1</li>')
         .replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-disc my-4">$&</ul>')
         // Blockquotes
-        .replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-emerald-500 pl-4 py-2 my-4 text-stone-400 italic">$1</blockquote>')
-        // Links
-        .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-emerald-400 hover:text-emerald-300 underline">$1</a>')
+        .replace(/^&gt; (.+)$/gm, '<blockquote class="border-l-4 border-emerald-500 pl-4 py-2 my-4 text-stone-400 italic">$1</blockquote>')
+        // 🔒 Links - ONLY allow internal links (starting with /)
+        .replace(/\[(.+?)\]\((\/.+?)\)/g, (match, text, url) => {
+            if (isSafeUrl(url)) {
+                return `<a href="${url}" class="text-emerald-400 hover:text-emerald-300 underline">${text}</a>`;
+            }
+            return text; // Strip unsafe links, keep text only
+        })
         // Paragraphs
         .replace(/^(?!<[a-z])(.*\S.*)$/gm, '<p class="text-stone-300 my-4 leading-relaxed">$1</p>')
         // Tables
         .replace(/\|(.+)\|/g, '<tr><td class="border border-stone-700 px-4 py-2 text-stone-300">$1</td></tr>')
-        // Line breaks
+        // Line breaks (escaped --- becomes safe)
         .replace(/---/g, '<hr class="border-stone-700 my-8" />')
 }

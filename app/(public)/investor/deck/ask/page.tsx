@@ -105,8 +105,8 @@ export default function AskSlide() {
                 >
                     <Mail className="w-12 h-12 text-emerald-400 mx-auto" />
                     <h3 className="text-2xl font-bold text-white">Ready to Discuss Terms?</h3>
-                    <p className="text-stone-400">Contact us to schedule a follow-up meeting</p>
-                    <div className="text-emerald-400 font-mono text-lg">founder@sadec.os</div>
+                    <p className="text-stone-400">Agrios.tech is raising $1.5M Seed Round (Valuation Cap: $8M) to digitize the Mekong Delta's flower supply chain.g</p>
+                    <div className="text-emerald-400 font-mono text-lg">founder@agrios.tech</div>
                 </motion.div>
             </div>
         </div>

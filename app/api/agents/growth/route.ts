@@ -3,17 +3,64 @@ import { runContentGenerator } from '@/lib/agents/content-generator'
 import { runLeadNurture, startWelcomeSequence } from '@/lib/agents/lead-nurture'
 import { processReferral, onPurchase, createReferralForUser } from '@/lib/agents/viral-loop'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase'
+import { cookies } from 'next/headers'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-// POST: Run specific agent
+/**
+ * Growth Agent API
+ * 🔒 SECURITY: POST requires authentication
+ */
+
+// 🔒 Helper to check authentication
+async function requireAuth(): Promise<{ userId: string; email: string } | null> {
+    try {
+        const cookieStore = cookies()
+        const supabase = createServerClient(cookieStore)
+        const { data: { user }, error } = await supabase.auth.getUser()
+        if (error || !user) return null
+        return { userId: user.id, email: user.email || '' }
+    } catch {
+        return null
+    }
+}
+
+// POST: Run specific agent (🔒 AUTHENTICATED ONLY)
 export async function POST(request: NextRequest) {
+    // 🔒 SECURITY: Require authentication for agent execution
+    const auth = await requireAuth()
+    if (!auth) {
+        return NextResponse.json(
+            { error: 'Authentication required to run growth agents' },
+            { status: 401 }
+        )
+    }
+
     const { searchParams } = new URL(request.url)
     const agent = searchParams.get('agent')
 
+    // 🔒 Input validation
+    if (!agent || typeof agent !== 'string') {
+        return NextResponse.json(
+            { error: 'agent parameter is required' },
+            { status: 400 }
+        )
+    }
+
+    // 🔒 Whitelist of allowed agents
+    const allowedAgents = ['content', 'nurture', 'referral-use', 'referral-create', 'purchase-complete', 'start-welcome', 'all']
+    if (!allowedAgents.includes(agent)) {
+        return NextResponse.json(
+            { error: `Unknown agent: ${agent}. Available: ${allowedAgents.join(', ')}` },
+            { status: 400 }
+        )
+    }
+
     try {
         let result
+        console.log(`🤖 [${auth.email}] Running growth agent: ${agent}`)
 
         switch (agent) {
             case 'content':
@@ -26,24 +73,37 @@ export async function POST(request: NextRequest) {
 
             case 'referral-use': {
                 const body = await request.json()
+                // 🔒 Input validation
+                if (!body.code || !body.email) {
+                    return NextResponse.json({ error: 'code and email are required' }, { status: 400 })
+                }
                 result = await processReferral(body.code, body.email, body.orderId)
                 break
             }
 
             case 'referral-create': {
                 const body = await request.json()
+                if (!body.userId || !body.email) {
+                    return NextResponse.json({ error: 'userId and email are required' }, { status: 400 })
+                }
                 result = await createReferralForUser(body.userId, body.email, body.name)
                 break
             }
 
             case 'purchase-complete': {
                 const body = await request.json()
+                if (!body.orderId || !body.email) {
+                    return NextResponse.json({ error: 'orderId and email are required' }, { status: 400 })
+                }
                 result = await onPurchase(body.orderId, body.email, body.name)
                 break
             }
 
             case 'start-welcome': {
                 const body = await request.json()
+                if (!body.leadId) {
+                    return NextResponse.json({ error: 'leadId is required' }, { status: 400 })
+                }
                 result = await startWelcomeSequence(body.leadId)
                 break
             }
@@ -58,15 +118,15 @@ export async function POST(request: NextRequest) {
                     timestamp: new Date().toISOString()
                 }
                 break
-
-            default:
-                return NextResponse.json(
-                    { error: `Unknown agent: ${agent}. Available: content, nurture, referral-use, referral-create, purchase-complete, start-welcome, all` },
-                    { status: 400 }
-                )
         }
 
-        return NextResponse.json({ success: true, agent, result })
+        console.log(`✅ [${auth.email}] Growth agent ${agent} completed`)
+        return NextResponse.json({
+            success: true,
+            agent,
+            result,
+            executedBy: auth.email
+        })
 
     } catch (error: unknown) {
         console.error(`[Growth Agent] Error running ${agent}:`, error)
@@ -77,10 +137,16 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// GET: Get agent status and metrics
+// GET: Get agent status and metrics (public read for dashboard)
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const action = searchParams.get('action') || 'status'
+
+    // 🔒 Validate action parameter
+    const allowedActions = ['status', 'metrics', 'content-queue']
+    if (!allowedActions.includes(action)) {
+        return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
+    }
 
     try {
         const supabase = createClient(supabaseUrl, supabaseServiceKey)

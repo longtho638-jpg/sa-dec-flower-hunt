@@ -373,165 +373,173 @@ export default function AdoptPage() {
     const [showModal, setShowModal] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-stone-950 via-emerald-950/20 to-stone-950">
-            {/* Hero */}
-            <section className="relative overflow-hidden py-20 px-4">
-                {/* Floating leaves */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {[...Array(15)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute text-2xl"
-                            initial={{
-                                x: `${Math.random() * 100}%`,
-                                y: -50,
-                                rotate: 0
-                            }}
-                            animate={{
-                                y: '110vh',
-                                rotate: 360
-                            }}
-                            transition={{
-                                duration: 10 + Math.random() * 10,
-                                repeat: Infinity,
-                                delay: i * 0.5
-                            }}
-                        >
-                            🌿
-                        </motion.div>
-                    ))}
-                </div>
+        <div className="min-h-screen bg-stone-950 text-white relative">
+            {/* Background Image */}
+            <div className="fixed inset-0 z-0">
+                <img src="/assets/digital-twins/agrios_farmer_hyperreal_1765367316910.png" className="w-full h-full object-cover opacity-20" />
+                <div className="absolute inset-0 bg-stone-950/80" />
+            </div>
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center">
-                    <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-medium mb-6"
-                    >
-                        <Leaf className="w-4 h-4" />
-                        Virtual Farming
-                    </motion.div>
-
-                    <motion.h1
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-bold text-white mb-4"
-                    >
-                        🌱 Nhận Nuôi <span className="text-emerald-400">Vườn Hoa</span>
-                    </motion.h1>
-
-                    <motion.p
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-stone-400 text-lg max-w-2xl mx-auto mb-8"
-                    >
-                        Trở thành "Bố Mẹ Nuôi" của một chậu hoa Sa Đéc. Theo dõi quá trình sinh trưởng và nhận hoa tươi khi thu hoạch!
-                    </motion.p>
-
-                    {/* Journey steps */}
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className="flex flex-wrap justify-center gap-4"
-                    >
-                        {JOURNEY_STEPS.map((step, i) => (
-                            <div key={i} className="flex items-center gap-2 bg-stone-900/50 border border-stone-700 rounded-xl px-4 py-2">
-                                <div className="w-8 h-8 bg-emerald-600/20 rounded-full flex items-center justify-center text-emerald-400">
-                                    {step.icon}
-                                </div>
-                                <div className="text-left">
-                                    <div className="text-white text-sm font-medium">{step.title}</div>
-                                    <div className="text-stone-500 text-xs">{step.desc}</div>
-                                </div>
-                                {i < JOURNEY_STEPS.length - 1 && (
-                                    <ChevronRight className="w-4 h-4 text-stone-600 ml-2" />
-                                )}
-                            </div>
-                        ))}
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Plant selection */}
-            <section className="px-4 pb-20">
-                <div className="max-w-6xl mx-auto">
-                    <h2 className="text-2xl font-bold text-white text-center mb-8">
-                        Chọn loại cây để nhận nuôi
-                    </h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        {ADOPT_PLANTS.map(plant => (
-                            <PlantCard
-                                key={plant.id}
-                                plant={plant}
-                                isSelected={selectedPlant?.id === plant.id}
-                                onSelect={() => setSelectedPlant(plant)}
-                            />
+            <div className="relative z-10 w-full">
+                {/* Hero */}
+                <section className="relative overflow-hidden py-20 px-4">
+                    {/* Floating leaves */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        {[...Array(15)].map((_, i) => (
+                            <motion.div
+                                key={i}
+                                className="absolute text-2xl"
+                                initial={{
+                                    x: `${Math.random() * 100}%`,
+                                    y: -50,
+                                    rotate: 0
+                                }}
+                                animate={{
+                                    y: '110vh',
+                                    rotate: 360
+                                }}
+                                transition={{
+                                    duration: 10 + Math.random() * 10,
+                                    repeat: Infinity,
+                                    delay: i * 0.5
+                                }}
+                            >
+                                🌿
+                            </motion.div>
                         ))}
                     </div>
 
-                    {/* CTA */}
-                    <div className="text-center">
-                        <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            disabled={!selectedPlant}
-                            onClick={() => setShowModal(true)}
-                            className={`
+                    <div className="relative z-10 max-w-4xl mx-auto text-center">
+                        <motion.div
+                            initial={{ y: -20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-medium mb-6"
+                        >
+                            <Leaf className="w-4 h-4" />
+                            Virtual Farming
+                        </motion.div>
+
+                        <motion.h1
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.1 }}
+                            className="text-4xl md:text-5xl font-bold text-white mb-4"
+                        >
+                            🌱 Nhận Nuôi <span className="text-emerald-400">Vườn Hoa</span>
+                        </motion.h1>
+
+                        <motion.p
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-stone-400 text-lg max-w-2xl mx-auto mb-8"
+                        >
+                            Trở thành "Bố Mẹ Nuôi" của một chậu hoa Sa Đéc. Theo dõi quá trình sinh trưởng và nhận hoa tươi khi thu hoạch!
+                        </motion.p>
+
+                        {/* Journey steps */}
+                        <motion.div
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="flex flex-wrap justify-center gap-4"
+                        >
+                            {JOURNEY_STEPS.map((step, i) => (
+                                <div key={i} className="flex items-center gap-2 bg-stone-900/50 border border-stone-700 rounded-xl px-4 py-2">
+                                    <div className="w-8 h-8 bg-emerald-600/20 rounded-full flex items-center justify-center text-emerald-400">
+                                        {step.icon}
+                                    </div>
+                                    <div className="text-left">
+                                        <div className="text-white text-sm font-medium">{step.title}</div>
+                                        <div className="text-stone-500 text-xs">{step.desc}</div>
+                                    </div>
+                                    {i < JOURNEY_STEPS.length - 1 && (
+                                        <ChevronRight className="w-4 h-4 text-stone-600 ml-2" />
+                                    )}
+                                </div>
+                            ))}
+                        </motion.div>
+                    </div>
+                </section>
+
+                {/* Plant selection */}
+                <section className="px-4 pb-20">
+                    <div className="max-w-6xl mx-auto">
+                        <h2 className="text-2xl font-bold text-white text-center mb-8">
+                            Chọn loại cây để nhận nuôi
+                        </h2>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            {ADOPT_PLANTS.map(plant => (
+                                <PlantCard
+                                    key={plant.id}
+                                    plant={plant}
+                                    isSelected={selectedPlant?.id === plant.id}
+                                    onSelect={() => setSelectedPlant(plant)}
+                                />
+                            ))}
+                        </div>
+
+                        {/* CTA */}
+                        <div className="text-center">
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                disabled={!selectedPlant}
+                                onClick={() => setShowModal(true)}
+                                className={`
                 px-12 py-4 rounded-xl font-bold text-lg transition-all
                 ${selectedPlant
-                                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
-                                    : 'bg-stone-700 text-stone-400 cursor-not-allowed'
-                                }
+                                        ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
+                                        : 'bg-stone-700 text-stone-400 cursor-not-allowed'
+                                    }
               `}
-                        >
-                            {selectedPlant
-                                ? `Nhận nuôi ${selectedPlant.name} - ${(selectedPlant.price / 1000).toFixed(0)}k/tháng`
-                                : 'Chọn một loại cây để tiếp tục'
-                            }
-                        </motion.button>
+                            >
+                                {selectedPlant
+                                    ? `Nhận nuôi ${selectedPlant.name} - ${(selectedPlant.price / 1000).toFixed(0)}k/tháng`
+                                    : 'Chọn một loại cây để tiếp tục'
+                                }
+                            </motion.button>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* Benefits */}
-            <section className="px-4 pb-20 bg-stone-900/30">
-                <div className="max-w-4xl mx-auto py-12">
-                    <h2 className="text-2xl font-bold text-white text-center mb-8">
-                        Tại sao nên nhận nuôi?
-                    </h2>
+                {/* Benefits */}
+                <section className="px-4 pb-20 bg-stone-900/30">
+                    <div className="max-w-4xl mx-auto py-12">
+                        <h2 className="text-2xl font-bold text-white text-center mb-8">
+                            Tại sao nên nhận nuôi?
+                        </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {[
-                            { icon: <Sun className="w-8 h-8" />, title: 'Hỗ trợ nông dân', desc: 'Tiền đăng ký giúp nông dân trang trải chi phí giống và phân bón' },
-                            { icon: <Camera className="w-8 h-8" />, title: 'Theo dõi realtime', desc: 'Nhận ảnh và video cập nhật hàng tuần về "con nuôi" của bạn' },
-                            { icon: <Gift className="w-8 h-8" />, title: 'Nhận hoa tươi', desc: 'Ship tận nhà khi thu hoạch - hoa tươi 100% từ vườn' }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-stone-800/50 border border-stone-700 rounded-xl p-6 text-center">
-                                <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center text-emerald-400 mx-auto mb-4">
-                                    {item.icon}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                                { icon: <Sun className="w-8 h-8" />, title: 'Hỗ trợ nông dân', desc: 'Tiền đăng ký giúp nông dân trang trải chi phí giống và phân bón' },
+                                { icon: <Camera className="w-8 h-8" />, title: 'Theo dõi realtime', desc: 'Nhận ảnh và video cập nhật hàng tuần về "con nuôi" của bạn' },
+                                { icon: <Gift className="w-8 h-8" />, title: 'Nhận hoa tươi', desc: 'Ship tận nhà khi thu hoạch - hoa tươi 100% từ vườn' }
+                            ].map((item, i) => (
+                                <div key={i} className="bg-stone-800/50 border border-stone-700 rounded-xl p-6 text-center">
+                                    <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center text-emerald-400 mx-auto mb-4">
+                                        {item.icon}
+                                    </div>
+                                    <h3 className="text-white font-bold mb-2">{item.title}</h3>
+                                    <p className="text-stone-400 text-sm">{item.desc}</p>
                                 </div>
-                                <h3 className="text-white font-bold mb-2">{item.title}</h3>
-                                <p className="text-stone-400 text-sm">{item.desc}</p>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* Modal */}
-            <AnimatePresence>
-                {showModal && (
-                    <AdoptionModal
-                        plant={selectedPlant}
-                        isOpen={showModal}
-                        onClose={() => setShowModal(false)}
-                    />
-                )}
-            </AnimatePresence>
+                {/* Modal */}
+                <AnimatePresence>
+                    {showModal && (
+                        <AdoptionModal
+                            plant={selectedPlant}
+                            isOpen={showModal}
+                            onClose={() => setShowModal(false)}
+                        />
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 }

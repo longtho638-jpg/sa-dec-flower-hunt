@@ -115,8 +115,11 @@ export default function AgentsPage() {
 
     return (
         <div className="min-h-screen bg-black text-white font-mono p-6">
-            {/* Grid Background */}
-            <div className="fixed inset-0 bg-[linear-gradient(rgba(16,185,129,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.03)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+            {/* Background */}
+            <div className="fixed inset-0 z-0">
+                <img src="/assets/digital-twins/agrios_lab_hyperreal_1765368168487.png" className="w-full h-full object-cover opacity-15" />
+                <div className="absolute inset-0 bg-stone-950/90" />
+            </div>
 
             <div className="relative z-10 max-w-6xl mx-auto">
                 {/* Header */}

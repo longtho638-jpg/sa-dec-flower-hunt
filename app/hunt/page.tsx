@@ -1,61 +1,64 @@
 "use client";
 
 // ============================================================================
-// HUNT PAGE - Loot Box Collection Game
-// ============================================================================
-// Du khách săn hộp quà từ các vườn hoa Sa Đéc
-// Real-time updates từ Garden OS khi nông dân cập nhật kho
+// HUNTER GUIDE - AR NAVIGATION INTERFACE
 // ============================================================================
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    Gift, MapPin, Sparkles, Star, Clock,
-    Compass, Trophy, Zap, ChevronRight, RefreshCw
+    Gift, MapPin, Sparkles, Star, Trophy, Zap,
+    ChevronRight, RefreshCw, Crosshair, Navigation, Camera
 } from "lucide-react";
 import { useGardenRealtime } from "@/hooks/useGardenRealtime";
 import { LootBoxGrid, LootBoxAlert } from "@/components/game/LootBox";
+import { GlassPanel } from "@/components/ui/glass-panel";
+import { NeonButton } from "@/components/ui/neon-button";
 import Link from "next/link";
+import { AgriosLogo } from "@/components/brand/AgriosLogo";
 
-// Rarity badge component
+// HUD COMPONENT
+function HUDOverlay() {
+    return (
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+            {/* Corners */}
+            <div className="absolute top-4 left-4 w-16 h-16 border-t-2 border-l-2 border-emerald-500/50 rounded-tl-2xl" />
+            <div className="absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 border-emerald-500/50 rounded-tr-2xl" />
+            <div className="absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 border-emerald-500/50 rounded-bl-2xl" />
+            <div className="absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 border-emerald-500/50 rounded-br-2xl" />
+
+            {/* Center Crosshair */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border border-emerald-500/10 rounded-full flex items-center justify-center">
+                <Crosshair className="w-8 h-8 text-emerald-500/30" />
+            </div>
+
+            {/* Compass Strip */}
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 w-64 h-8 bg-black/20 backdrop-blur border border-white/10 flex items-center justify-center gap-8 text-[10px] text-emerald-500 font-mono rounded-full">
+                <span>NW</span><span>N</span><span className="text-white text-base">●</span><span>NE</span><span>E</span>
+            </div>
+        </div>
+    );
+}
+
+// Rarity badge component (Updated)
 function RarityBadge({ rarity }: { rarity: string }) {
     const config: Record<string, { bg: string; text: string; icon: string }> = {
-        COMMON: { bg: "bg-stone-600", text: "text-stone-100", icon: "📦" },
-        RARE: { bg: "bg-blue-600", text: "text-blue-100", icon: "🎁" },
-        EPIC: { bg: "bg-purple-600", text: "text-purple-100", icon: "💎" },
-        LEGENDARY: { bg: "bg-gradient-to-r from-amber-500 to-orange-500", text: "text-white", icon: "👑" },
+        COMMON: { bg: "bg-stone-600/50", text: "text-stone-100", icon: "📦" },
+        RARE: { bg: "bg-blue-600/50", text: "text-blue-100", icon: "🎁" },
+        EPIC: { bg: "bg-purple-600/50", text: "text-purple-100", icon: "💎" },
+        LEGENDARY: { bg: "bg-amber-500/50", text: "text-amber-100", icon: "👑" },
     };
 
     const c = config[rarity] || config.COMMON;
 
     return (
-        <span className={`${c.bg} ${c.text} px-2 py-0.5 rounded-full text-xs font-bold inline-flex items-center gap-1`}>
+        <span className={`${c.bg} ${c.text} border border-white/10 px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1 backdrop-blur-md`}>
             {c.icon} {rarity}
         </span>
     );
 }
 
-// Stats card
-function StatCard({ icon, value, label, color }: {
-    icon: React.ReactNode;
-    value: string | number;
-    label: string;
-    color: string;
-}) {
-    return (
-        <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className={`bg-stone-900/50 border border-stone-800 rounded-xl p-4 text-center`}
-        >
-            <div className={`${color} mb-2`}>{icon}</div>
-            <div className="text-2xl font-bold text-white">{value}</div>
-            <div className="text-stone-500 text-xs">{label}</div>
-        </motion.div>
-    );
-}
-
-// Garden card with inventory
+// Garden card with inventory (Glassmorphism)
 function GardenCard({ garden, inventory }: {
     garden: { id: string; name: string; address?: string; specialties?: string[] };
     inventory: { quantity: number; flower_name: string }[];
@@ -64,62 +67,53 @@ function GardenCard({ garden, inventory }: {
     const isHot = totalFlowers >= 50;
 
     return (
-        <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className={`
-        bg-stone-900/50 border rounded-xl p-4 relative overflow-hidden
-        ${isHot ? 'border-amber-500/50' : 'border-stone-800'}
-      `}
-        >
+        <GlassPanel intensity={isHot ? "high" : "low"} className="p-4 relative hover:scale-[1.02] transition-transform duration-300">
             {isHot && (
-                <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
-                    🔥 HOT
+                <div className="absolute -top-1 -right-1">
+                    <span className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                    </span>
                 </div>
             )}
 
             <div className="flex items-start gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center text-2xl">
-                    🌸
+                <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center border border-emerald-500/30">
+                    <MapPin className={`w-5 h-5 ${isHot ? 'text-amber-400' : 'text-emerald-400'}`} />
                 </div>
-                <div className="flex-1">
-                    <h3 className="text-white font-bold">{garden.name}</h3>
-                    {garden.address && (
-                        <p className="text-stone-500 text-sm flex items-center gap-1">
-                            <MapPin className="w-3 h-3" /> {garden.address}
-                        </p>
-                    )}
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-white font-bold truncate pr-4">{garden.name}</h3>
+                    <p className="text-stone-400 text-xs flex items-center gap-1 truncate">
+                        {garden.address || "Sa Dec Flower Village"}
+                    </p>
                 </div>
             </div>
 
             {/* Inventory summary */}
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-3 flex flex-wrap gap-1">
                 {inventory.slice(0, 3).map((item, i) => (
-                    <span key={i} className="bg-stone-800 text-stone-300 text-xs px-2 py-1 rounded-full">
-                        {item.flower_name}: {item.quantity}
+                    <span key={i} className="bg-white/5 border border-white/5 text-stone-300 text-[10px] px-2 py-0.5 rounded">
+                        {item.flower_name}: <span className="text-white font-bold">{item.quantity}</span>
                     </span>
                 ))}
             </div>
 
-            {/* Total */}
-            <div className="mt-4 flex items-center justify-between">
-                <span className="text-stone-500 text-sm">Tổng kho:</span>
-                <span className={`font-bold ${isHot ? 'text-amber-400' : 'text-emerald-400'}`}>
-                    {totalFlowers} chậu
-                </span>
-            </div>
-
-            <Link
-                href={`/shop?garden=${garden.id}`}
-                className="mt-4 w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
-            >
-                Xem vườn <ChevronRight className="w-4 h-4" />
+            <Link href={`/shop?garden=${garden.id}`} className="mt-3 block">
+                <NeonButton variant={isHot ? "primary" : "secondary"} className="w-full h-8 text-xs py-0">
+                    WARP TO GARDEN
+                </NeonButton>
             </Link>
-        </motion.div>
+        </GlassPanel>
     );
 }
 
-export default function HuntPage() {
+import { withI18n, WithI18nProps } from "@/lib/withI18n";
+
+// ... (imports)
+
+// HUD and other sub-components remain same
+
+function HuntPage({ texts }: WithI18nProps) {
     const {
         gardens,
         inventory,
@@ -138,125 +132,95 @@ export default function HuntPage() {
         setTimeout(() => setRefreshing(false), 1000);
     };
 
-    // Count loot by rarity
-    const lootByRarity = {
-        COMMON: lootBoxes.filter(l => l.rarity === 'COMMON').length,
-        RARE: lootBoxes.filter(l => l.rarity === 'RARE').length,
-        EPIC: lootBoxes.filter(l => l.rarity === 'EPIC').length,
-        LEGENDARY: lootBoxes.filter(l => l.rarity === 'LEGENDARY').length,
-    };
-
     return (
-        <div className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950">
-            {/* Floating Loot Alert */}
-            <LootBoxAlert />
-
-            {/* Hero Section */}
-            <div className="relative overflow-hidden">
-                {/* Animated background */}
-                <div className="absolute inset-0">
-                    {[...Array(20)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute w-2 h-2 bg-amber-400/20 rounded-full"
-                            initial={{
-                                x: `${Math.random() * 100}%`,
-                                y: `${Math.random() * 100}%`
-                            }}
-                            animate={{
-                                y: [null, `${Math.random() * 100}%`],
-                                opacity: [0.2, 0.5, 0.2],
-                            }}
-                            transition={{
-                                duration: 5 + Math.random() * 5,
-                                repeat: Infinity,
-                            }}
-                        />
-                    ))}
-                </div>
-
-                <div className="relative z-10 px-4 py-12 text-center">
-                    {/* Connection status */}
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                        <div className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-500' : 'bg-red-500'} animate-pulse`} />
-                        <span className="text-stone-500 text-sm">
-                            {connected ? 'Live tracking' : 'Đang kết nối...'}
-                        </span>
-                    </div>
-
-                    {/* Title */}
-                    <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                    >
-                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-300 via-orange-400 to-rose-400 bg-clip-text text-transparent mb-2">
-                            🎯 SĂN HOA SA ĐÉC
-                        </h1>
-                        <p className="text-stone-400 text-lg">
-                            Thu thập hộp quà từ các vườn hoa
-                        </p>
-                    </motion.div>
-
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-4 gap-3 max-w-lg mx-auto mt-8">
-                        <StatCard
-                            icon={<Gift className="w-6 h-6 mx-auto" />}
-                            value={lootBoxes.length}
-                            label="Hộp quà"
-                            color="text-amber-400"
-                        />
-                        <StatCard
-                            icon={<Sparkles className="w-6 h-6 mx-auto" />}
-                            value={lootByRarity.RARE + lootByRarity.EPIC + lootByRarity.LEGENDARY}
-                            label="Hiếm+"
-                            color="text-blue-400"
-                        />
-                        <StatCard
-                            icon={<MapPin className="w-6 h-6 mx-auto" />}
-                            value={hotGardens.length}
-                            label="Vườn hot"
-                            color="text-emerald-400"
-                        />
-                        <StatCard
-                            icon={<Compass className="w-6 h-6 mx-auto" />}
-                            value={gardens.length}
-                            label="Tổng vườn"
-                            color="text-purple-400"
-                        />
-                    </div>
-                </div>
+        <div className="min-h-screen bg-black text-white relative font-sans overflow-x-hidden selection:bg-emerald-500/30">
+            {/* --- AR SIMULATION BACKGROUND --- */}
+            <div className="fixed inset-0 z-0 opacity-40">
+                <img
+                    src="/assets/digital-twins/agrios_hunter_hyperreal_1765367337914.png"
+                    alt="AR Background"
+                    className="w-full h-full object-cover filter brightness-[0.7]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black" />
             </div>
 
-            {/* Main Content */}
-            <div className="px-4 pb-24">
-                {/* Refresh button */}
+            <HUDOverlay />
+            <LootBoxAlert />
+
+            {/* --- HEADER --- */}
+            <div className="relative z-20 container mx-auto px-4 pt-6 pb-2">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Gift className="w-5 h-5 text-amber-400" />
-                        Hộp Quà Đang Chờ
-                    </h2>
+                    <div className="flex items-center gap-2">
+                        <AgriosLogo className="w-8 h-8" />
+                        <div>
+                            <h1 className="text-xl font-black tracking-tighter leading-none">
+                                {texts["title"].split('_')[0]}<span className="text-emerald-500">_{texts["title"].split('_')[1]}</span>
+                            </h1>
+                            <div className="flex items-center gap-2 text-[10px] font-mono text-stone-400">
+                                <span className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-500' : 'bg-red-500'} animate-pulse`} />
+                                {connected ? texts["gps.locked"] : texts["gps.searching"]}
+                            </div>
+                        </div>
+                    </div>
+
                     <button
                         onClick={handleRefresh}
-                        disabled={refreshing}
-                        className="text-stone-400 hover:text-white flex items-center gap-1 text-sm"
+                        className="bg-black/40 backdrop-blur border border-white/10 rounded-full p-2 hover:bg-emerald-500/20 transition-colors"
                     >
-                        <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                        Làm mới
+                        <RefreshCw className={`w-5 h-5 text-emerald-500 ${refreshing ? 'animate-spin' : ''}`} strokeWidth={1.5} />
                     </button>
                 </div>
 
-                {/* Loot Boxes Grid */}
-                <LootBoxGrid userId={undefined} />
+                {/* --- STATS HUD --- */}
+                <div className="grid grid-cols-4 gap-2 mb-8">
+                    <GlassPanel className="p-2 flex flex-col items-center justify-center text-center" intensity="low">
+                        <Gift className="w-5 h-5 text-amber-400 mb-1" />
+                        <span className="text-lg font-bold leading-none">{lootBoxes.length}</span>
+                        <span className="text-[8px] text-stone-500 uppercase tracking-widest mt-1">{texts["stats.loot"]}</span>
+                    </GlassPanel>
+                    <GlassPanel className="p-2 flex flex-col items-center justify-center text-center" intensity="low">
+                        <Star className="w-5 h-5 text-purple-400 mb-1" />
+                        <span className="text-lg font-bold leading-none">
+                            {lootBoxes.filter(l => ['RARE', 'EPIC', 'LEGENDARY'].includes(l.rarity)).length}
+                        </span>
+                        <span className="text-[8px] text-stone-500 uppercase tracking-widest mt-1">{texts["stats.epic"]}</span>
+                    </GlassPanel>
+                    <GlassPanel className="p-2 flex flex-col items-center justify-center text-center" intensity="low">
+                        <Zap className="w-5 h-5 text-emerald-400 mb-1" />
+                        <span className="text-lg font-bold leading-none">{hotGardens.length}</span>
+                        <span className="text-[8px] text-stone-500 uppercase tracking-widest mt-1">{texts["stats.zones"]}</span>
+                    </GlassPanel>
+                    <GlassPanel className="p-2 flex flex-col items-center justify-center text-center" intensity="low">
+                        <MapPin className="w-5 h-5 text-blue-400 mb-1" />
+                        <span className="text-lg font-bold leading-none">{gardens.length}</span>
+                        <span className="text-[8px] text-stone-500 uppercase tracking-widest mt-1">{texts["stats.nodes"]}</span>
+                    </GlassPanel>
+                </div>
+            </div>
 
-                {/* Hot Gardens Section */}
+            {/* --- MAIN CONTENT SCROLL --- */}
+            <div className="relative z-20 px-4 pb-24 space-y-8">
+
+                {/* Loot Section */}
+                <div>
+                    <div className="flex items-center gap-2 mb-4">
+                        <Navigation className="w-4 h-4 text-emerald-500 animate-pulse" />
+                        <h2 className="text-sm font-bold uppercase tracking-widest text-emerald-500">{texts["headings.anomalies"]}</h2>
+                    </div>
+                    {/* Wrapped LootBoxGrid */}
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl border border-white/5 p-2">
+                        <LootBoxGrid userId={undefined} />
+                    </div>
+                </div>
+
+                {/* Hot Gardens */}
                 {hotGardens.length > 0 && (
-                    <div className="mt-12">
-                        <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-6">
-                            <Zap className="w-5 h-5 text-amber-400" />
-                            Vườn Đang Hot
-                        </h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <Zap className="w-4 h-4 text-amber-500" />
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-amber-500">{texts["headings.hotspots"]}</h2>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
                             {hotGardens.map(garden => {
                                 const gardenInventory = inventory.filter(i => i.garden_id === garden.id);
                                 return (
@@ -271,31 +235,19 @@ export default function HuntPage() {
                     </div>
                 )}
 
-                {/* All Gardens */}
-                <div className="mt-12">
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-6">
-                        <MapPin className="w-5 h-5 text-emerald-400" />
-                        Tất Cả Nhà Vườn ({gardens.length})
+                {/* All Gardens List */}
+                <div>
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-stone-500 mb-4 flex items-center gap-2">
+                        {texts["headings.all_targets"]} ({gardens.length})
                     </h2>
 
                     {loading ? (
-                        <div className="flex justify-center py-12">
-                            <motion.div
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full"
-                            />
-                        </div>
-                    ) : gardens.length === 0 ? (
-                        <div className="text-center py-12 bg-stone-900/50 rounded-2xl border border-stone-800">
-                            <MapPin className="w-12 h-12 mx-auto text-stone-600 mb-4" />
-                            <p className="text-stone-400">Chưa có nhà vườn nào</p>
-                            <p className="text-stone-500 text-sm mt-1">
-                                Khi nông dân đăng ký qua Garden OS, vườn sẽ xuất hiện ở đây
-                            </p>
+                        <div className="text-center py-8">
+                            <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                            <p className="text-xs text-emerald-500 mt-2 font-mono">{texts["status.scanning"]}</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 gap-3">
                             {gardens.map(garden => {
                                 const gardenInventory = inventory.filter(i => i.garden_id === garden.id);
                                 return (
@@ -309,52 +261,18 @@ export default function HuntPage() {
                         </div>
                     )}
                 </div>
+            </div>
 
-                {/* How to Play */}
-                <div className="mt-12 bg-gradient-to-br from-stone-900 to-stone-800 rounded-2xl p-6 border border-stone-700">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <Trophy className="w-5 h-5 text-amber-400" />
-                        Cách Chơi
-                    </h3>
-
-                    <div className="space-y-4">
-                        <div className="flex gap-4">
-                            <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">1</div>
-                            <div>
-                                <p className="text-white font-medium">Theo dõi vườn hot</p>
-                                <p className="text-stone-400 text-sm">Khi nông dân cập nhật kho &gt;50 chậu, hộp quà sẽ xuất hiện</p>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-4">
-                            <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">2</div>
-                            <div>
-                                <p className="text-white font-medium">Mở hộp quà</p>
-                                <p className="text-stone-400 text-sm">Nhận voucher giảm giá, điểm thưởng, hoặc phần quà đặc biệt</p>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-4">
-                            <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">3</div>
-                            <div>
-                                <p className="text-white font-medium">Đến vườn mua hoa</p>
-                                <p className="text-stone-400 text-sm">Sử dụng voucher khi mua hoa trực tiếp hoặc online</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Rarity legend */}
-                    <div className="mt-6 pt-4 border-t border-stone-700">
-                        <p className="text-stone-500 text-sm mb-3">Độ hiếm hộp quà:</p>
-                        <div className="flex flex-wrap gap-2">
-                            <RarityBadge rarity="COMMON" />
-                            <RarityBadge rarity="RARE" />
-                            <RarityBadge rarity="EPIC" />
-                            <RarityBadge rarity="LEGENDARY" />
-                        </div>
-                    </div>
-                </div>
+            {/* --- FLOATING ACTION BUTTON --- */}
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+                <Link href="/qr">
+                    <button className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.5)] border-4 border-black/50 hover:scale-110 transition-transform">
+                        <Camera className="w-8 h-8 text-black" />
+                    </button>
+                </Link>
             </div>
         </div>
     );
 }
+
+export default withI18n(HuntPage, "hunt");

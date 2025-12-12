@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { runContentGenerator } from '@/lib/agents/content-generator'
 import { runLeadNurture } from '@/lib/agents/lead-nurture'
 import { runSEOBlogAgent } from '@/lib/agents/seo-blog'
@@ -8,10 +8,20 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-// Vercel Cron job - runs daily at 4AM
-// Configure in vercel.json: { "crons": [{ "path": "/api/cron/daily-growth", "schedule": "0 4 * * *" }] }
+/**
+ * Daily Growth Orchestrator Cron Job
+ * 🔒 SECURITY: Protected by CRON_SECRET
+ * Configure in vercel.json: { "crons": [{ "path": "/api/cron/daily-growth", "schedule": "0 4 * * *" }] }
+ */
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+    // 🔒 SECURITY: Verify cron secret to prevent unauthorized access
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        console.warn('[Daily Growth] Unauthorized access attempt');
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const startTime = Date.now()
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -133,7 +143,12 @@ export async function GET() {
     }
 }
 
-// Also support POST for manual triggers
-export async function POST() {
-    return GET()
+// Also support POST for manual triggers (🔒 SECURED)
+export async function POST(request: NextRequest) {
+    // 🔒 SECURITY: Verify cron secret
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    return GET(request)
 }

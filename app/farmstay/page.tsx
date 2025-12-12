@@ -260,176 +260,184 @@ export default function FarmstayPage() {
     const [guests, setGuests] = useState(2);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950">
-            {/* Hero */}
-            <section className="relative overflow-hidden py-20 px-4">
-                {/* Animated background */}
-                <div className="absolute inset-0 overflow-hidden">
-                    {[...Array(10)].map((_, i) => (
+        <div className="min-h-screen bg-stone-950 text-white relative">
+            {/* Background Image */}
+            <div className="fixed inset-0 z-0">
+                <img src="/assets/digital-twins/agrios_landing_hyperreal_1765367547331.png" className="w-full h-full object-cover opacity-20" />
+                <div className="absolute inset-0 bg-stone-950/80" />
+            </div>
+
+            <div className="relative z-10 w-full">
+                {/* Hero */}
+                <section className="relative overflow-hidden py-20 px-4">
+                    {/* Animated background */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        {[...Array(10)].map((_, i) => (
+                            <motion.div
+                                key={i}
+                                className="absolute text-4xl"
+                                initial={{ x: -50, y: `${i * 10}%` }}
+                                animate={{ x: '110vw' }}
+                                transition={{
+                                    duration: 20 + i * 2,
+                                    repeat: Infinity,
+                                    delay: i * 2
+                                }}
+                            >
+                                {['🌿', '🌸', '🪷', '🌻', '🌺'][i % 5]}
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    <div className="relative z-10 max-w-4xl mx-auto text-center">
                         <motion.div
-                            key={i}
-                            className="absolute text-4xl"
-                            initial={{ x: -50, y: `${i * 10}%` }}
-                            animate={{ x: '110vw' }}
-                            transition={{
-                                duration: 20 + i * 2,
-                                repeat: Infinity,
-                                delay: i * 2
-                            }}
+                            initial={{ y: -20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-medium mb-6"
                         >
-                            {['🌿', '🌸', '🪷', '🌻', '🌺'][i % 5]}
+                            <TreePine className="w-4 h-4" />
+                            Digital Detox
                         </motion.div>
-                    ))}
-                </div>
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center">
-                    <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-medium mb-6"
-                    >
-                        <TreePine className="w-4 h-4" />
-                        Digital Detox
-                    </motion.div>
+                        <motion.h1
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.1 }}
+                            className="text-4xl md:text-5xl font-bold text-white mb-4"
+                        >
+                            🏡 Farmstay <span className="text-emerald-400">Sa Đéc</span>
+                        </motion.h1>
 
-                    <motion.h1
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-bold text-white mb-4"
-                    >
-                        🏡 Farmstay <span className="text-emerald-400">Sa Đéc</span>
-                    </motion.h1>
+                        <motion.p
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-stone-400 text-lg max-w-2xl mx-auto mb-8"
+                        >
+                            Nghỉ dưỡng giữa vườn hoa. Sống chậm, thở sâu, ngắm hoa nở.
+                        </motion.p>
 
-                    <motion.p
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-stone-400 text-lg max-w-2xl mx-auto mb-8"
-                    >
-                        Nghỉ dưỡng giữa vườn hoa. Sống chậm, thở sâu, ngắm hoa nở.
-                    </motion.p>
-
-                    {/* Search bar */}
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className="bg-stone-900/80 backdrop-blur-sm border border-stone-700 rounded-2xl p-4 max-w-3xl mx-auto"
-                    >
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div className="bg-stone-800 rounded-xl p-3">
-                                <label className="text-stone-500 text-xs mb-1 block">Địa điểm</label>
-                                <div className="flex items-center gap-2 text-white">
-                                    <MapPin className="w-4 h-4 text-emerald-400" />
-                                    Sa Đéc, Đồng Tháp
+                        {/* Search bar */}
+                        <motion.div
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="bg-stone-900/80 backdrop-blur-sm border border-stone-700 rounded-2xl p-4 max-w-3xl mx-auto"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="bg-stone-800 rounded-xl p-3">
+                                    <label className="text-stone-500 text-xs mb-1 block">Địa điểm</label>
+                                    <div className="flex items-center gap-2 text-white">
+                                        <MapPin className="w-4 h-4 text-emerald-400" />
+                                        Sa Đéc, Đồng Tháp
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="bg-stone-800 rounded-xl p-3">
-                                <label className="text-stone-500 text-xs mb-1 block">Ngày</label>
-                                <div className="flex items-center gap-2 text-white">
-                                    <Calendar className="w-4 h-4 text-emerald-400" />
-                                    <input
-                                        type="date"
-                                        className="bg-transparent border-none text-white w-full"
-                                        onChange={e => setSelectedDate(e.target.value)}
-                                    />
+                                <div className="bg-stone-800 rounded-xl p-3">
+                                    <label className="text-stone-500 text-xs mb-1 block">Ngày</label>
+                                    <div className="flex items-center gap-2 text-white">
+                                        <Calendar className="w-4 h-4 text-emerald-400" />
+                                        <input
+                                            type="date"
+                                            className="bg-transparent border-none text-white w-full"
+                                            onChange={e => setSelectedDate(e.target.value)}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="bg-stone-800 rounded-xl p-3">
-                                <label className="text-stone-500 text-xs mb-1 block">Số khách</label>
-                                <div className="flex items-center gap-2">
-                                    <Users className="w-4 h-4 text-emerald-400" />
-                                    <select
-                                        value={guests}
-                                        onChange={e => setGuests(Number(e.target.value))}
-                                        className="bg-transparent border-none text-white w-full"
-                                    >
-                                        {[1, 2, 3, 4, 5, 6].map(n => (
-                                            <option key={n} value={n}>{n} khách</option>
-                                        ))}
-                                    </select>
+                                <div className="bg-stone-800 rounded-xl p-3">
+                                    <label className="text-stone-500 text-xs mb-1 block">Số khách</label>
+                                    <div className="flex items-center gap-2">
+                                        <Users className="w-4 h-4 text-emerald-400" />
+                                        <select
+                                            value={guests}
+                                            onChange={e => setGuests(Number(e.target.value))}
+                                            className="bg-transparent border-none text-white w-full"
+                                        >
+                                            {[1, 2, 3, 4, 5, 6].map(n => (
+                                                <option key={n} value={n}>{n} khách</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
+                                <button className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+                                    Tìm kiếm
+                                </button>
                             </div>
-                            <button className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
-                                Tìm kiếm
-                            </button>
+                        </motion.div>
+                    </div>
+                </section>
+
+                {/* Stats */}
+                <section className="px-4 pb-12">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {[
+                                { value: '20+', label: 'Farmstays', icon: <Home className="w-5 h-5" /> },
+                                { value: '4.8', label: 'Rating TB', icon: <Star className="w-5 h-5" /> },
+                                { value: '500+', label: 'Reviews', icon: <Camera className="w-5 h-5" /> },
+                                { value: '24/7', label: 'Hỗ trợ', icon: <Phone className="w-5 h-5" /> },
+                            ].map((stat, i) => (
+                                <div key={i} className="bg-stone-900/50 border border-stone-800 rounded-xl p-4 text-center">
+                                    <div className="text-emerald-400 mb-2 flex justify-center">{stat.icon}</div>
+                                    <div className="text-2xl font-bold text-white">{stat.value}</div>
+                                    <div className="text-stone-500 text-sm">{stat.label}</div>
+                                </div>
+                            ))}
                         </div>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Stats */}
-            <section className="px-4 pb-12">
-                <div className="max-w-6xl mx-auto">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {[
-                            { value: '20+', label: 'Farmstays', icon: <Home className="w-5 h-5" /> },
-                            { value: '4.8', label: 'Rating TB', icon: <Star className="w-5 h-5" /> },
-                            { value: '500+', label: 'Reviews', icon: <Camera className="w-5 h-5" /> },
-                            { value: '24/7', label: 'Hỗ trợ', icon: <Phone className="w-5 h-5" /> },
-                        ].map((stat, i) => (
-                            <div key={i} className="bg-stone-900/50 border border-stone-800 rounded-xl p-4 text-center">
-                                <div className="text-emerald-400 mb-2 flex justify-center">{stat.icon}</div>
-                                <div className="text-2xl font-bold text-white">{stat.value}</div>
-                                <div className="text-stone-500 text-sm">{stat.label}</div>
-                            </div>
-                        ))}
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* Listings */}
-            <section className="px-4 pb-20">
-                <div className="max-w-6xl mx-auto">
-                    <h2 className="text-2xl font-bold text-white mb-6">
-                        Farmstay nổi bật
-                    </h2>
+                {/* Listings */}
+                <section className="px-4 pb-20">
+                    <div className="max-w-6xl mx-auto">
+                        <h2 className="text-2xl font-bold text-white mb-6">
+                            Farmstay nổi bật
+                        </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {FARMSTAYS.map(farmstay => (
-                            <FarmstayCard key={farmstay.id} farmstay={farmstay} />
-                        ))}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {FARMSTAYS.map(farmstay => (
+                                <FarmstayCard key={farmstay.id} farmstay={farmstay} />
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* Why Farmstay */}
-            <section className="px-4 pb-20 bg-stone-900/30">
-                <div className="max-w-4xl mx-auto py-12">
-                    <h2 className="text-2xl font-bold text-white text-center mb-8">
-                        Tại sao chọn Farmstay Sa Đéc?
-                    </h2>
+                {/* Why Farmstay */}
+                <section className="px-4 pb-20 bg-stone-900/30">
+                    <div className="max-w-4xl mx-auto py-12">
+                        <h2 className="text-2xl font-bold text-white text-center mb-8">
+                            Tại sao chọn Farmstay Sa Đéc?
+                        </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {[
-                            {
-                                icon: <Sun className="w-8 h-8" />,
-                                title: 'Sống chậm',
-                                desc: 'Thoát khỏi thành phố ồn ào, tận hưởng không khí trong lành giữa vườn hoa'
-                            },
-                            {
-                                icon: <Utensils className="w-8 h-8" />,
-                                title: 'Ẩm thực địa phương',
-                                desc: 'Nấu ăn cùng nông dân, thưởng thức đặc sản Đồng Tháp: cá lóc, sen, nem'
-                            },
-                            {
-                                icon: <Camera className="w-8 h-8" />,
-                                title: 'Check-in tuyệt đẹp',
-                                desc: 'Background vườn hoa 100 năm, hoàn hảo cho ảnh Instagram'
-                            }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-stone-800/50 border border-stone-700 rounded-xl p-6 text-center">
-                                <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center text-emerald-400 mx-auto mb-4">
-                                    {item.icon}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                                {
+                                    icon: <Sun className="w-8 h-8" />,
+                                    title: 'Sống chậm',
+                                    desc: 'Thoát khỏi thành phố ồn ào, tận hưởng không khí trong lành giữa vườn hoa'
+                                },
+                                {
+                                    icon: <Utensils className="w-8 h-8" />,
+                                    title: 'Ẩm thực địa phương',
+                                    desc: 'Nấu ăn cùng nông dân, thưởng thức đặc sản Đồng Tháp: cá lóc, sen, nem'
+                                },
+                                {
+                                    icon: <Camera className="w-8 h-8" />,
+                                    title: 'Check-in tuyệt đẹp',
+                                    desc: 'Background vườn hoa 100 năm, hoàn hảo cho ảnh Instagram'
+                                }
+                            ].map((item, i) => (
+                                <div key={i} className="bg-stone-800/50 border border-stone-700 rounded-xl p-6 text-center">
+                                    <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center text-emerald-400 mx-auto mb-4">
+                                        {item.icon}
+                                    </div>
+                                    <h3 className="text-white font-bold mb-2">{item.title}</h3>
+                                    <p className="text-stone-400 text-sm">{item.desc}</p>
                                 </div>
-                                <h3 className="text-white font-bold mb-2">{item.title}</h3>
-                                <p className="text-stone-400 text-sm">{item.desc}</p>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
     );
 }

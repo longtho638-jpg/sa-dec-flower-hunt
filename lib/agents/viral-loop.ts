@@ -174,7 +174,7 @@ export class ViralLoopAgent {
         sms: string
         facebook: string
     } {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sadec.os'
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://agrios.tech'
         const link = `${baseUrl}?ref=${code}`
 
         return {

@@ -1,7 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
+// Demo stats for go-live testing
+const DEMO_STATS = {
+    orders: [
+        { id: "1", flower_name: "Cúc Mâm Xôi", size: "M", quantity: 2, price: 450000, status: "completed", customer_name: "Nguyễn Văn A", customer_phone: "0901234567", address: "123 Nguyễn Huệ, Q1", created_at: new Date().toISOString() },
+        { id: "2", flower_name: "Hoa Hồng Sa Đéc", size: "L", quantity: 1, price: 240000, status: "shipped", customer_name: "Trần Thị B", customer_phone: "0909876543", address: "456 Lê Lợi, Q3", created_at: new Date(Date.now() - 3600000).toISOString() },
+        { id: "3", flower_name: "Mai Vàng", size: "XL", quantity: 1, price: 600000, status: "pending", customer_name: "Lê Văn C", customer_phone: "0912345678", address: "789 Trần Hưng Đạo, Q5", created_at: new Date(Date.now() - 7200000).toISOString() },
+    ],
+    users: 7500,
+    partners: 42,
+    demo: true
+};
+
 export async function GET(request: NextRequest) {
+    // 🎯 DEMO MODE: Allow bypass for go-live testing
+    const demoMode = request.headers.get('X-Demo-Mode') === 'true';
+    if (demoMode) {
+        return NextResponse.json(DEMO_STATS);
+    }
+
     // Security Check: Verify Auth Token
     const authHeader = request.headers.get('Authorization');
     const token = authHeader?.split(' ')[1];

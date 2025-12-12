@@ -2,11 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { LanguageProvider } from "@/lib/i18n";
 import { StructuredData } from "@/components/StructuredData";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { Toaster } from "sonner";
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ClientLayoutWrapper } from "@/components/ClientLayoutWrapper";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -30,22 +31,22 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Sa Đéc Flower Hunt 2026 - Săn Hoa & Quà Tết",
-    template: "%s | Sa Đéc Flower Hunt",
+    default: "AGRIOS.tech - Làng Hoa Sa Đéc 2026",
+    template: "%s | AGRIOS.tech",
   },
-  description: "Khám phá vẻ đẹp hoa xuân miền Tây, quét AR nhận voucher và đặt hoa giá gốc tại vườn.",
+  description: "Nền tảng nông nghiệp thông minh: Khám phá vẻ đẹp hoa xuân miền Tây, quét AR nhận voucher và đặt hoa giá gốc tại vườn.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Flower Hunt",
+    title: "AGRIOS.tech",
   },
   openGraph: {
     type: "website",
     locale: "vi_VN",
-    url: "https://sadec-flower-hunt.vercel.app",
-    siteName: "Sa Đéc Flower Hunt 2026",
-    title: "Sa Đéc Flower Hunt 2026 - Festival Hoa Xuân",
+    url: "https://agrios.tech",
+    siteName: "AGRIOS.tech",
+    title: "AGRIOS.tech - Nền Tảng Hoa Sa Đéc",
     description: "Trải nghiệm du lịch thực tế ảo, quét AR nhận quà và đặt mua hoa Tết Sa Đéc giá tốt nhất.",
     images: [
       {
@@ -58,17 +59,14 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sa Đéc Flower Hunt 2026",
-    description: "Săn hoa, quét AR, nhận quà Tết!",
+    title: "AGRIOS.tech - Làng Hoa Sa Đéc",
+    description: "Nền tảng nông nghiệp thông minh: Săn hoa, quét AR, nhận quà Tết!",
     images: ["https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1200&h=630&fit=crop"],
   },
   other: {
     "tiktok-developers-site-verification": "c0E0ijZDiRb4hadyVk27Fk7qFeUGdppt",
   },
 };
-
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { AICopilot } from '@/components/ai/AICopilot';
 
 export default function RootLayout({
   children,
@@ -77,7 +75,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${jetbrainsMono.variable} ${inter.variable}`}>
+      <body className={`${jetbrainsMono.variable} ${inter.variable}`} suppressHydrationWarning>
         <ErrorBoundary>
           <ThemeProvider
             attribute="class"
@@ -88,7 +86,6 @@ export default function RootLayout({
             <LanguageProvider>
               <ServiceWorkerRegister />
               {children}
-              <PWAInstallPrompt />
               <StructuredData data={{
                 "@type": "SoftwareApplication",
                 "name": "AGRIOS - Sa Đéc Flower Hunt 2026",
@@ -101,7 +98,7 @@ export default function RootLayout({
                 }
               }} />
               <Toaster />
-              <AICopilot />
+              <ClientLayoutWrapper />
             </LanguageProvider>
           </ThemeProvider>
         </ErrorBoundary>

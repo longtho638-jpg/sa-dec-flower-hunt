@@ -1,34 +1,43 @@
-# SADEC.OS Press Kit
+# AGRIOS.tech Press Kit
 
-## About SADEC.OS
+## About AGRIOS.tech
 
-SADEC.OS is a digital agricultural platform connecting flower farmers in Sa Đéc (Đồng Tháp, Vietnam) with buyers nationwide.
+AGRIOS.tech is a digital agricultural platform connecting flower farmers in Sa Đéc (Đồng Tháp, Vietnam) with buyers nationwide.
 
-### Quick Facts
+## Mission
 
-- **Location**: Sa Đéc, Đồng Tháp, Vietnam
-- **Focus**: Flower supply chain digitization
-- **Target Users**: Farmers, Buyers, Logistics Partners
-- **Status**: Beta (Development Phase)
+"Số hóa làng hoa Sa Đéc" - Digitizing Vietnam's largest flower village.
 
-### Mission
+## Key Features
 
-Empowering Vietnamese flower farmers with digital tools, market access, and fair pricing.
+- 🌸 Direct farmer-to-consumer marketplace
+- 🚚 Cold-chain logistics network
+- 🏦 Agricultural fintech solutions
+- 🤖 AI-powered farming assistant
+- 📱 AR/QR flower hunting experience
 
-### Key Features
+## Facts & Figures
 
-1. **Farmer Dashboard** - Manage products, orders, and revenue
-2. **AI-Assisted Listings** - Generate optimized product descriptions
-3. **Direct Sales** - Connect farmers directly to buyers
-4. **Transparent Pricing** - Fair commission structure
+- **Location**: Sa Đéc, Đồng Tháp Province
+- **Target Market**: B2C flowers, B2B wholesale
+- **Launch Campaign**: Sa Đéc Flower Hunt 2026
 
-### Contact
+## Brand Assets
 
-- Email: press@sadec.os (placeholder)
-- Website: https://sa-dec-flower-hunt.vercel.app/
+Download logo and guidelines: [Brand Assets](/assets/brand-assets.md)
+
+## Media Contact
+
+- **Email**: press@agrios.tech
+- **Website**: https://agrios.tech
+- **Zalo**: @agrios.tech
+
+## Founder
+
+Long Nguyễn - CEO & Founder
 
 ---
 
-*This is a beta product. Features and data shown may represent development targets.*
+*All statistics are targets for Tết 2026 campaign.*
 
-© 2024 SADEC.OS
+© 2024 AGRIOS TECHNOLOGY CO., LTD

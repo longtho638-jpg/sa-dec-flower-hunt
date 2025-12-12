@@ -1,12 +1,15 @@
 // ============================================================================
 // FLASH SALE API - "Giải cứu hoa" Auto-trigger System
+// 🔒 SECURITY: POST/DELETE require authentication
 // ============================================================================
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/supabase';
+import { cookies } from 'next/headers';
 import { yieldPredictor } from '@/lib/agents/yield-predictor';
 
-// Lazy Supabase client
+// Lazy Supabase client (service role for DB operations)
 function getSupabase() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -14,7 +17,20 @@ function getSupabase() {
     return createClient(url, key);
 }
 
-// GET: Get active flash sales
+// 🔒 SECURITY: Check if user is authenticated
+async function requireAuth(): Promise<{ userId: string; email: string } | null> {
+    try {
+        const cookieStore = cookies();
+        const supabase = createServerClient(cookieStore);
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error || !user) return null;
+        return { userId: user.id, email: user.email || '' };
+    } catch {
+        return null;
+    }
+}
+
+// GET: Get active flash sales (public read)
 export async function GET(request: NextRequest) {
     try {
         const supabase = getSupabase();
@@ -83,9 +99,18 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// POST: Create or trigger flash sales
+// POST: Create or trigger flash sales (🔒 AUTHENTICATED ONLY)
 export async function POST(request: NextRequest) {
     try {
+        // 🔒 SECURITY: Require authentication
+        const auth = await requireAuth();
+        if (!auth) {
+            return NextResponse.json(
+                { error: 'Authentication required to create flash sales' },
+                { status: 401 }
+            );
+        }
+
         const supabase = getSupabase();
         if (!supabase) {
             return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -94,8 +119,18 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { action, inventoryId, discount, duration } = body;
 
+        // 🔒 Input validation
+        if (discount !== undefined && (typeof discount !== 'number' || discount < 0 || discount > 90)) {
+            return NextResponse.json({ error: 'Discount must be between 0 and 90' }, { status: 400 });
+        }
+
+        if (duration !== undefined && (typeof duration !== 'number' || duration < 1 || duration > 168)) {
+            return NextResponse.json({ error: 'Duration must be between 1 and 168 hours' }, { status: 400 });
+        }
+
         // Auto-trigger: Generate flash sales from Yield Predictor
         if (action === 'auto') {
+            console.log(`🔔 [${auth.email}] Triggering auto flash sales`);
             const flashSales = await yieldPredictor.generateFlashSales();
 
             // Save to database (if table exists)
@@ -109,7 +144,8 @@ export async function POST(request: NextRequest) {
                 reason: sale.reason,
                 is_active: true,
                 expires_at: sale.expiresAt.toISOString(),
-                created_at: new Date().toISOString()
+                created_at: new Date().toISOString(),
+                created_by: auth.userId  // 🔒 Audit trail
             }));
 
             // Attempt to insert (non-blocking if table doesn't exist)
@@ -122,12 +158,20 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({
                 success: true,
                 message: `Generated ${flashSales.length} flash sales`,
-                flashSales
+                flashSales,
+                createdBy: auth.email
             });
         }
 
         // Manual: Create single flash sale
         if (action === 'manual' && inventoryId) {
+            // 🔒 Validate UUID format
+            if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(inventoryId)) {
+                return NextResponse.json({ error: 'Invalid inventory ID format' }, { status: 400 });
+            }
+
+            console.log(`🔔 [${auth.email}] Creating manual flash sale for ${inventoryId}`);
+
             // Get inventory item
             const { data: inventory, error: invError } = await supabase
                 .from('inventory')
@@ -153,7 +197,8 @@ export async function POST(request: NextRequest) {
                 discount: saleDiscount,
                 reason: `🔥 Flash Sale: ${inventory.flower_name || inventory.flower_type}! Giảm ${saleDiscount}%`,
                 is_active: true,
-                expires_at: new Date(Date.now() + saleDuration * 60 * 60 * 1000).toISOString()
+                expires_at: new Date(Date.now() + saleDuration * 60 * 60 * 1000).toISOString(),
+                created_by: auth.userId  // 🔒 Audit trail
             };
 
             // Try to insert
@@ -169,14 +214,16 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({
                     success: true,
                     message: 'Flash sale created',
-                    flashSale: created
+                    flashSale: created,
+                    createdBy: auth.email
                 });
             } catch {
                 // Return the generated sale without saving
                 return NextResponse.json({
                     success: true,
                     message: 'Flash sale generated (not saved)',
-                    flashSale
+                    flashSale,
+                    createdBy: auth.email
                 });
             }
         }
@@ -192,9 +239,18 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// DELETE: Deactivate flash sale
+// DELETE: Deactivate flash sale (🔒 AUTHENTICATED ONLY)
 export async function DELETE(request: NextRequest) {
     try {
+        // 🔒 SECURITY: Require authentication
+        const auth = await requireAuth();
+        if (!auth) {
+            return NextResponse.json(
+                { error: 'Authentication required to delete flash sales' },
+                { status: 401 }
+            );
+        }
+
         const supabase = getSupabase();
         if (!supabase) {
             return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -207,16 +263,28 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ error: 'Sale ID required' }, { status: 400 });
         }
 
+        // 🔒 Validate UUID format
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(saleId)) {
+            return NextResponse.json({ error: 'Invalid sale ID format' }, { status: 400 });
+        }
+
+        console.log(`🗑️ [${auth.email}] Deactivating flash sale ${saleId}`);
+
         const { error } = await supabase
             .from('flash_sales')
-            .update({ is_active: false })
+            .update({
+                is_active: false,
+                deactivated_by: auth.userId,  // 🔒 Audit trail
+                deactivated_at: new Date().toISOString()
+            })
             .eq('id', saleId);
 
         if (error) throw error;
 
         return NextResponse.json({
             success: true,
-            message: 'Flash sale deactivated'
+            message: 'Flash sale deactivated',
+            deactivatedBy: auth.email
         });
 
     } catch (error) {

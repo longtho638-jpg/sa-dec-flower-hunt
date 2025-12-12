@@ -23,7 +23,7 @@ export function LandingHeader({ onLoginClick }: LandingHeaderProps) {
                         <span className="text-xs">💠</span>
                     </div>
                     <h1 className="text-sm font-bold tracking-[0.2em] font-mono text-white">
-                        SADEC<span className="text-emerald-500">.OS</span>
+                        AGRIOS<span className="text-emerald-500">.tech</span>
                     </h1>
                 </div>
 

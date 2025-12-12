@@ -195,7 +195,7 @@ export class LeadNurtureAgent {
                     emailTemplate.subject,
                     this.renderTemplate(emailTemplate.template, {
                         name: seq.leads.name || 'Bạn',
-                        shop_url: process.env.NEXT_PUBLIC_APP_URL || 'https://sadec.os',
+                        shop_url: process.env.NEXT_PUBLIC_APP_URL || 'https://agrios.tech',
                         video_call_url: `${process.env.NEXT_PUBLIC_APP_URL}/video`,
                         days_until_tet: this.getDaysUntilTet().toString(),
                         unsubscribe_url: `${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe?id=${seq.lead_id}`
@@ -246,7 +246,7 @@ export class LeadNurtureAgent {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                from: 'SADEC.OS <hoa@sadec.os>',
+                from: 'AGRIOS.tech <hoa@agrios.tech>',
                 to: [to],
                 subject,
                 html

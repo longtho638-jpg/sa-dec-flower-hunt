@@ -3,19 +3,41 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DollarSign, Users, Zap, TrendingUp, Cpu, Activity, ShoppingCart, Eye, Target } from "lucide-react";
-import { RevenueChart } from "@/components/admin/RevenueChart";
-import { AgentFeed } from "@/components/admin/AgentFeed";
-import { CEOActions } from "@/components/admin/CEOActions";
+import dynamic from "next/dynamic";
+import { DollarSign, Users, Zap, TrendingUp, Cpu, Activity, ShoppingCart, Eye, Target, Loader2 } from "lucide-react";
 import { KPICard } from "@/components/admin/KPICard";
 import { LiveMetricCard } from "@/components/admin/LiveMetricCard";
-import { ActivityFeed } from "@/components/admin/ActivityFeed";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getAdminStats, getDailyRevenue, AdminStats, DailyRevenue } from "@/lib/api/admin";
-import { format } from "date-fns";
-import { ParticleBackground } from "@/components/ui/ParticleBackground";
-import { ThreeDCard } from "@/components/ui/ThreeDCard";
 import { useLanguage } from "@/lib/i18n";
+
+// --- Dynamic Imports for Performance ---
+const RevenueChart = dynamic(() => import("@/components/admin/RevenueChart").then(mod => mod.RevenueChart), {
+    loading: () => <LoadingSpinner />,
+    ssr: false
+});
+const AgentFeed = dynamic(() => import("@/components/admin/AgentFeed").then(mod => mod.AgentFeed), {
+    loading: () => <LoadingSpinner />,
+    ssr: false
+});
+const CEOActions = dynamic(() => import("@/components/admin/CEOActions").then(mod => mod.CEOActions), {
+    loading: () => <LoadingSpinner />
+});
+const ActivityFeed = dynamic(() => import("@/components/admin/ActivityFeed").then(mod => mod.ActivityFeed), {
+    loading: () => <LoadingSpinner />,
+    ssr: false
+});
+const ParticleBackground = dynamic(() => import("@/components/ui/ParticleBackground").then(mod => mod.ParticleBackground), {
+    ssr: false
+});
+const ThreeDCard = dynamic(() => import("@/components/ui/ThreeDCard").then(mod => mod.ThreeDCard), {
+    ssr: false
+});
+
+// --- Helper Components ---
+function LoadingSpinner() {
+    return <div className="w-full h-full flex items-center justify-center min-h-[100px]"><Loader2 className="w-6 h-6 animate-spin text-blue-500" /></div>;
+}
 
 export default function DashboardPage() {
     const { t } = useLanguage();
@@ -110,93 +132,13 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Live Metrics Section - NEW */}
+            {/* Live Metrics Section */}
             {liveMetrics && (
-                <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-blue-300 uppercase tracking-widest flex items-center gap-2 mb-4">
-                        <Activity className="w-4 h-4 text-blue-500" />
-                        {t("dashboard.live_command")}
-                        <span className="text-[10px] text-blue-600 font-normal">
-                            (POLLING: 30s)
-                        </span>
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <ThreeDCard className="bg-slate-900/80 border-blue-800/50">
-                            <div className="p-4">
-                                <LiveMetricCard
-                                    title="Active Users"
-                                    value={liveMetrics.activeUsersNow}
-                                    icon={Eye}
-                                    subtitle="Last 5 minutes"
-                                />
-                            </div>
-                        </ThreeDCard>
-                        <ThreeDCard className="bg-slate-900/80 border-blue-800/50">
-                            <div className="p-4">
-                                <LiveMetricCard
-                                    title="Orders Today"
-                                    value={liveMetrics.ordersToday}
-                                    icon={ShoppingCart}
-                                    format="number"
-                                    subtitle={`Rev: ${new Intl.NumberFormat('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND',
-                                        notation: 'compact'
-                                    }).format(liveMetrics?.revenueToday || 0)}`}
-                                />
-                            </div>
-                        </ThreeDCard>
-                        <ThreeDCard className="bg-slate-900/80 border-blue-800/50">
-                            <div className="p-4">
-                                <LiveMetricCard
-                                    title="Conversion"
-                                    value={liveMetrics.conversionRate}
-                                    icon={Target}
-                                    format="percentage"
-                                    trend={liveMetrics.conversionRate > 3 ? 5 : -2}
-                                    subtitle="Funnel Efficiency"
-                                />
-                            </div>
-                        </ThreeDCard>
-                        <ThreeDCard className="bg-slate-900/80 border-blue-800/50">
-                            <div className="p-4">
-                                <LiveMetricCard
-                                    title="Avg Cart Val"
-                                    value={liveMetrics.avgCartValue}
-                                    icon={DollarSign}
-                                    format="currency"
-                                    subtitle="Per Transaction"
-                                />
-                            </div>
-                        </ThreeDCard>
-                    </div>
-
-                    {/* Activity Feed */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="lg:col-span-2">
-                            <div className="bg-slate-900/60 border border-blue-900/30 rounded-xl p-4 backdrop-blur-md">
-                                <ActivityFeed activities={activityFeed} maxHeight="350px" />
-                            </div>
-                        </div>
-                        <div>
-                            <ThreeDCard className="bg-gradient-to-br from-purple-900/40 to-slate-900/80 border-purple-500/30 h-full">
-                                <CardHeader>
-                                    <CardTitle className="text-sm font-semibold text-purple-400 uppercase tracking-widest flex items-center gap-2">
-                                        <Zap className="w-4 h-4" /> Top Performer
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-lg font-bold text-white shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                                        {liveMetrics?.topSellingProduct?.name || "No Data"}
-                                    </p>
-                                    <p className="text-sm text-purple-400 mt-1 font-mono">
-                                        {liveMetrics?.topSellingProduct?.quantity || 0} UNITS DEPLOYED
-                                    </p>
-                                </CardContent>
-                            </ThreeDCard>
-                        </div>
-                    </div>
-                </div>
+                <LiveMetricsDashboard
+                    liveMetrics={liveMetrics}
+                    activityFeed={activityFeed}
+                    t={t}
+                />
             )}
 
             {/* Original KPI Grid */}
@@ -263,6 +205,97 @@ export default function DashboardPage() {
             <footer className="text-center text-[10px] text-blue-900/50 font-mono mt-8 uppercase tracking-[0.3em]">
                 {t("dashboard.secure_footer")}
             </footer>
+        </div>
+    );
+}
+
+// --- Sub-Components ---
+function LiveMetricsDashboard({ liveMetrics, activityFeed, t }: { liveMetrics: any, activityFeed: any[], t: any }) {
+    return (
+        <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-blue-300 uppercase tracking-widest flex items-center gap-2 mb-4">
+                <Activity className="w-4 h-4 text-blue-500" />
+                {t("dashboard.live_command")}
+                <span className="text-[10px] text-blue-600 font-normal">
+                    (POLLING: 30s)
+                </span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <ThreeDCard className="bg-slate-900/80 border-blue-800/50">
+                    <div className="p-4">
+                        <LiveMetricCard
+                            title="Active Users"
+                            value={liveMetrics.activeUsersNow}
+                            icon={Eye}
+                            subtitle="Last 5 minutes"
+                        />
+                    </div>
+                </ThreeDCard>
+                <ThreeDCard className="bg-slate-900/80 border-blue-800/50">
+                    <div className="p-4">
+                        <LiveMetricCard
+                            title="Orders Today"
+                            value={liveMetrics.ordersToday}
+                            icon={ShoppingCart}
+                            format="number"
+                            subtitle={`Rev: ${new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                                notation: 'compact'
+                            }).format(liveMetrics?.revenueToday || 0)}`}
+                        />
+                    </div>
+                </ThreeDCard>
+                <ThreeDCard className="bg-slate-900/80 border-blue-800/50">
+                    <div className="p-4">
+                        <LiveMetricCard
+                            title="Conversion"
+                            value={liveMetrics.conversionRate}
+                            icon={Target}
+                            format="percentage"
+                            trend={liveMetrics.conversionRate > 3 ? 5 : -2}
+                            subtitle="Funnel Efficiency"
+                        />
+                    </div>
+                </ThreeDCard>
+                <ThreeDCard className="bg-slate-900/80 border-blue-800/50">
+                    <div className="p-4">
+                        <LiveMetricCard
+                            title="Avg Cart Val"
+                            value={liveMetrics.avgCartValue}
+                            icon={DollarSign}
+                            format="currency"
+                            subtitle="Per Transaction"
+                        />
+                    </div>
+                </ThreeDCard>
+            </div>
+
+            {/* Activity Feed */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                    <div className="bg-slate-900/60 border border-blue-900/30 rounded-xl p-4 backdrop-blur-md">
+                        <ActivityFeed activities={activityFeed} maxHeight="350px" />
+                    </div>
+                </div>
+                <div>
+                    <ThreeDCard className="bg-gradient-to-br from-purple-900/40 to-slate-900/80 border-purple-500/30 h-full">
+                        <CardHeader>
+                            <CardTitle className="text-sm font-semibold text-purple-400 uppercase tracking-widest flex items-center gap-2">
+                                <Zap className="w-4 h-4" /> Top Performer
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-lg font-bold text-white shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+                                {liveMetrics?.topSellingProduct?.name || "No Data"}
+                            </p>
+                            <p className="text-sm text-purple-400 mt-1 font-mono">
+                                {liveMetrics?.topSellingProduct?.quantity || 0} UNITS DEPLOYED
+                            </p>
+                        </CardContent>
+                    </ThreeDCard>
+                </div>
+            </div>
         </div>
     );
 }

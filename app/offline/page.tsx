@@ -1,6 +1,8 @@
 "use client";
 
-export default function OfflinePage() {
+import { withI18n, WithI18nProps } from "@/lib/withI18n";
+
+function OfflinePage({ texts }: WithI18nProps) {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-50 to-stone-50 p-4">
             <div className="text-center space-y-6 max-w-md">
@@ -28,18 +30,18 @@ export default function OfflinePage() {
 
                 {/* Title */}
                 <h1 className="text-3xl font-bold text-stone-900">
-                    📵 Mất kết nối
+                    {texts["title"]}
                 </h1>
 
                 {/* Description */}
                 <p className="text-stone-600 text-lg">
-                    Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet và thử lại.
+                    {texts["desc"]}
                 </p>
 
                 {/* Cached Content Info */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-                    <p className="font-medium">💡 Mẹo:</p>
-                    <p>Bạn vẫn có thể xem các trang đã truy cập trước đó!</p>
+                    <p className="font-medium">{texts["tip_title"]}</p>
+                    <p>{texts["tip_desc"]}</p>
                 </div>
 
                 {/* Action Buttons */}
@@ -48,21 +50,23 @@ export default function OfflinePage() {
                         onClick={() => window.location.reload()}
                         className="w-full px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors shadow-lg"
                     >
-                        🔄 Thử lại
+                        {texts["retry_btn"]}
                     </button>
                     <button
                         onClick={() => window.history.back()}
                         className="w-full px-6 py-3 bg-white hover:bg-stone-50 text-stone-700 font-medium rounded-lg border border-stone-200 transition-colors"
                     >
-                        ← Quay lại
+                        {texts["back_btn"]}
                     </button>
                 </div>
 
                 {/* Footer */}
                 <p className="text-xs text-stone-400 mt-8">
-                    Sa Đéc Flower Hunt - Festival Hoa Xuân 2028
+                    {texts["footer"]}
                 </p>
             </div>
         </div>
     );
 }
+
+export default withI18n(OfflinePage, "offline");

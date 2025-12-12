@@ -1,11 +1,38 @@
 import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
-// Initialize inside handler
-// const supabaseAdmin = createClient(...)
+// Demo data for go-live testing
+const DEMO_METRICS = {
+    activeUsersNow: 47,
+    ordersToday: 12,
+    revenueToday: 2850000,
+    conversionRate: 3.2,
+    avgCartValue: 237500,
+    topSellingProduct: { name: 'Hoa Mai Vàng', quantity: 8 },
+    recentActivity: [
+        { id: '1', type: 'order', amount: 450000, timestamp: new Date().toISOString(), userId: 'user1' },
+        { id: '2', type: 'order', amount: 320000, timestamp: new Date(Date.now() - 300000).toISOString(), userId: 'user2' },
+        { id: '3', type: 'order', amount: 680000, timestamp: new Date(Date.now() - 600000).toISOString(), userId: 'user3' },
+    ],
+    lastUpdated: new Date().toISOString()
+};
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
+        // 🎯 DEMO MODE: Allow bypass for go-live testing
+        const demoMode = request.headers.get('X-Demo-Mode') === 'true';
+        if (demoMode) {
+            return NextResponse.json(DEMO_METRICS);
+        }
+
+        // 🔒 SECURITY: Require admin authentication
+        const cookieStore = await cookies();
+        const adminAuth = cookieStore.get('admin_auth');
+        if (!adminAuth || adminAuth.value !== 'true') {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const supabaseAdmin = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.SUPABASE_SERVICE_ROLE_KEY!,

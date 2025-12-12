@@ -61,93 +61,98 @@ function CheckoutContent() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white font-mono p-4 md:p-8">
-            <div className="max-w-2xl mx-auto">
-                {/* Back Button */}
-                <button
-                    onClick={() => router.back()}
-                    className="flex items-center gap-2 text-stone-500 hover:text-emerald-400 mb-8 transition-colors"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span className="text-sm uppercase tracking-wider">Quay lại</span>
-                </button>
+        <div className="min-h-screen bg-black text-white font-mono p-4 md:p-8 relative">
+            <div className="fixed inset-0 z-0">
+                <img src="/assets/digital-twins/agrios_market_hyperreal_1765367298057.png" className="w-full h-full object-cover opacity-15" />
+            </div>
+            <div className="relative z-10">
+                <div className="max-w-2xl mx-auto">
+                    {/* Back Button */}
+                    <button
+                        onClick={() => router.back()}
+                        className="flex items-center gap-2 text-stone-500 hover:text-emerald-400 mb-8 transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        <span className="text-sm uppercase tracking-wider">Quay lại</span>
+                    </button>
 
-                {/* Main Card */}
-                <motion.div
-                    className="bg-stone-950 border border-emerald-500/30 rounded-sm p-8 md:p-12"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    {/* Header */}
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="w-12 h-12 border border-emerald-500/30 flex items-center justify-center bg-emerald-900/20">
-                            <CreditCard className="w-6 h-6 text-emerald-400" />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-white">THANH_TOÁN</h1>
-                            <p className="text-xs text-stone-500 uppercase tracking-wider">Secure Payment Gateway</p>
-                        </div>
-                    </div>
-
-                    {/* Order Info */}
-                    <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-sm p-6 mb-8">
-                        <div className="text-xs text-emerald-500 uppercase tracking-wider mb-2">Order ID</div>
-                        <div className="text-sm text-white font-mono break-all">{orderId}</div>
-                    </div>
-
-                    {/* Payment Method */}
-                    <div className="mb-8">
-                        <div className="text-sm text-stone-400 uppercase tracking-wider mb-4">Phương thức thanh toán</div>
-                        <div className="bg-stone-900 border border-emerald-500/30 rounded-sm p-4 flex items-center gap-4">
-                            <div className="w-16 h-16 bg-emerald-900/20 border border-emerald-500/30 flex items-center justify-center rounded">
-                                <span className="text-2xl">💳</span>
+                    {/* Main Card */}
+                    <motion.div
+                        className="bg-stone-950 border border-emerald-500/30 rounded-sm p-8 md:p-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        {/* Header */}
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 border border-emerald-500/30 flex items-center justify-center bg-emerald-900/20">
+                                <CreditCard className="w-6 h-6 text-emerald-400" />
                             </div>
                             <div>
-                                <div className="text-white font-bold">PayOS</div>
-                                <div className="text-xs text-stone-500">QR Code / Internet Banking / E-Wallet</div>
-                                <div className="text-[10px] text-emerald-500 mt-1">⚡ Nhanh hơn • Rẻ hơn • Dễ hơn</div>
+                                <h1 className="text-2xl md:text-3xl font-bold text-white">THANH_TOÁN</h1>
+                                <p className="text-xs text-stone-500 uppercase tracking-wider">Secure Payment Gateway</p>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Error Message */}
-                    {error && (
-                        <motion.div
-                            className="bg-red-950/30 border border-red-500/30 rounded-sm p-4 mb-6 flex items-start gap-3"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                        >
-                            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                            <div className="text-sm text-red-300">{error}</div>
-                        </motion.div>
-                    )}
+                        {/* Order Info */}
+                        <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-sm p-6 mb-8">
+                            <div className="text-xs text-emerald-500 uppercase tracking-wider mb-2">Order ID</div>
+                            <div className="text-sm text-white font-mono break-all">{orderId}</div>
+                        </div>
 
-                    {/* Action Button */}
-                    <Button
-                        onClick={handlePayment}
-                        disabled={loading}
-                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-6 text-lg uppercase tracking-wider rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {loading ? (
-                            <>
-                                <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                                Đang xử lý...
-                            </>
-                        ) : (
-                            <>
-                                <CreditCard className="w-5 h-5 mr-2" />
-                                Thanh toán ngay
-                            </>
+                        {/* Payment Method */}
+                        <div className="mb-8">
+                            <div className="text-sm text-stone-400 uppercase tracking-wider mb-4">Phương thức thanh toán</div>
+                            <div className="bg-stone-900 border border-emerald-500/30 rounded-sm p-4 flex items-center gap-4">
+                                <div className="w-16 h-16 bg-emerald-900/20 border border-emerald-500/30 flex items-center justify-center rounded">
+                                    <span className="text-2xl">💳</span>
+                                </div>
+                                <div>
+                                    <div className="text-white font-bold">PayOS</div>
+                                    <div className="text-xs text-stone-500">QR Code / Internet Banking / E-Wallet</div>
+                                    <div className="text-[10px] text-emerald-500 mt-1">⚡ Nhanh hơn • Rẻ hơn • Dễ hơn</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Error Message */}
+                        {error && (
+                            <motion.div
+                                className="bg-red-950/30 border border-red-500/30 rounded-sm p-4 mb-6 flex items-start gap-3"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                            >
+                                <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                                <div className="text-sm text-red-300">{error}</div>
+                            </motion.div>
                         )}
-                    </Button>
 
-                    {/* Security Note */}
-                    <div className="mt-6 text-center">
-                        <p className="text-xs text-stone-600 uppercase tracking-wider">
-                            🔒 Giao dịch được mã hóa và bảo mật bởi PayOS
-                        </p>
-                    </div>
-                </motion.div>
+                        {/* Action Button */}
+                        <Button
+                            onClick={handlePayment}
+                            disabled={loading}
+                            className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-6 text-lg uppercase tracking-wider rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                                    Đang xử lý...
+                                </>
+                            ) : (
+                                <>
+                                    <CreditCard className="w-5 h-5 mr-2" />
+                                    Thanh toán ngay
+                                </>
+                            )}
+                        </Button>
+
+                        {/* Security Note */}
+                        <div className="mt-6 text-center">
+                            <p className="text-xs text-stone-600 uppercase tracking-wider">
+                                🔒 Giao dịch được mã hóa và bảo mật bởi PayOS
+                            </p>
+                        </div>
+                    </motion.div>
+                </div>
             </div>
         </div>
     );

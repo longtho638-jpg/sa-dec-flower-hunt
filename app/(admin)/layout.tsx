@@ -2,6 +2,14 @@ import React from "react";
 import Link from "next/link";
 import { LayoutDashboard, Users, TrendingUp, Settings, Activity } from "lucide-react";
 
+const ADMIN_NAV_ITEMS = [
+    { href: "/dashboard", label: "Command Center", icon: LayoutDashboard, active: true },
+    { href: "/org-chart", label: "The Machine (Org)", icon: Users },
+    { href: "/admin/economics", label: "Growth Metrics", icon: TrendingUp },
+    { href: "/marketing", label: "Marketing & Viral", icon: TrendingUp, iconColor: "text-pink-500", hoverColor: "hover:text-pink-400" },
+    { href: "/admin/config", label: "System Config", icon: Settings },
+];
+
 export default function AdminLayout({
     children,
 }: {
@@ -20,26 +28,22 @@ export default function AdminLayout({
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
-                    <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 bg-stone-900/50 text-green-400 rounded-lg border border-stone-800 hover:bg-stone-900 transition-colors">
-                        <LayoutDashboard className="w-5 h-5" />
-                        <span className="font-bold">Command Center</span>
-                    </Link>
-                    <Link href="/org-chart" className="flex items-center gap-3 px-4 py-3 text-stone-400 hover:bg-stone-900/30 hover:text-stone-200 rounded-lg transition-colors group">
-                        <Users className="w-5 h-5 group-hover:text-green-400 transition-colors" />
-                        <span className="group-hover:text-white transition-colors">The Machine (Org)</span>
-                    </Link>
-                    <Link href="#" className="flex items-center gap-3 px-4 py-3 text-stone-400 hover:bg-stone-900/30 hover:text-stone-200 rounded-lg transition-colors">
-                        <TrendingUp className="w-5 h-5" />
-                        <span>Growth Metrics</span>
-                    </Link>
-                    <Link href="/marketing" className="flex items-center gap-3 px-4 py-3 text-stone-400 hover:bg-stone-900/30 hover:text-stone-200 rounded-lg transition-colors hover:text-pink-400">
-                        <TrendingUp className="w-5 h-5 text-pink-500" />
-                        <span>Marketing & Viral</span>
-                    </Link>
-                    <Link href="#" className="flex items-center gap-3 px-4 py-3 text-stone-400 hover:bg-stone-900/30 hover:text-stone-200 rounded-lg transition-colors">
-                        <Settings className="w-5 h-5" />
-                        <span>System Config</span>
-                    </Link>
+                    {ADMIN_NAV_ITEMS.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg border transition-colors group ${
+                                item.active
+                                    ? "bg-stone-900/50 text-green-400 border-stone-800 hover:bg-stone-900"
+                                    : `text-stone-400 border-transparent hover:bg-stone-900/30 hover:text-stone-200 ${item.hoverColor || ""}`
+                            }`}
+                        >
+                            <item.icon className={`w-5 h-5 ${item.iconColor || "group-hover:text-green-400"} transition-colors`} />
+                            <span className={item.active ? "font-bold" : "group-hover:text-white transition-colors"}>
+                                {item.label}
+                            </span>
+                        </Link>
+                    ))}
                 </nav>
 
                 <div className="p-4 border-t border-stone-800">

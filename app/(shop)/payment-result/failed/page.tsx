@@ -38,7 +38,7 @@ function FailedContent() {
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 uppercase tracking-wider">
                         THANH_TOÁN_THẤT_BẠI
                     </h1>
-                    <p className="text-red-400 mb-6">Giao dịch không thành công</p>
+                    <p className="text-stone-500 text-sm">Nếu bạn nghĩ đây là lỗi, hãy liên hệ hotline AGRIOS.tech</p>
                 </motion.div>
 
                 {/* Reason */}
@@ -110,7 +110,7 @@ function FailedContent() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.2 }}
                 >
-                    Cần hỗ trợ? Liên hệ: support@sadec.os
+                    Cần hỗ trợ? Liên hệ: support@agrios.tech
                 </motion.p>
             </motion.div>
         </div>

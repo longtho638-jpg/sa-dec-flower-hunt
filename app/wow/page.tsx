@@ -1,250 +1,368 @@
 "use client";
 
 // ============================================================================
-// WOW SHOWCASE PAGE - All Premium Features in One Place
-// ============================================================================
-// Demonstrates all WOW features with maximum visual impact
+// WOW DEMO PAGE - Showcase of Premium Visual Effects
 // ============================================================================
 
-import { WowHero } from "@/components/landing/WowHero";
-import { FlashSaleBanner } from "@/components/shop/FlashSaleBanner";
-import { TetCountdown } from "@/components/widgets/TetCountdown";
-import { WeatherWidget } from "@/components/widgets/WeatherWidget";
-import { QuickLinks } from "@/components/landing/QuickLinks";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+import { AgriosLogo } from "@/components/brand/AgriosLogo";
+import { NeonButton } from "@/components/ui/neon-button";
+import { Sparkles, ArrowRight, Moon, Flower2, Zap, CreditCard, PartyPopper, BarChart3, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Zap, Gift, Flower2, Home, Star } from "lucide-react";
 
-// Feature showcase section
-function FeatureShowcase() {
-    const features = [
-        {
-            title: "Yield Predictor AI",
-            description: "Dự báo nhu cầu thị trường và định giá động dựa trên AI",
-            icon: "🔮",
-            gradient: "from-purple-600 to-indigo-600",
-            stats: "80% chính xác"
-        },
-        {
-            title: "Garden Digital Twin",
-            description: "Bản sao số của vườn hoa, theo dõi tồn kho realtime",
-            icon: "🌸",
-            gradient: "from-pink-600 to-rose-600",
-            stats: "Realtime sync"
-        },
-        {
-            title: "Cold Chain IoT",
-            description: "Vận chuyển lạnh với cảm biến nhiệt độ 24/7",
-            icon: "🚚",
-            gradient: "from-cyan-600 to-blue-600",
-            stats: "18-22°C"
-        },
-        {
-            title: "Loot Box Game",
-            description: "Du khách săn hộp quà ảo, nhận phần thưởng thật",
-            icon: "🎁",
-            gradient: "from-amber-600 to-orange-600",
-            stats: "4 rarities"
-        }
-    ];
+// --- Dynamic Imports for Performance (Lazy Loading) ---
+const FireflyGarden = dynamic(() => import("@/components/wow/FireflyGarden").then(mod => mod.FireflyGarden), {
+    loading: () => <LoadingPlaceholder />,
+    ssr: false // Client-side visual effects often don't need SSR
+});
+const HoloProductCard = dynamic(() => import("@/components/wow/HoloCard").then(mod => mod.HoloProductCard), {
+    loading: () => <div className="h-[400px] w-full bg-stone-900/50 rounded-3xl animate-pulse" />
+});
+const TetCountdown = dynamic(() => import("@/components/wow/TetCountdown").then(mod => mod.TetCountdown), {
+    loading: () => <LoadingPlaceholder />
+});
+const BloomGarden = dynamic(() => import("@/components/wow/BloomFlower").then(mod => mod.BloomGarden), {
+    loading: () => <LoadingPlaceholder />,
+    ssr: false
+});
+const ChartsDashboard = dynamic(() => import("@/components/wow/AnimatedCharts").then(mod => mod.ChartsDashboard), {
+    loading: () => <LoadingPlaceholder />
+});
+
+// --- Constants ---
+const DEMO_PRODUCTS = [
+    {
+        image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop",
+        title: "Mai Vàng Bonsai",
+        price: "2,500,000₫",
+        originalPrice: "3,200,000₫",
+        badge: "HOT",
+        rating: 5,
+    },
+    {
+        image: "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&h=400&fit=crop",
+        title: "Hoa Hồng Ecuador",
+        price: "450,000₫",
+        rating: 4,
+    },
+    {
+        image: "https://images.unsplash.com/photo-1518882605630-8eb5f838bc11?w=400&h=400&fit=crop",
+        title: "Lan Hồ Điệp Trắng",
+        price: "1,200,000₫",
+        originalPrice: "1,500,000₫",
+        badge: "SALE",
+        rating: 5,
+    },
+];
+
+type SectionType = "firefly" | "holo" | "tet" | "bloom" | "charts";
+
+const SECTIONS: { id: SectionType; label: string; icon: React.ReactNode }[] = [
+    { id: "firefly", label: "Firefly Garden", icon: <Moon className="w-4 h-4" /> },
+    { id: "holo", label: "Holo Cards", icon: <CreditCard className="w-4 h-4" /> },
+    { id: "tet", label: "Tết Countdown", icon: <PartyPopper className="w-4 h-4" /> },
+    { id: "bloom", label: "Bloom Flowers", icon: <Flower2 className="w-4 h-4" /> },
+    { id: "charts", label: "Animated Charts", icon: <BarChart3 className="w-4 h-4" /> },
+];
+
+// --- Main Page Component ---
+export default function WowDemoPage() {
+    const [activeSection, setActiveSection] = useState<SectionType>("firefly");
 
     return (
-        <section className="py-20 px-4 bg-stone-900/50">
-            <div className="max-w-6xl mx-auto">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    className="text-center mb-12"
-                >
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                        Công nghệ <span className="text-emerald-400">IPO-Ready</span>
-                    </h2>
-                    <p className="text-stone-400 max-w-2xl mx-auto">
-                        Hạ tầng số hiện đại cho nông nghiệp thông minh
-                    </p>
-                </motion.div>
+        <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
+            {/* Background: Context-aware */}
+            {activeSection !== "firefly" && (
+                <div className="fixed inset-0 z-0 bg-gradient-to-b from-stone-950 via-black to-stone-950" />
+            )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {features.map((feature, i) => (
-                        <motion.div
-                            key={feature.title}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className={`bg-gradient-to-br ${feature.gradient} rounded-2xl p-6 relative overflow-hidden group`}
-                        >
-                            <div className="absolute top-0 right-0 text-8xl opacity-20 -mr-4 -mt-4 group-hover:scale-110 transition-transform">
-                                {feature.icon}
-                            </div>
-                            <div className="relative z-10">
-                                <span className="text-4xl mb-4 block">{feature.icon}</span>
-                                <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                                <p className="text-white/80 text-sm mb-4">{feature.description}</p>
-                                <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm text-white font-medium">
-                                    <Star className="w-4 h-4" />
-                                    {feature.stats}
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
+            {/* Content Overlay */}
+            <div className="relative z-10">
+                <Header />
+                <Navigation activeSection={activeSection} onSelect={setActiveSection} />
+
+                {/* Render Active Section */}
+                <div className="min-h-[80vh]">
+                    {activeSection === "firefly" && <FireflySection />}
+                    {activeSection === "holo" && <HoloSection />}
+                    {activeSection === "tet" && <TetSection />}
+                    {activeSection === "bloom" && <BloomSection />}
+                    {activeSection === "charts" && <ChartsSection />}
                 </div>
+
+                <Footer activeSection={activeSection} />
             </div>
-        </section>
+        </div>
     );
 }
 
-// Premium testimonial
-function PremiumTestimonial() {
+// --- Sub-Components (Extracted for Readability) ---
+
+function LoadingPlaceholder() {
     return (
-        <section className="py-20 px-4">
-            <div className="max-w-4xl mx-auto">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    className="bg-gradient-to-br from-emerald-900/50 to-green-900/50 border border-emerald-500/30 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
+        <div className="flex items-center justify-center w-full h-[400px]">
+            <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+        </div>
+    );
+}
+
+function Header() {
+    return (
+        <header className="p-6 flex items-center justify-between sticky top-0 bg-black/50 backdrop-blur-md z-50">
+            <Link href="/" className="flex items-center gap-3 group">
+                <AgriosLogo className="w-8 h-8" />
+                <span className="text-lg font-bold tracking-tight group-hover:text-emerald-400 transition-colors">
+                    AGRIOS<span className="text-emerald-500">.tech</span>
+                </span>
+            </Link>
+
+            <div className="flex items-center gap-2 px-4 py-2 bg-black/50 backdrop-blur-md rounded-full border border-emerald-500/20">
+                <Sparkles className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-mono text-emerald-400">WOW_MODE</span>
+            </div>
+        </header>
+    );
+}
+
+function Navigation({ activeSection, onSelect }: { activeSection: SectionType; onSelect: (s: SectionType) => void }) {
+    return (
+        <div className="flex justify-center gap-2 md:gap-4 py-4 px-4 overflow-x-auto">
+            {SECTIONS.map((section) => (
+                <button
+                    key={section.id}
+                    onClick={() => onSelect(section.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap ${activeSection === section.id
+                        ? "bg-emerald-500 text-black"
+                        : "bg-stone-800 text-white hover:bg-stone-700"
+                        }`}
                 >
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 left-0 w-full h-full">
-                        <div className="absolute top-0 left-0 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
-                        <div className="absolute bottom-0 right-0 w-60 h-60 bg-green-500/20 rounded-full blur-3xl" />
-                    </div>
-
-                    <div className="relative z-10">
-                        <div className="flex justify-center gap-1 mb-6">
-                            {[...Array(5)].map((_, i) => (
-                                <Star key={i} className="w-6 h-6 text-amber-400 fill-amber-400" />
-                            ))}
-                        </div>
-
-                        <blockquote className="text-2xl md:text-3xl font-bold text-white mb-6 leading-relaxed">
-                            "AGRIOS đã thay đổi hoàn toàn cách tôi bán hoa. Giờ tôi có thể
-                            <span className="text-emerald-400"> theo dõi tồn kho realtime</span>,
-                            nhận đơn hàng online, và
-                            <span className="text-emerald-400"> không còn lo được mùa mất giá</span>."
-                        </blockquote>
-
-                        <div className="flex items-center justify-center gap-4">
-                            <div className="w-16 h-16 bg-emerald-600 rounded-full flex items-center justify-center text-3xl">
-                                👩‍🌾
-                            </div>
-                            <div className="text-left">
-                                <div className="text-white font-bold">Cô Tư Hồng</div>
-                                <div className="text-emerald-400 text-sm">Vườn Hồng Tư Tôn - Sa Đéc</div>
-                                <div className="text-stone-500 text-xs">35 năm kinh nghiệm trồng hoa</div>
-                            </div>
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-        </section>
+                    {section.icon}
+                    <span className="hidden md:inline">{section.label}</span>
+                </button>
+            ))}
+        </div>
     );
 }
 
-// Final CTA
-function FinalCTA() {
+function FireflySection() {
+    const [fireflyCount, setFireflyCount] = useState(50);
+    const [showFlowers, setShowFlowers] = useState(true);
+    const [interactive, setInteractive] = useState(true);
+
     return (
-        <section className="py-20 px-4">
-            <div className="max-w-4xl mx-auto">
+        <>
+            {/* Background specific to Firefly section */}
+            <div className="fixed inset-0 z-0">
+                <FireflyGarden
+                    fireflyCount={fireflyCount}
+                    showFlowers={showFlowers}
+                    interactive={interactive}
+                />
+            </div>
+
+            <main className="min-h-[80vh] flex items-center justify-center px-6 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-600 rounded-3xl p-12 text-center relative overflow-hidden"
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center max-w-4xl"
                 >
-                    {/* Animated sparkles */}
-                    {[...Array(10)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute text-2xl"
-                            initial={{ opacity: 0 }}
-                            animate={{
-                                opacity: [0, 1, 0],
-                                y: [-20, -60],
-                                x: Math.random() * 20 - 10
-                            }}
-                            transition={{
-                                duration: 2,
-                                repeat: Infinity,
-                                delay: i * 0.3
-                            }}
-                            style={{ left: `${10 + i * 8}%`, top: '50%' }}
-                        >
-                            ✨
-                        </motion.div>
-                    ))}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-full text-sm mb-8 backdrop-blur-sm"
+                    >
+                        <Moon className="w-4 h-4" />
+                        <span>Đêm Hoa Đăng Sa Đéc</span>
+                        <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>✨</motion.span>
+                    </motion.div>
 
-                    <div className="relative z-10">
-                        <motion.div
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="text-5xl mb-6"
-                        >
-                            🌸
-                        </motion.div>
+                    <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-400">
+                            Khu Vườn
+                        </span>
+                        <br />
+                        <span className="text-white">Đom Đóm</span>
+                    </h1>
 
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                            Sẵn sàng trải nghiệm?
-                        </h2>
-                        <p className="text-emerald-100 text-lg mb-8 max-w-xl mx-auto">
-                            Tham gia cùng 500+ nhà vườn Sa Đéc đang sử dụng AGRIOS
-                        </p>
+                    <p className="text-xl text-stone-300 mb-12 max-w-2xl mx-auto">
+                        Di chuyển chuột để tương tác với đom đóm.
+                        <br />
+                        <span className="text-emerald-400">Trải nghiệm không gian ảo diệu làng hoa Sa Đéc.</span>
+                    </p>
 
-                        <div className="flex flex-wrap justify-center gap-4">
-                            <Link
-                                href="/register?role=farmer"
-                                className="bg-white text-emerald-600 px-8 py-4 rounded-xl font-bold hover:bg-emerald-50 transition-all flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
-                            >
-                                <Flower2 className="w-5 h-5" />
-                                Đăng ký Nhà Vườn
-                            </Link>
-                            <Link
-                                href="/shop"
-                                className="bg-emerald-700/50 text-white px-8 py-4 rounded-xl font-bold hover:bg-emerald-700 transition-all flex items-center gap-2 border border-emerald-400/50"
-                            >
-                                <Gift className="w-5 h-5" />
-                                Mua Hoa Tết
-                                <ArrowRight className="w-5 h-5" />
-                            </Link>
-                        </div>
+                    <div className="flex flex-wrap justify-center gap-4 mb-16">
+                        <Link href="/hunt">
+                            <NeonButton variant="primary" className="group">
+                                <Zap className="w-4 h-4 mr-2" />
+                                Bắt Đầu Săn Hoa
+                                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                            </NeonButton>
+                        </Link>
+                        <Link href="/shop">
+                            <NeonButton variant="outline" className="group">
+                                <Flower2 className="w-4 h-4 mr-2" />
+                                Mua Hoa Ngay
+                            </NeonButton>
+                        </Link>
                     </div>
+
+                    {/* Controls Panel */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl p-6 max-w-md mx-auto"
+                    >
+                        <h3 className="text-sm font-mono text-emerald-500 uppercase tracking-wider mb-4">
+                            ⚙️ Điều Khiển
+                        </h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <span className="text-stone-400">Số đom đóm</span>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => setFireflyCount(Math.max(10, fireflyCount - 20))} className="w-8 h-8 bg-stone-800 hover:bg-stone-700 rounded-lg text-white transition-colors">-</button>
+                                    <span className="w-12 text-center font-mono text-emerald-400">{fireflyCount}</span>
+                                    <button onClick={() => setFireflyCount(Math.min(200, fireflyCount + 20))} className="w-8 h-8 bg-stone-800 hover:bg-stone-700 rounded-lg text-white transition-colors">+</button>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-stone-400">Hiện hoa</span>
+                                <button onClick={() => setShowFlowers(!showFlowers)} className={`w-12 h-6 rounded-full transition-colors ${showFlowers ? 'bg-emerald-500' : 'bg-stone-700'}`}>
+                                    <div className={`w-5 h-5 bg-white rounded-full transition-transform ${showFlowers ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-stone-400">Tương tác chuột</span>
+                                <button onClick={() => setInteractive(!interactive)} className={`w-12 h-6 rounded-full transition-colors ${interactive ? 'bg-emerald-500' : 'bg-stone-700'}`}>
+                                    <div className={`w-5 h-5 bg-white rounded-full transition-transform ${interactive ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
                 </motion.div>
-            </div>
-        </section>
+            </main>
+        </>
     );
 }
 
-// Main WOW page
-export default function WowPage() {
+function HoloSection() {
     return (
-        <div className="min-h-screen bg-stone-950">
-            {/* Hero with all effects */}
-            <WowHero />
-
-            {/* Flash Sales */}
-            <section className="px-4 py-8">
-                <div className="max-w-6xl mx-auto">
-                    <FlashSaleBanner />
+        <main className="min-h-[80vh] px-6 py-12">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
+                <div className="text-center mb-12">
+                    <motion.div className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/30 text-purple-400 px-4 py-2 rounded-full text-sm mb-6">
+                        <CreditCard className="w-4 h-4" />
+                        <span>Holographic Effect</span>
+                        <motion.span animate={{ rotate: [0, 360] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}>💎</motion.span>
+                    </motion.div>
+                    <h1 className="text-5xl md:text-7xl font-black mb-6">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-amber-400">Holo Cards</span>
+                    </h1>
+                    <p className="text-xl text-stone-300 max-w-2xl mx-auto">
+                        Di chuyển chuột trên thẻ để xem hiệu ứng holographic.
+                        <br /><span className="text-purple-400">Rainbow shimmer + 3D tilt + Glitter particles</span>
+                    </p>
                 </div>
-            </section>
-
-            {/* Two column: Tet Countdown + Weather */}
-            <section className="px-4 py-8">
-                <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
-                    <TetCountdown />
-                    <WeatherWidget />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {DEMO_PRODUCTS.map((product, i) => (
+                        <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
+                            <HoloProductCard {...product} />
+                        </motion.div>
+                    ))}
                 </div>
-            </section>
+                <div className="text-center mt-12">
+                    <Link href="/shop">
+                        <NeonButton variant="primary" className="group">
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Xem Tất Cả Sản Phẩm
+                            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </NeonButton>
+                    </Link>
+                </div>
+            </motion.div>
+        </main>
+    );
+}
 
-            {/* Feature Showcase */}
-            <FeatureShowcase />
+function TetSection() {
+    return (
+        <main className="min-h-[80vh] px-6 py-12 flex items-center justify-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl w-full">
+                <TetCountdown />
+            </motion.div>
+        </main>
+    );
+}
 
-            {/* Quick Links */}
-            <QuickLinks />
+function BloomSection() {
+    return (
+        <main className="min-h-[80vh] px-6 py-12">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
+                <div className="text-center mb-8">
+                    <motion.div className="inline-flex items-center gap-2 bg-pink-500/10 border border-pink-500/30 text-pink-400 px-4 py-2 rounded-full text-sm mb-6">
+                        <Flower2 className="w-4 h-4" />
+                        <span>Interactive Bloom</span>
+                        <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity }}>🌸</motion.span>
+                    </motion.div>
+                    <h1 className="text-5xl md:text-7xl font-black mb-6">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-amber-400">Bloom Garden</span>
+                    </h1>
+                    <p className="text-xl text-stone-300 max-w-2xl mx-auto">
+                        Hover over flowers to make them bloom
+                        <br /><span className="text-pink-400">Rose • Lotus • Sakura • Sunflower</span>
+                    </p>
+                </div>
+                <div className="h-[500px] rounded-3xl overflow-hidden border border-stone-800">
+                    <BloomGarden />
+                </div>
+            </motion.div>
+        </main>
+    );
+}
 
-            {/* Testimonial */}
-            <PremiumTestimonial />
+function ChartsSection() {
+    return (
+        <main className="min-h-[80vh] px-6 py-12">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
+                <div className="text-center mb-8">
+                    <motion.div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-sm mb-6">
+                        <BarChart3 className="w-4 h-4" />
+                        <span>Data Visualization</span>
+                        <motion.span animate={{ y: [0, -3, 0] }} transition={{ duration: 1, repeat: Infinity }}>📊</motion.span>
+                    </motion.div>
+                    <h1 className="text-5xl md:text-7xl font-black mb-6">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400">Animated Charts</span>
+                    </h1>
+                    <p className="text-xl text-stone-300 max-w-2xl mx-auto">
+                        Spring-animated numbers and progress indicators
+                        <br /><span className="text-blue-400">Stat Cards • Bar Charts • Progress Rings</span>
+                    </p>
+                </div>
+                <div className="rounded-3xl overflow-hidden border border-stone-800 bg-stone-950/50 backdrop-blur-sm">
+                    <ChartsDashboard />
+                </div>
+            </motion.div>
+        </main>
+    );
+}
 
-            {/* Final CTA */}
-            <FinalCTA />
-        </div>
+function Footer({ activeSection }: { activeSection: SectionType }) {
+    return (
+        <footer className="p-6 text-center">
+            <motion.p
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-xs text-stone-600 font-mono uppercase tracking-widest"
+            >
+                {activeSection === "firefly" && "Move your cursor to interact with fireflies"}
+                {activeSection === "holo" && "Hover over cards to see holographic effect"}
+                {activeSection === "tet" && "Watch fireworks and countdown to Tết 2026"}
+                {activeSection === "bloom" && "Hover over flowers to make them bloom"}
+                {activeSection === "charts" && "Animated data visualization dashboard"}
+            </motion.p>
+        </footer>
     );
 }
