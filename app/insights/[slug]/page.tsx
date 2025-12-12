@@ -35,6 +35,11 @@ export default function BlogPostPage() {
 
     useEffect(() => {
         async function fetchPost() {
+            if (!supabase) {
+                setLoading(false);
+                return;
+            }
+
             // Try to find by slug in content
             const { data, error } = await supabase
                 .from('content_queue')

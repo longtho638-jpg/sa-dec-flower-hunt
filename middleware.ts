@@ -34,8 +34,10 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 1. Protect Admin Routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  // 1. Protect Admin Routes (Except IPO and Leadership which have mixed access or dev testing)
+  if (request.nextUrl.pathname.startsWith('/admin') &&
+    !request.nextUrl.pathname.startsWith('/admin/ipo') &&
+    !request.nextUrl.pathname.startsWith('/admin/leadership')) {
     if (!user) {
       // If not logged in, redirect to home or login
       // We can also redirect to a dedicated /login page if it exists
@@ -47,10 +49,9 @@ export async function middleware(request: NextRequest) {
 
   // 2. Protect Farmer Routes
   if (request.nextUrl.pathname.startsWith('/farmer')) {
-    // DEBUG: Temporarily allowing access to debug client-side session
-    // if (!user) {
-    //     return NextResponse.redirect(new URL('/', request.url));
-    // }
+    if (!user) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
   }
 
   return supabaseResponse;

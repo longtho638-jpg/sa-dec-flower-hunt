@@ -195,9 +195,9 @@ export function useGardenRealtime() {
 
         // Cleanup
         return () => {
-            supabase.removeChannel(inventoryChannel);
-            supabase.removeChannel(lootBoxChannel);
-            supabase.removeChannel(gardensChannel);
+            supabase?.removeChannel(inventoryChannel);
+            supabase?.removeChannel(lootBoxChannel);
+            supabase?.removeChannel(gardensChannel);
             setConnected(false);
         };
     }, [fetchData, handleInventoryChange, handleLootBoxChange]);
