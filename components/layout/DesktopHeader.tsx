@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AgriosLogo } from "@/components/brand/AgriosLogo";
+import { AgriosVectorLogo } from "@/components/brand/AgriosVectorLogo";
 import { NeonButton } from "@/components/ui/neon-button";
 import { useLanguage } from "@/lib/i18n";
 import { WOWLanguageToggle } from "@/components/wow/WOWLanguageToggle";
@@ -23,16 +23,8 @@ export function DesktopHeader() {
     return (
         <header className="fixed top-0 left-0 right-0 z-50 hidden md:flex items-center justify-between px-8 py-4 bg-black/50 backdrop-blur-md border-b border-white/5 transition-all duration-300">
             {/* Logo Section */}
-            <Link href="/" className="flex items-center gap-3 group">
-                <AgriosLogo className="w-8 h-8 group-hover:drop-shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all" />
-                <div className="flex flex-col">
-                    <span className="text-lg font-bold tracking-tight text-white leading-none">
-                        AGRIOS<span className="text-emerald-500">.tech</span>
-                    </span>
-                    <span className="text-[10px] text-emerald-500/60 font-mono tracking-widest uppercase">
-                        Garden OS
-                    </span>
-                </div>
+            <Link href="/" className="flex items-center group">
+                <AgriosVectorLogo className="h-12 w-auto group-hover:drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all" variant="full" />
             </Link>
 
             {/* Navigation Links */}

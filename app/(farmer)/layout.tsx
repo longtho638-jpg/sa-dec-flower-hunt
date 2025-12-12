@@ -20,30 +20,52 @@ const NAV_ITEMS = [
     { label: "SYSTEM_CONFIG", icon: Settings, href: "/farmer/settings" },
 ];
 
-function FarmerSidebar() {
+import { AgriosVectorLogo } from "@/components/brand/AgriosVectorLogo";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+// Updated Sidebar with Props
+function FarmerSidebar({ collapsed = false, setCollapsed }: { collapsed: boolean; setCollapsed: any }) {
     const pathname = usePathname();
     const { profile } = useFarmer();
+    // Removed local state, using props
+    const isCollapsed = collapsed;
+    const setIsCollapsed = setCollapsed;
 
     return (
-        <div className="flex flex-col h-full bg-[#030303] border-r border-white/10 text-zinc-400 font-mono text-sm">
-            <div className="p-6 border-b border-white/10">
-                <div className="flex items-center gap-2 mb-6">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <h1 className="text-lg font-bold text-white tracking-widest">
-                        AGRIOS.<span className="text-emerald-500">tech</span>
-                    </h1>
-                </div>
-
-                <div className="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/5 hover:border-emerald-500/30 transition-colors">
-                    <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-white/10">
-                        <Image src={profile.avatar} alt={profile.farmerName} fill className="object-cover" sizes="40px" />
-                    </div>
-                    <div className="overflow-hidden">
-                        <p className="text-xs font-bold text-white truncate">{profile.farmerName}</p>
-                        <p className="text-[10px] text-emerald-500 truncate">ID: {profile.id?.substring(0, 8)}</p>
-                    </div>
+        <div className={`flex flex-col h-full bg-[#030303] border-r border-white/10 text-zinc-400 font-mono text-sm transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
+            <div className={`flex items-center justify-between p-6 border-b border-white/10 ${isCollapsed ? 'px-4' : ''}`}>
+                <div className={`flex items-center gap-2 ${isCollapsed ? 'justify-center w-full' : ''}`}>
+                    <AgriosVectorLogo
+                        variant={isCollapsed ? 'icon' : 'full'}
+                        className={`transition-all duration-300 ${isCollapsed ? 'h-8' : 'h-10'}`}
+                        animate={false}
+                    />
                 </div>
             </div>
+
+            {/* Collapse Toggle */}
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="absolute top-[28px] -right-3 h-6 w-6 rounded-full border border-white/10 bg-black text-white hover:bg-emerald-500/20 z-10 hidden md:flex items-center justify-center p-0"
+            >
+                {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
+            </Button>
+
+            {!isCollapsed && (
+                <div className="p-6 pb-2">
+                    <div className="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/5 hover:border-emerald-500/30 transition-colors">
+                        <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-white/10 shrink-0">
+                            <Image src={profile.avatar} alt={profile.farmerName} fill className="object-cover" sizes="40px" />
+                        </div>
+                        <div className="overflow-hidden">
+                            <p className="text-xs font-bold text-white truncate">{profile.farmerName}</p>
+                            <p className="text-[10px] text-emerald-500 truncate">ID: {profile.id?.substring(0, 8)}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <nav className="flex-1 p-4 space-y-2">
                 {NAV_ITEMS.map((item) => {
@@ -52,14 +74,15 @@ function FarmerSidebar() {
                         <Link key={item.href} href={item.href}>
                             <Button
                                 variant="ghost"
-                                className={`w-full justify-start gap-3 rounded-none border-l-2 h-10 mb-1 transition-all duration-300
+                                className={`w-full justify-start gap-3 rounded-none h-10 mb-1 transition-all duration-300
+                                    ${isCollapsed ? 'px-0 justify-center' : 'border-l-2'}
                                     ${isActive
                                         ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-bold'
                                         : 'border-transparent hover:bg-white/5 hover:text-white hover:border-white/20'
                                     }`}
                             >
-                                <item.icon className="w-4 h-4" strokeWidth={1.5} />
-                                {item.label}
+                                <item.icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                                {!isCollapsed && item.label}
                             </Button>
                         </Link>
                     )
@@ -67,27 +90,31 @@ function FarmerSidebar() {
             </nav>
 
             <div className="p-4 border-t border-white/10">
-                <div className="bg-emerald-950/30 rounded border border-emerald-500/20 p-3 mb-4">
-                    <div className="flex justify-between items-center text-[10px] text-emerald-400 mb-1">
-                        <span>SYSTEM STATUS</span>
-                        <span className="animate-pulse">● ONLINE</span>
+                {!isCollapsed && (
+                    <div className="bg-emerald-950/30 rounded border border-emerald-500/20 p-3 mb-4">
+                        <div className="flex justify-between items-center text-[10px] text-emerald-400 mb-1">
+                            <span>SYSTEM STATUS</span>
+                            <span className="animate-pulse">● ONLINE</span>
+                        </div>
+                        <div className="w-full bg-black h-1 rounded-full overflow-hidden">
+                            <div className="bg-emerald-500 w-full h-full animate-[shimmer_2s_infinite]" />
+                        </div>
                     </div>
-                    <div className="w-full bg-black h-1 rounded-full overflow-hidden">
-                        <div className="bg-emerald-500 w-full h-full animate-[shimmer_2s_infinite]" />
-                    </div>
-                </div>
+                )}
 
-                <Button variant="ghost" className="w-full justify-start gap-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 font-mono text-xs uppercase hover:border-red-500/50 border border-transparent">
-                    <LogOut className="w-4 h-4" />
-                    Logout_Terminal
+                <Button variant="ghost" className={`w-full gap-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 font-mono text-xs uppercase hover:border-red-500/50 border border-transparent ${isCollapsed ? 'justify-center px-0' : 'justify-start'}`}>
+                    <LogOut className="w-4 h-4 shrink-0" />
+                    {!isCollapsed && "Logout_Terminal"}
                 </Button>
             </div>
         </div>
     );
 }
 
+// Ensure clean wrapper component
 function FarmerLayoutContent({ children }: { children: React.ReactNode }) {
     const { isLoading } = useFarmer();
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     if (isLoading) {
         return (
@@ -102,9 +129,9 @@ function FarmerLayoutContent({ children }: { children: React.ReactNode }) {
             <div className="fixed inset-0 z-0 opacity-30 pointer-events-none">
                 <img src="/assets/digital-twins/agrios_farmer_hyperreal_1765367316910.png" className="w-full h-full object-cover" />
             </div>
-            {/* Desktop Sidebar */}
-            <div className="hidden md:block w-64 shrink-0 fixed inset-y-0 z-50">
-                <FarmerSidebar />
+            {/* Desktop Sidebar with Prop */}
+            <div className={`hidden md:block shrink-0 fixed inset-y-0 z-50 transition-all duration-300 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}>
+                <FarmerSidebar collapsed={isSidebarCollapsed} setCollapsed={setIsSidebarCollapsed} />
             </div>
 
             {/* Mobile Header */}
@@ -117,13 +144,13 @@ function FarmerLayoutContent({ children }: { children: React.ReactNode }) {
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 bg-[#030303] border-white/10 w-64">
-                        <FarmerSidebar />
+                        <FarmerSidebar collapsed={false} setCollapsed={() => { }} />
                     </SheetContent>
                 </Sheet>
             </div>
 
-            {/* Main Content */}
-            <main className="flex-1 md:ml-64 p-4 md:p-6 pt-16 md:pt-6 overflow-x-hidden">
+            {/* Main Content - Dynamic Margin */}
+            <main className={`flex-1 p-4 md:p-6 pt-16 md:pt-6 overflow-x-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 <div className="max-w-7xl mx-auto">
                     {children}
                 </div>
@@ -131,8 +158,6 @@ function FarmerLayoutContent({ children }: { children: React.ReactNode }) {
         </div>
     )
 }
-
-
 
 function FarmerProtection({ children }: { children: React.ReactNode }) {
     const { profile, isLoading } = useFarmer();
