@@ -52,7 +52,7 @@ export function ComparisonTable() {
                         🔍 SO SÁNH MỤC TIÊU
                     </p>
                     <h2 className="text-2xl font-light text-white">
-                        SADEC.OS vs <span className="text-stone-500 font-mono">Truyền Thống</span>
+                        AGRIOS.tech vs <span className="text-stone-500 font-mono">Truyền Thống</span>
                     </h2>
                     <p className="text-[9px] text-stone-600 mt-2">[Giá trị mục tiêu - đang triển khai]</p>
                 </div>
@@ -67,7 +67,7 @@ export function ComparisonTable() {
                     <div className="grid grid-cols-4 bg-stone-950 border-b border-emerald-500/20">
                         <div className="p-4 text-xs text-stone-400 uppercase tracking-wider">Feature</div>
                         <div className="p-4 text-xs text-stone-500 uppercase tracking-wider text-center">Truyền Thống</div>
-                        <div className="p-4 text-xs text-emerald-400 uppercase tracking-wider text-center font-bold">SADEC.OS</div>
+                        <div className="p-4 text-xs text-emerald-400 uppercase tracking-wider text-center font-bold">AGRIOS.tech</div>
                         <div className="p-4 text-xs text-emerald-400 uppercase tracking-wider text-center">Lợi Ích</div>
                     </div>
 

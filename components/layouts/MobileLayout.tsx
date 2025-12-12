@@ -6,6 +6,7 @@ import { User, Scan, Menu, X, Home, FileText, Handshake, Zap, Terminal, Activity
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n";
+import { WOWLanguageToggle } from "@/components/wow/WOWLanguageToggle";
 
 interface MobileLayoutProps {
     children: React.ReactNode;
@@ -24,7 +25,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
     const isActive = (path: string) => pathname === path;
 
     return (
-        <div className="min-h-screen bg-[#050505] pb-24 text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden">
+        <div className="min-h-screen bg-stone-950 pb-24 text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden">
             {/* Cyber Grid Background */}
             <div className="fixed inset-0 bg-[linear-gradient(rgba(16,185,129,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.02)_1px,transparent_1px)] bg-[size:30px_30px] z-0 pointer-events-none" />
 
@@ -52,6 +53,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                             <Wifi className="w-3 h-3" />
                             <Battery className="w-3 h-3" />
                         </div>
+                        <WOWLanguageToggle />
                         <Button
                             size="sm"
                             onClick={onLoginClick}
@@ -71,7 +73,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                     onClick={() => setIsMenuOpen(false)}
                 >
                     <div
-                        className="w-72 h-full bg-[#050505] border-r border-emerald-900/30 p-6 flex flex-col relative"
+                        className="w-72 h-full bg-stone-950 border-r border-emerald-900/30 p-6 flex flex-col relative"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="absolute top-0 right-0 p-4">
@@ -82,7 +84,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
 
                         <div className="mt-8 mb-8 pl-4 border-l border-emerald-500/30">
                             <h2 className="text-lg font-mono font-bold text-white">{t("mobile.mission")}</h2>
-                            <p className="text-[10px] text-emerald-500/60 font-mono">OPERATIONAL_MENU</p>
+                            <p className="text-[10px] text-emerald-500/60 font-mono">{t("mobile.menu_title")}</p>
                         </div>
 
                         <nav className="space-y-4 flex-1">
@@ -150,7 +152,7 @@ export function MobileLayout({ children, onLoginClick }: MobileLayoutProps) {
                                         <Scan className="w-6 h-6 text-emerald-400" />
                                     </div>
                                 </div>
-                                <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-bold text-emerald-500 font-mono tracking-widest bg-black px-1">SCAN</span>
+                                <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-bold text-emerald-500 font-mono tracking-widest bg-black px-1">{t("mobile.scan_fab")}</span>
                             </div>
                         </Link>
                     </div>

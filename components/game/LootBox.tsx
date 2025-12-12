@@ -56,7 +56,7 @@ const RARITY_CONFIG = {
     }
 };
 
-// Single Loot Box Card
+// Single Loot Box Card (Updated with Glassmorphism)
 export function LootBoxCard({ lootBox, gardenName, onClaim }: LootBoxProps) {
     const [claiming, setClaiming] = useState(false);
     const config = RARITY_CONFIG[lootBox.rarity];
@@ -81,13 +81,15 @@ export function LootBoxCard({ lootBox, gardenName, onClaim }: LootBoxProps) {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
             className={`
-        relative overflow-hidden rounded-2xl border-2 ${config.border}
-        bg-gradient-to-br ${config.bg} p-1 shadow-2xl ${config.glow}
+        relative overflow-hidden rounded-2xl p-0.5 shadow-2xl ${config.glow}
       `}
         >
+            <div className={`absolute inset-0 bg-gradient-to-br ${config.bg} opacity-20`} />
+            <div className={`absolute inset-0 border-2 ${config.border} rounded-2xl opacity-50`} />
+
             {/* Sparkle effect for rare+ */}
             {lootBox.rarity !== 'COMMON' && (
-                <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     {[...Array(5)].map((_, i) => (
                         <motion.div
                             key={i}
@@ -112,61 +114,70 @@ export function LootBoxCard({ lootBox, gardenName, onClaim }: LootBoxProps) {
             )}
 
             {/* Content */}
-            <div className="relative bg-stone-950/90 backdrop-blur-sm rounded-xl p-4">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                        <span className="text-2xl">{config.icon}</span>
-                        <div>
-                            <div className={`text-xs font-bold bg-gradient-to-r ${config.bg} bg-clip-text text-transparent`}>
-                                {config.label}
+            <div className="relative bg-black/40 backdrop-blur-xl rounded-xl p-4 h-full flex flex-col justify-between">
+                <div>
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                            <span className="text-3xl filter drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">{config.icon}</span>
+                            <div>
+                                <div className={`text-[10px] font-bold uppercase tracking-widest bg-gradient-to-r ${config.bg} bg-clip-text text-transparent`}>
+                                    {config.label}
+                                </div>
+                                <div className="text-white font-bold text-sm tracking-tight">{lootBox.reward_value}</div>
                             </div>
-                            <div className="text-white font-bold text-sm">{lootBox.reward_value}</div>
                         </div>
                     </div>
 
-                    {/* Timer */}
-                    <div className="flex items-center gap-1 text-stone-400 text-xs">
-                        <Clock className="w-3 h-3" />
-                        <span>{hoursLeft}h còn</span>
-                    </div>
+                    {/* Garden source */}
+                    {gardenName && (
+                        <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-4 bg-white/5 py-1 px-2 rounded-lg border border-white/5">
+                            <MapPin className="w-3 h-3 text-emerald-500" />
+                            <span>{gardenName}</span>
+                        </div>
+                    )}
                 </div>
 
-                {/* Garden source */}
-                {gardenName && (
-                    <div className="flex items-center gap-1 text-stone-500 text-xs mb-3">
-                        <MapPin className="w-3 h-3" />
-                        <span>{gardenName}</span>
+                <div className="space-y-3">
+                    {/* Timer */}
+                    <div className="flex items-center justify-between text-[10px] text-stone-500 font-mono">
+                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> EXPIRES IN</span>
+                        <span className="text-white">{hoursLeft}H</span>
                     </div>
-                )}
 
-                {/* Claim button */}
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    disabled={claiming}
-                    onClick={handleClaim}
-                    className={`
-            w-full py-3 rounded-lg font-bold text-sm
-            bg-gradient-to-r ${config.bg} text-white
-            hover:shadow-lg transition-shadow
-            disabled:opacity-50 disabled:cursor-not-allowed
-          `}
-                >
-                    {claiming ? (
-                        <motion.span
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity }}
-                        >
-                            ⏳
-                        </motion.span>
-                    ) : (
-                        <>
-                            <Sparkles className="inline w-4 h-4 mr-1" />
-                            Mở Hộp Quà
-                        </>
-                    )}
-                </motion.button>
+                    {/* Claim button */}
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        disabled={claiming}
+                        onClick={handleClaim}
+                        className={`
+                w-full py-2.5 rounded-lg font-bold text-xs uppercase tracking-widest
+                bg-gradient-to-r ${config.bg} text-white
+                hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-shadow
+                disabled:opacity-50 disabled:cursor-not-allowed
+                relative overflow-hidden
+            `}
+                    >
+                        {/* Button Scanline */}
+                        <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.2)_50%)] bg-[length:100%_4px] pointer-events-none opacity-50" />
+
+                        {claiming ? (
+                            <motion.span
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity }}
+                                className="inline-block"
+                            >
+                                ⏳
+                            </motion.span>
+                        ) : (
+                            <span className="flex items-center justify-center gap-2 relative z-10">
+                                <Sparkles className="w-4 h-4" />
+                                CLAIM REWARD
+                            </span>
+                        )}
+                    </motion.button>
+                </div>
             </div>
         </motion.div>
     );

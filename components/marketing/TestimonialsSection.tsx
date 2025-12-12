@@ -68,7 +68,7 @@ export function TestimonialsSection() {
                         💬 TIẾNG NÓI TỪ CHUỖI GIÁ TRỊ
                     </p>
                     <h2 className="text-2xl font-light text-white">
-                        Họ nói gì về <span className="text-emerald-400 font-bold font-mono">SADEC.OS</span>
+                        Họ nói gì về <span className="text-emerald-400 font-bold font-mono">AGRIOS.tech</span>
                     </h2>
                 </div>
 

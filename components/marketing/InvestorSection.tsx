@@ -121,7 +121,7 @@ export function InvestorSection() {
                         🏦 ĐỐI TÁC & NHÀ ĐẦU TƯ
                     </p>
                     <h2 className="text-2xl font-light text-white">
-                        Xây dựng cùng <span className="text-emerald-400 font-bold font-mono">SADEC.OS</span>
+                        Xây dựng cùng <span className="text-emerald-400 font-bold font-mono">AGRIOS.tech</span>
                     </h2>
                 </div>
 

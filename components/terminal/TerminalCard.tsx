@@ -2,7 +2,12 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
-import { Components, Animations } from "@/lib/design-system";
+
+const fadeIn = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 }
+};
 
 interface TerminalCardProps {
     children: ReactNode;
@@ -17,7 +22,7 @@ export const TerminalCard = ({ children, className = "", glowOnHover = false }: 
             initial="initial"
             animate="animate"
             exit="exit"
-            variants={Animations.fadeIn}
+            variants={fadeIn}
         >
             {children}
         </motion.div>

@@ -11,8 +11,8 @@ import { motion } from "framer-motion";
 import { Gift, Clock, Sparkles, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-// Tet 2025 date (Lunar New Year: January 29, 2025)
-const TET_DATE = new Date('2025-01-29T00:00:00+07:00');
+// Tet 2026 date (Lunar New Year: February 17, 2026)
+const TET_DATE = new Date('2026-02-17T00:00:00+07:00');
 
 interface TimeLeft {
     days: number;

@@ -15,10 +15,10 @@ export function ReferralCard() {
 
     useEffect(() => {
         // 1. Get or create userId
-        let userId = localStorage.getItem("sadec_user_id");
+        let userId = localStorage.getItem("agrios_user_id");
         if (!userId) {
             userId = crypto.randomUUID();
-            localStorage.setItem("sadec_user_id", userId!);
+            localStorage.setItem("agrios_user_id", userId!);
         }
 
         // 2. Generate deterministic code from userId (simplified)
@@ -65,7 +65,7 @@ export function ReferralCard() {
     };
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(`https://sadec-flower-hunt.vercel.app?ref=${referralCode}`)
+        navigator.clipboard.writeText(`https://agrios.tech?ref=${referralCode}`)
         setCopied(true)
 
         confetti({
@@ -84,7 +84,7 @@ export function ReferralCard() {
                 await navigator.share({
                     title: 'Tặng bạn 50k mua hoa Tết! 🌸',
                     text: 'Nhận ngay voucher 50k khi đặt hoa Sa Đéc tại đây:',
-                    url: `https://sadec-flower-hunt.vercel.app?ref=${referralCode}`,
+                    url: `https://agrios.tech?ref=${referralCode}`,
                 })
             } catch (error) {
                 console.log('Error sharing', error)

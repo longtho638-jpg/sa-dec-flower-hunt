@@ -8,6 +8,7 @@ import { LoginModal } from "@/components/LoginModal";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n";
+import { WOWLanguageToggle } from "@/components/wow/WOWLanguageToggle";
 
 interface DesktopLayoutProps {
     children: React.ReactNode;
@@ -33,7 +34,7 @@ export function DesktopLayout({ children, onLoginClick }: DesktopLayoutProps) {
     ];
 
     return (
-        <div className="min-h-screen bg-[#050505] flex text-white font-sans selection:bg-emerald-500/30">
+        <div className="min-h-screen bg-stone-950 flex text-white font-sans selection:bg-emerald-500/30">
             {/* Cyberpunk Sidebar */}
             <aside className="w-72 bg-black border-r border-emerald-900/30 fixed h-full overflow-y-auto z-50">
                 <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-5 pointer-events-none" />
@@ -103,6 +104,11 @@ export function DesktopLayout({ children, onLoginClick }: DesktopLayoutProps) {
                                 <span className="text-emerald-400">*****</span>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Language Toggle */}
+                    <div className="mb-4">
+                        <WOWLanguageToggle />
                     </div>
 
                     {/* Auth Button */}

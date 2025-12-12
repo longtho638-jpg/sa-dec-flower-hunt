@@ -19,7 +19,7 @@ const MEDIA_LOGOS = [
 
 const PRESS_QUOTE = {
     quote: "Nền tảng số hóa chuỗi cung ứng hoa kiểng đầu tiên tại Việt Nam, kết nối trực tiếp nhà vườn Sa Đéc với thị trường toàn quốc.",
-    source: "Tầm nhìn SADEC.OS",
+    source: "Tầm nhìn AGRIOS.tech",
     date: "Vision Statement"
 };
 
@@ -80,7 +80,7 @@ export function PressSection({ onOpenWizard }: PressSectionProps) {
 
                 {/* CTAs */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/assets/press-kit.md" download="SADEC_Press_Kit.md">
+                    <a href="/assets/press-kit.md" download="AGRIOS_Press_Kit.md">
                         <Button
                             variant="outline"
                             className="border-stone-700 text-stone-400 hover:bg-stone-900 w-full"
@@ -89,7 +89,7 @@ export function PressSection({ onOpenWizard }: PressSectionProps) {
                             Press Kit (MD)
                         </Button>
                     </a>
-                    <a href="/assets/brand-assets.md" download="SADEC_Brand_Assets.md">
+                    <a href="/assets/brand-assets.md" download="AGRIOS_Brand_Assets.md">
                         <Button
                             variant="outline"
                             className="border-stone-700 text-stone-400 hover:bg-stone-900 w-full"

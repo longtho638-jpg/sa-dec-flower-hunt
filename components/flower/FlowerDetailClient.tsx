@@ -1,26 +1,34 @@
 "use client";
 
 import { motion } from "framer-motion";
-import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Separator } from "@/components/ui/separator";
-import { TraceabilityTimeline } from "@/components/TraceabilityTimeline";
-import { FreshnessIndex } from "@/components/FreshnessIndex";
-import { GardenProfile } from "@/components/GardenProfile";
-import { DrFlowerChat } from "@/components/DrFlowerChat";
-import { ARView } from "@/components/ARView";
 import { FlowerHero } from "@/components/flower/FlowerHero";
 import { FlowerHeader } from "@/components/flower/FlowerHeader";
 import { FlowerDetails } from "@/components/flower/FlowerDetails";
 import { TrustBadges } from "@/components/flower/TrustBadges";
 import { FlowerActions } from "@/components/flower/FlowerActions";
-import FarmerStory from "@/components/flower/FarmerStory";
-import { FARMER_STORIES } from "@/lib/farmerStories";
-import { ProductReviews } from "@/components/ProductReviews";
-import { RelatedProducts } from "@/components/RelatedProducts";
 import { UrgencyTriggers } from "@/components/flower/UrgencyTriggers";
 import type { Product } from "@/lib/api/products";
 import { safeJsonLd } from "@/lib/utils-seo";
+import { FARMER_STORIES } from "@/lib/farmerStories";
+import { Loader2 } from "lucide-react";
+
+// --- Dynamic Imports for Performance ---
+const LeadCaptureForm = dynamic(() => import("@/components/LeadCaptureForm"), { loading: () => <LoadingSkeleton /> });
+const TraceabilityTimeline = dynamic(() => import("@/components/TraceabilityTimeline").then(mod => mod.TraceabilityTimeline), { loading: () => <LoadingSkeleton /> });
+const FreshnessIndex = dynamic(() => import("@/components/FreshnessIndex").then(mod => mod.FreshnessIndex), { loading: () => <LoadingSkeleton /> });
+const GardenProfile = dynamic(() => import("@/components/GardenProfile").then(mod => mod.GardenProfile), { loading: () => <LoadingSkeleton /> });
+const DrFlowerChat = dynamic(() => import("@/components/DrFlowerChat").then(mod => mod.DrFlowerChat), { ssr: false });
+const ARView = dynamic(() => import("@/components/ARView").then(mod => mod.ARView), { ssr: false });
+const FarmerStory = dynamic(() => import("@/components/flower/FarmerStory"), { loading: () => <LoadingSkeleton /> });
+const ProductReviews = dynamic(() => import("@/components/ProductReviews").then(mod => mod.ProductReviews), { loading: () => <LoadingSkeleton /> });
+const RelatedProducts = dynamic(() => import("@/components/RelatedProducts").then(mod => mod.RelatedProducts), { loading: () => <LoadingSkeleton /> });
+
+function LoadingSkeleton() {
+    return <div className="w-full h-24 bg-stone-100 rounded-xl animate-pulse flex items-center justify-center"><Loader2 className="w-5 h-5 text-stone-300 animate-spin" /></div>;
+}
 
 export default function FlowerDetailClient({ product }: { product: Product }) {
     const [showAR, setShowAR] = useState(false);

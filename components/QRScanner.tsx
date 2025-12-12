@@ -16,22 +16,22 @@ export function QRScanner() {
             setScannedData(text);
 
             // Logic xử lý mã QR
-            if (text.startsWith("SADEC-") || text.includes("sadec")) {
+            if (text.startsWith("SADEC-") || text.startsWith("AGRIOS-") || text.includes("sadec") || text.includes("agrios")) {
                 // Giả lập logic cộng điểm
-                const scanned = JSON.parse(localStorage.getItem("sadec_scanned") || "[]");
+                const scanned = JSON.parse(localStorage.getItem("agrios_scanned") || "[]");
 
                 // Check duplicate (đơn giản hóa: dùng text làm ID)
                 const scanId = text.split("-").pop() || Date.now();
 
                 if (!scanned.includes(Number(scanId)) && !isNaN(Number(scanId))) {
                     scanned.push(Number(scanId));
-                    localStorage.setItem("sadec_scanned", JSON.stringify(scanned));
+                    localStorage.setItem("agrios_scanned", JSON.stringify(scanned));
                     toast.success("Đã tìm thấy một vườn hoa mới! 🎉");
                 } else if (isNaN(Number(scanId))) {
                     // Mock cho mã test không phải số
                     const randomId = Math.floor(Math.random() * 1000) + 100;
                     scanned.push(randomId);
-                    localStorage.setItem("sadec_scanned", JSON.stringify(scanned));
+                    localStorage.setItem("agrios_scanned", JSON.stringify(scanned));
                     toast.success("Đã tìm thấy kho báu! 🌸");
                 } else {
                     toast.info("Bạn đã quét vườn này rồi!");
@@ -50,7 +50,7 @@ export function QRScanner() {
                 }
 
             } else {
-                toast.error("Mã QR không hợp lệ (Không phải mã Sa Đéc Flower Hunt)");
+                toast.error("Mã QR không hợp lệ (Không phải mã AGRIOS Flower Hunt)");
             }
 
             setTimeout(() => {
@@ -94,7 +94,7 @@ export function QRScanner() {
                     className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20"
                 >
                     <div className="text-center">
-                        {scannedData.includes("SADEC") || scannedData.includes("sadec") ? (
+                        {scannedData.includes("SADEC") || scannedData.includes("sadec") || scannedData.includes("AGRIOS") || scannedData.includes("agrios") ? (
                             <>
                                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-2" />
                                 <h3 className="text-xl font-bold text-white">Thành Công!</h3>

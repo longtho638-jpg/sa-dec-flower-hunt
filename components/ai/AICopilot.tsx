@@ -102,6 +102,31 @@ interface Message {
 }
 
 // Chat bubble component
+// 🔒 SECURITY: Sanitize content to prevent XSS attacks
+function escapeHtml(text: string): string {
+    const div = typeof document !== 'undefined' ? document.createElement('div') : null;
+    if (div) {
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    // Server-side fallback
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function formatBotContent(content: string): string {
+    // 🔒 First escape the content to prevent XSS
+    const escaped = escapeHtml(content);
+    // Then apply safe formatting (only on escaped content)
+    return escaped
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\[(.*?)\]\((\/[a-zA-Z0-9\-\/]*)\)/g, '<a href="$2" class="text-emerald-400 underline">$1</a>');  // 🔒 Only allow internal links
+}
+
 function ChatBubble({ message }: { message: Message }) {
     const isBot = message.role === "bot";
 
@@ -128,9 +153,9 @@ function ChatBubble({ message }: { message: Message }) {
                 <div
                     className="text-sm whitespace-pre-wrap"
                     dangerouslySetInnerHTML={{
-                        __html: message.content
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-emerald-400 underline">$1</a>')
+                        __html: isBot
+                            ? formatBotContent(message.content)  // 🔒 Bot messages: sanitize + format
+                            : escapeHtml(message.content)        // 🔒 User messages: escape only
                     }}
                 />
                 <div className="text-[10px] text-stone-500 mt-1">
