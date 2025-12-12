@@ -10,6 +10,7 @@ import { ArrowRight, Play, MapPin, BarChart3, Sprout, ShoppingBag, Globe } from 
 import { WOWLanguageToggle } from '@/components/wow/WOWLanguageToggle';
 import { GeoLanguageNotice } from '@/components/wow/GeoLanguageNotice';
 import { useLanguage } from '@/lib/i18n';
+import { GlobalFooter } from '@/components/layout/GlobalFooter';
 
 export default function LandingPageClient() {
     const { scrollY } = useScroll();
@@ -200,62 +201,8 @@ export default function LandingPageClient() {
                 </div>
             </section>
 
-            {/* --- FOOTER --- */}
-            <footer className="pt-20 pb-10 border-t border-emerald-900/30 bg-black/50">
-                <div className="container mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                        <div className="col-span-1 md:col-span-1">
-                            <div className="flex items-center gap-3 mb-6">
-                                <AgriosLogo className="w-8 h-8" />
-                                <span className="text-xl font-bold tracking-tight">AGRIOS<span className="text-emerald-500">.tech</span></span>
-                            </div>
-                            <p className="text-stone-500 text-sm leading-relaxed">
-                                CÔNG TY TNHH CÔNG NGHỆ AGRIOS<br />
-                                Sa Đéc, Đồng Tháp, Việt Nam<br />
-                                MST: (Pending)
-                            </p>
-                        </div>
-
-                        <div>
-                            <h4 className="text-white font-bold mb-6">{t("landing.footer.platform")}</h4>
-                            <ul className="space-y-4 text-sm text-stone-400">
-                                <li><Link href="/hunt" className="hover:text-emerald-400 transition-colors">{t("landing.module.hunter.title")}</Link></li>
-                                <li><Link href="/partner" className="hover:text-emerald-400 transition-colors">{t("landing.module.garden.title")}</Link></li>
-                                <li><Link href="/shop" className="hover:text-emerald-400 transition-colors">{t("landing.footer.marketplace")}</Link></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="text-white font-bold mb-6">{t("landing.footer.company")}</h4>
-                            <ul className="space-y-4 text-sm text-stone-400">
-                                <li><Link href="/about" className="hover:text-emerald-400 transition-colors">{t("landing.footer.about")}</Link></li>
-                                <li><Link href="/investor" className="hover:text-emerald-400 transition-colors">{t("landing.footer.investors")}</Link></li>
-                                <li><Link href="/contact" className="hover:text-emerald-400 transition-colors">{t("landing.footer.contact")}</Link></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="text-white font-bold mb-6">{t("landing.footer.legal")}</h4>
-                            <ul className="space-y-4 text-sm text-stone-400">
-                                <li><Link href="/privacy" className="hover:text-emerald-400 transition-colors">{t("landing.footer.privacy")}</Link></li>
-                                <li><Link href="/terms" className="hover:text-emerald-400 transition-colors">{t("landing.footer.terms")}</Link></li>
-                                <li><Link href="/payment-policy" className="hover:text-emerald-400 transition-colors">{t("landing.footer.payment")}</Link></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div className="border-t border-emerald-900/30 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-xs text-stone-600 font-mono">
-                            © 2024 AGRIOS TECHNOLOGY CO., LTD. // ALL RIGHTS RESERVED
-                        </p>
-                        <div className="flex items-center gap-4 text-xs text-stone-600 font-mono">
-                            <span>VSIC: 6201</span>
-                            <span>•</span>
-                            <span>STATUS: LIVE</span>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            {/* --- FOOTER (Reusable Component) --- */}
+            <GlobalFooter />
         </div>
     );
 }
