@@ -18,56 +18,59 @@ import {
 // Type for navigation items
 interface NavItem {
     href: string;
-    label: string;
-    labelEn: string;
+    labelKey: string; // i18n key
     icon: any;
     hot?: boolean;
 }
 
-// Navigation Structure - Data Integrity: All Routes Mapped
-const NAV_STRUCTURE: Record<string, { label: string; labelEn: string; icon: any; items: NavItem[] }> = {
+interface NavSection {
+    labelKey: string; // i18n key
+    icon: any;
+    items: NavItem[];
+}
+
+// Navigation Structure - Uses i18n keys for full translation support
+const getNavStructure = (t: (key: string) => string): Record<string, { label: string; icon: any; items: { href: string; label: string; icon: any; hot?: boolean }[] }> => ({
     explore: {
-        label: "Khám Phá",
-        labelEn: "Explore",
+        label: t('megamenu.explore'),
         icon: Sparkles,
         items: [
-            { href: "/festival", label: "Lễ Hội Hoa", labelEn: "Festival", icon: Sparkles, hot: true },
-            { href: "/hub", label: "Trung Tâm", labelEn: "Hub", icon: HomeIcon },
-            { href: "/farmstay", label: "Farmstay", labelEn: "Farmstay", icon: Tent },
-            { href: "/leaderboard", label: "Bảng Xếp Hạng", labelEn: "Leaderboard", icon: Trophy },
-            { href: "/map", label: "Bản Đồ Hoa", labelEn: "Flower Map", icon: Map },
+            { href: "/festival", label: t('megamenu.festival'), icon: Sparkles, hot: true },
+            { href: "/hub", label: t('megamenu.hub'), icon: HomeIcon },
+            { href: "/farmstay", label: t('megamenu.farmstay'), icon: Tent },
+            { href: "/leaderboard", label: t('megamenu.leaderboard'), icon: Trophy },
+            { href: "/map", label: t('megamenu.flower_map'), icon: Map },
         ]
     },
     commerce: {
-        label: "Mua Sắm",
-        labelEn: "Shop",
+        label: t('megamenu.commerce'),
         icon: ShoppingBag,
         items: [
-            { href: "/shop", label: "Cửa Hàng", labelEn: "Shop", icon: ShoppingBag },
-            { href: "/hunt", label: "Săn Hoa AR", labelEn: "AR Hunt", icon: ScanLine, hot: true },
-            { href: "/adopt", label: "Nhận Nuôi Hoa", labelEn: "Adopt Flower", icon: Heart },
-            { href: "/badges", label: "Huy Hiệu", labelEn: "Badges", icon: Trophy },
+            { href: "/shop", label: t('megamenu.shop'), icon: ShoppingBag },
+            { href: "/hunt", label: t('megamenu.ar_hunt'), icon: ScanLine, hot: true },
+            { href: "/adopt", label: t('megamenu.adopt'), icon: Heart },
+            { href: "/badges", label: t('megamenu.badges'), icon: Trophy },
         ]
     },
     partners: {
-        label: "Đối Tác",
-        labelEn: "Partners",
+        label: t('megamenu.partners'),
         icon: Users,
         items: [
-            { href: "/partner", label: "Đăng Ký Đối Tác", labelEn: "Partner Portal", icon: Sprout },
-            { href: "/suppliers", label: "Nhà Cung Cấp", labelEn: "Suppliers", icon: Store },
-            { href: "/trader", label: "Thương Lái", labelEn: "Traders", icon: Briefcase },
-            { href: "/logistics", label: "Logistics", labelEn: "Logistics", icon: Truck },
+            { href: "/partner", label: t('megamenu.partner_portal'), icon: Sprout },
+            { href: "/suppliers", label: t('megamenu.suppliers'), icon: Store },
+            { href: "/trader", label: t('megamenu.traders'), icon: Briefcase },
+            { href: "/logistics", label: t('megamenu.logistics'), icon: Truck },
         ]
     },
-};
+});
 
 export function DesktopHeader() {
     const pathname = usePathname();
     const { t, language } = useLanguage();
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-    const isVi = language === 'vi';
+    // Get translated nav structure
+    const NAV_STRUCTURE = getNavStructure(t);
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 hidden md:block">
@@ -88,7 +91,7 @@ export function DesktopHeader() {
                         >
                             <button className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-stone-300 hover:text-white transition-colors rounded-lg hover:bg-white/5">
                                 <section.icon className="w-4 h-4" />
-                                {isVi ? section.label : section.labelEn}
+                                {section.label}
                                 <ChevronDown className={`w-3 h-3 transition-transform ${openDropdown === key ? 'rotate-180' : ''}`} />
                             </button>
 
@@ -113,7 +116,7 @@ export function DesktopHeader() {
                                                         }`}
                                                 >
                                                     <item.icon className="w-4 h-4" />
-                                                    {isVi ? item.label : item.labelEn}
+                                                    {item.label}
                                                     {item.hot && (
                                                         <span className="ml-auto text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-bold animate-pulse">
                                                             HOT
@@ -134,7 +137,7 @@ export function DesktopHeader() {
                         className={`px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-white/5 ${pathname === '/insights' ? 'text-emerald-400' : 'text-stone-300 hover:text-white'
                             }`}
                     >
-                        {isVi ? 'Insights' : 'Insights'}
+                        {t('megamenu.insights')}
                     </Link>
                 </nav>
 
@@ -143,7 +146,7 @@ export function DesktopHeader() {
                     <WOWLanguageToggle />
                     <Link href="/farmer">
                         <NeonButton variant="outline" className="h-9 px-4 text-xs">
-                            {isVi ? 'ĐĂNG NHẬP' : 'LOGIN'}
+                            {t('megamenu.login')}
                         </NeonButton>
                     </Link>
                 </div>

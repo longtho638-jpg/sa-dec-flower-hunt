@@ -5,57 +5,52 @@ import { AgriosVectorLogo } from "@/components/brand/AgriosVectorLogo";
 import { useLanguage } from "@/lib/i18n";
 import {
     Facebook, Instagram, Youtube,
-    Mail, Phone, MapPin,
-    FileText, Shield, CreditCard, Info, Users, Briefcase
+    Mail, Phone, MapPin
 } from "lucide-react";
 
-// Footer Structure - Complete Data Integrity
-const FOOTER_LINKS = {
+// Footer Structure - Uses i18n keys for full translation support
+const getFooterLinks = (t: (key: string) => string) => ({
     company: {
-        label: "Công Ty",
-        labelEn: "Company",
+        label: t('footer.company'),
         items: [
-            { href: "/about", label: "Giới Thiệu", labelEn: "About Us" },
-            { href: "/founding", label: "Câu Chuyện", labelEn: "Our Story" },
-            { href: "/contact", label: "Liên Hệ", labelEn: "Contact" },
-            { href: "/insights", label: "Báo Cáo", labelEn: "Insights" },
+            { href: "/about", label: t('footer.about') },
+            { href: "/founding", label: t('footer.story') },
+            { href: "/contact", label: t('footer.contact') },
+            { href: "/insights", label: t('footer.insights') },
         ]
     },
     legal: {
-        label: "Pháp Lý",
-        labelEn: "Legal",
+        label: t('footer.legal'),
         items: [
-            { href: "/terms", label: "Điều Khoản", labelEn: "Terms" },
-            { href: "/privacy", label: "Bảo Mật", labelEn: "Privacy" },
-            { href: "/payment-policy", label: "Thanh Toán", labelEn: "Payments" },
+            { href: "/terms", label: t('footer.terms') },
+            { href: "/privacy", label: t('footer.privacy') },
+            { href: "/payment-policy", label: t('footer.payments') },
         ]
     },
     business: {
-        label: "Doanh Nghiệp",
-        labelEn: "Business",
+        label: t('footer.business'),
         items: [
-            { href: "/partner", label: "Đối Tác", labelEn: "Partners" },
-            { href: "/suppliers", label: "Nhà Cung Cấp", labelEn: "Suppliers" },
-            { href: "/investor", label: "Nhà Đầu Tư", labelEn: "Investors" },
-            { href: "/fintech", label: "Fintech", labelEn: "Fintech" },
+            { href: "/partner", label: t('footer.partners') },
+            { href: "/suppliers", label: t('footer.suppliers') },
+            { href: "/investor", label: t('footer.investors') },
+            { href: "/fintech", label: t('footer.fintech') },
         ]
     },
     features: {
-        label: "Tính Năng",
-        labelEn: "Features",
+        label: t('footer.features'),
         items: [
-            { href: "/festival", label: "Lễ Hội", labelEn: "Festival" },
-            { href: "/hunt", label: "AR Hunt", labelEn: "AR Hunt" },
-            { href: "/adopt", label: "Nhận Nuôi", labelEn: "Adopt" },
-            { href: "/leaderboard", label: "Xếp Hạng", labelEn: "Ranks" },
+            { href: "/festival", label: t('footer.festival') },
+            { href: "/hunt", label: t('footer.ar_hunt') },
+            { href: "/adopt", label: t('footer.adopt') },
+            { href: "/leaderboard", label: t('footer.ranks') },
         ]
     }
-};
+});
 
 export function GlobalFooter() {
-    const { language } = useLanguage();
-    const isVi = language === 'vi';
+    const { t } = useLanguage();
     const currentYear = new Date().getFullYear();
+    const FOOTER_LINKS = getFooterLinks(t);
 
     return (
         <footer className="bg-black border-t border-white/5 text-stone-400">
@@ -66,9 +61,7 @@ export function GlobalFooter() {
                     <div className="col-span-2 md:col-span-1 space-y-4">
                         <AgriosVectorLogo variant="full" className="h-10" animate={false} />
                         <p className="text-sm text-stone-500 leading-relaxed">
-                            {isVi
-                                ? 'Nền tảng nông nghiệp thông minh, kết nối du khách với làng hoa Sa Đéc.'
-                                : 'Smart agriculture platform connecting tourists with Sa Dec flower village.'}
+                            {t('footer.tagline')}
                         </p>
                         {/* Social Links */}
                         <div className="flex gap-3 pt-2">
@@ -91,7 +84,7 @@ export function GlobalFooter() {
                     {Object.entries(FOOTER_LINKS).map(([key, section]) => (
                         <div key={key} className="space-y-4">
                             <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
-                                {isVi ? section.label : section.labelEn}
+                                {section.label}
                             </h3>
                             <ul className="space-y-2">
                                 {section.items.map((item) => (
@@ -100,7 +93,7 @@ export function GlobalFooter() {
                                             href={item.href}
                                             className="text-sm hover:text-emerald-400 transition-colors"
                                         >
-                                            {isVi ? item.label : item.labelEn}
+                                            {item.label}
                                         </Link>
                                     </li>
                                 ))}
@@ -121,7 +114,7 @@ export function GlobalFooter() {
                     </a>
                     <span className="flex items-center gap-2">
                         <MapPin className="w-4 h-4" />
-                        {isVi ? 'Làng Hoa Sa Đéc, Đồng Tháp' : 'Sa Dec Flower Village, Dong Thap'}
+                        {t('footer.location')}
                     </span>
                 </div>
             </div>
@@ -129,7 +122,7 @@ export function GlobalFooter() {
             {/* Bottom Bar */}
             <div className="border-t border-white/5 py-4">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-500">
-                    <p>© {currentYear} AGRIOS Tech. {isVi ? 'Bảo lưu mọi quyền.' : 'All rights reserved.'}</p>
+                    <p>© {currentYear} AGRIOS Tech. {t('footer.copyright')}</p>
                     <p className="font-mono text-emerald-500/50">
                         GARDEN_OS v2.0 // NODE_ACTIVE
                     </p>
@@ -138,3 +131,4 @@ export function GlobalFooter() {
         </footer>
     );
 }
+
