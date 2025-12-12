@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
+import { supabase } from "@/lib/supabase"; // Import Supabase Client
 
 const APP_VERSION = "v1.0.1-unified";
 
@@ -28,6 +29,22 @@ export function UnifiedNavigation() {
     const { t, language, setLanguage } = useLanguage();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false); // Auth State
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+    // Check Authentication on Mount
+    useEffect(() => {
+        const checkAuth = async () => {
+            if (!supabase) {
+                setIsCheckingAuth(false);
+                return;
+            }
+            const { data } = await supabase.auth.getSession();
+            setIsAuthenticated(!!data.session);
+            setIsCheckingAuth(false);
+        };
+        checkAuth();
+    }, []);
 
     // Handle scroll for glassmorphism effect intensity
     useEffect(() => {
@@ -53,6 +70,12 @@ export function UnifiedNavigation() {
     const toggleLanguage = () => {
         setLanguage(language === 'vi' ? 'en' : 'vi');
     };
+
+    // LOGIC:
+    // 1. If checking auth, show nothing (prevent flash)
+    // 2. If NOT authenticated, return NULL (Hide on Mobile for Guests)
+    // 3. CSS: 'md:hidden' will handle Desktop hiding in the JSX wrapper below
+    if (isCheckingAuth || !isAuthenticated) return null;
 
     return (
         <>
@@ -144,8 +167,8 @@ export function UnifiedNavigation() {
                 )}
             </AnimatePresence>
 
-            {/* BOTTOM "ISLAND" NAVIGATION */}
-            <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-[420px]">
+            {/* BOTTOM "ISLAND" NAVIGATION - MOBILE ONLY (Logged In) */}
+            <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-[420px] md:hidden">
                 <div
                     className={`
             relative flex items-center justify-between px-6 py-4 rounded-full 

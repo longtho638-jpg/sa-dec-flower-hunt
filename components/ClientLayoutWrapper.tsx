@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic";
 import { UnifiedNavigation } from "@/components/layout/UnifiedNavigation";
 
+import { DesktopHeader } from "@/components/layout/DesktopHeader";
+
 const PWAInstallPrompt = dynamic(() => import("@/components/PWAInstallPrompt").then(mod => mod.PWAInstallPrompt), {
   ssr: false,
 });
@@ -15,6 +17,7 @@ export function ClientLayoutWrapper() {
     <>
       <PWAInstallPrompt />
       <AICopilot />
+      <DesktopHeader />
       <UnifiedNavigation />
     </>
   );
