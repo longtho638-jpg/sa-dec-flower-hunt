@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 import {
     TrendingUp,
     TrendingDown,
@@ -13,7 +14,86 @@ import {
     MapPin
 } from 'lucide-react';
 
+// Types for market opportunities
+interface MarketOpportunity {
+    id: string;
+    name: string;
+    supply: string;
+    quality: string;
+    price: number;
+    original_price?: number;
+    expires_in?: string;
+    badge: 'HIGH YIELD' | 'FLASH SALE' | 'PRE-ORDER';
+    color: 'emerald' | 'rose' | 'blue';
+}
+
+// Pre-order items type
+interface PreOrderItem {
+    id: string;
+    name: string;
+    harvest_date: string;
+    min_qty: number;
+    price: number;
+}
+
 export default function TraderPortal() {
+    const [opportunities, setOpportunities] = useState<MarketOpportunity[]>([]);
+    const [preOrders, setPreOrders] = useState<PreOrderItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Fetch products and set up realtime subscription
+    useEffect(() => {
+        const fetchProducts = async () => {
+            if (!supabase) {
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                // Fetch products for market opportunities
+                const { data: products, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('status', 'active')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                if (!error && products) {
+                    // Transform products to opportunities format
+                    const ops: MarketOpportunity[] = products.slice(0, 4).map((p: any, idx: number) => ({
+                        id: p.id,
+                        name: p.name || 'Hoa Sa Đéc',
+                        supply: p.stock > 100 ? 'High' : p.stock > 50 ? 'Medium' : 'Low',
+                        quality: 'A+',
+                        price: p.price || 150000,
+                        badge: idx === 0 ? 'HIGH YIELD' : idx === 1 ? 'FLASH SALE' : 'PRE-ORDER',
+                        color: idx === 0 ? 'emerald' : idx === 1 ? 'rose' : 'blue'
+                    }));
+                    setOpportunities(ops);
+                }
+
+                // Set up realtime subscription
+                const channel = supabase
+                    .channel('trader_products')
+                    .on('postgres_changes',
+                        { event: '*', schema: 'public', table: 'products' },
+                        () => fetchProducts()
+                    )
+                    .subscribe();
+
+                return () => {
+                    supabase?.removeChannel(channel);
+                };
+            } catch (err) {
+                console.error('Trader fetch error:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 p-6">
             <header className="mb-8 flex items-center justify-between">

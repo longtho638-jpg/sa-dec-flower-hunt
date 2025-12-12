@@ -5,7 +5,7 @@
 // ============================================================================
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 // Types
@@ -41,20 +41,6 @@ interface LootBox {
     expires_at: string;
 }
 
-// Get Supabase client (lazy init for SSR)
-let supabase: ReturnType<typeof createClient> | null = null;
-
-function getSupabase() {
-    if (!supabase && typeof window !== 'undefined') {
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-        if (url && key) {
-            supabase = createClient(url, key);
-        }
-    }
-    return supabase;
-}
-
 // ============================================================================
 // MAIN HOOK
 // ============================================================================
@@ -68,14 +54,13 @@ export function useGardenRealtime() {
 
     // Fetch initial data
     const fetchData = useCallback(async () => {
-        const client = getSupabase();
-        if (!client) return;
+        if (!supabase) return;
 
         try {
             const [gardensRes, inventoryRes, lootBoxesRes] = await Promise.all([
-                client.from('gardens').select('*').eq('status', 'OPEN'),
-                client.from('inventory').select('*').eq('is_available', true),
-                client.from('loot_boxes').select('*').eq('is_active', true).eq('is_claimed', false)
+                supabase.from('gardens').select('*').eq('status', 'OPEN'),
+                supabase.from('inventory').select('*').eq('is_available', true),
+                supabase.from('loot_boxes').select('*').eq('is_active', true).eq('is_claimed', false)
             ]);
 
             if (gardensRes.data) setGardens(gardensRes.data);
@@ -164,8 +149,7 @@ export function useGardenRealtime() {
 
     // Subscribe to realtime
     useEffect(() => {
-        const client = getSupabase();
-        if (!client) {
+        if (!supabase) {
             setLoading(false);
             return;
         }
@@ -174,7 +158,7 @@ export function useGardenRealtime() {
         fetchData();
 
         // Subscribe to channels
-        const inventoryChannel = client
+        const inventoryChannel = supabase
             .channel('public:inventory')
             .on('postgres_changes' as any, {
                 event: '*',
@@ -188,7 +172,7 @@ export function useGardenRealtime() {
                 }
             });
 
-        const lootBoxChannel = client
+        const lootBoxChannel = supabase
             .channel('public:loot_boxes')
             .on('postgres_changes' as any, {
                 event: '*',
@@ -197,7 +181,7 @@ export function useGardenRealtime() {
             }, handleLootBoxChange as any)
             .subscribe();
 
-        const gardensChannel = client
+        const gardensChannel = supabase
             .channel('public:gardens')
             .on('postgres_changes' as any, {
                 event: '*',
@@ -211,20 +195,19 @@ export function useGardenRealtime() {
 
         // Cleanup
         return () => {
-            client.removeChannel(inventoryChannel);
-            client.removeChannel(lootBoxChannel);
-            client.removeChannel(gardensChannel);
+            supabase.removeChannel(inventoryChannel);
+            supabase.removeChannel(lootBoxChannel);
+            supabase.removeChannel(gardensChannel);
             setConnected(false);
         };
     }, [fetchData, handleInventoryChange, handleLootBoxChange]);
 
     // Claim loot box
     const claimLootBox = useCallback(async (lootBoxId: string, userId: string) => {
-        const client = getSupabase() as any;
-        if (!client) return null;
+        if (!supabase) return null;
 
         try {
-            const { data, error } = await client
+            const { data, error } = await supabase
                 .from('loot_boxes')
                 .update({
                     is_claimed: true,
